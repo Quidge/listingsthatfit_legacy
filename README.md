@@ -4,15 +4,15 @@
 Roadmap
 ------
 1. Make database tables
-* Users
-  * Shirt size specifics + brands/price guidelines
-  * Shoe size specics + brands/price guidelines
-  * Jacket size specifics + brands/price guidelines
-  * Suit size specifics + brands/price guidelines
-  * Pants size specifics + brands/price guidelines
-  * Custom keyword watch list
-  * Subscribed sellers
-* Sellers
+  * Users
+    * Shirt size specifics + brands/price guidelines
+    * Shoe size specics + brands/price guidelines
+    * Jacket size specifics + brands/price guidelines
+    * Suit size specifics + brands/price guidelines
+    * Pants size specifics + brands/price guidelines
+    * Custom keyword watch list
+    * Subscribed sellers
+  * Sellers
 2. Write functions to query ebay with user preferences
 3. Write site
   * Registration
