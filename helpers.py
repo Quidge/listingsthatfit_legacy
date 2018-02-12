@@ -25,12 +25,12 @@ def findItemsByKeywords(endpoint, API_KEY, keywords, additionalVals=None):
 
 	return request.urlopen(url)
 	
-def findItemsAdvanced(endpoint, API_KEY, keywords):
+def findItemsAdvanced(endpoint, API_KEY, keywords, as_json=False):
 	"""Takes an endpoint and a dict holding name=value pairs. Returns a JSON objectwith results.
 
 	search() will do the URL encoding for you. 
 	"""
-
+	
 	defaults = parse.urlencode({
 		"OPERATION-NAME": "findItemsAdvanced",
 		"SERVICE-VERSION": "1.0.0",
@@ -41,12 +41,20 @@ def findItemsAdvanced(endpoint, API_KEY, keywords):
 
 	url = endpoint + "?" + defaults + "&REST-PAYLOAD&" + parse.urlencode(keywords, quote_via=parse.quote)
 
-	return request.urlopen(url)
+	resp = request.urlopen(url)
 
-def findItemsBySeller(endpoint, API_KEY, sellerName, keywords={}):
+	if as_json:
+		return json.loads(resp.read())
+	else:
+		return request.urlopen(url)
+
+def findItemsBySeller(endpoint, API_KEY, sellerName, keywords={}, as_json=False):
 	"""Helper function that wraps findItemsAdvanced and adds sellerName as key"""
 	
 	keywords["itemFilter.name"] = "Seller"
 	keywords["itemFilter.value"] = sellerName
 
-	return findItemsAdvanced(endpoint, API_KEY, keywords)
+	return findItemsAdvanced(endpoint, API_KEY, keywords, as_json)
+
+
+
