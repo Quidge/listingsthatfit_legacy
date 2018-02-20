@@ -10,7 +10,11 @@ name = "pypi"
 flask = "*"
 "psycopg2" = "*"
 flask-sqlalchemy = "*"
+sqlalchemy = "*"
 
 
 [dev-packages]
+
+[environment]
+HELLO = "holy_shit"
 

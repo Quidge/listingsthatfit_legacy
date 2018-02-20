@@ -1,9 +1,17 @@
 import json
+import os
 
 from urllib import request, parse
 
 endpoint = "http://svcs.ebay.com/services/search/FindingService/v1"
 api_key = "***REMOVED***"
+
+def get_env_variable(name):
+	try:
+		return os.environ[name]
+	except KeyError:
+		message = "Expected environment variable '{}' not set".format(name)
+		raise Exception(message)
 
 def findItemsByKeywords(endpoint, API_KEY, keywords, additionalVals=None):
 	"""Takes an endpoint and a dict holding name=value pairs. Returns a JSON objectwith results.
