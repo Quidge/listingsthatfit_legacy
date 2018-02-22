@@ -8,13 +8,10 @@ name = "pypi"
 [packages]
 
 flask = "*"
-"psycopg2" = "*"
 flask-sqlalchemy = "*"
 sqlalchemy = "*"
+flask-migrate = "*"
+"psycopg2-binary" = "*"
 
 
 [dev-packages]
-
-[environment]
-HELLO = "holy_shit"
-

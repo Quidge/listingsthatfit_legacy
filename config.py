@@ -3,7 +3,8 @@ from helpers import get_env_variable
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-PG_URL = get_env_variable('PGDATA')
+#PG_URL = get_env_variable('PGDATA')
+PG_URL = 'localhost'
 PG_USER = get_env_variable('POSTGRES_USER')
 PG_PASSWORD = get_env_variable('POSTGRES_PW')
 PG_DB = get_env_variable('POSTGRES_DB')

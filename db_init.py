@@ -1,4 +1,4 @@
-from flask_sqlalchemy import SQLAlchemy
+'''from flask_sqlalchemy import SQLAlchemy
 from helpers import get_env_variable
 from flask import Flask
 
@@ -16,4 +16,4 @@ DB_URL = 'postgresql+psycopg2://{user}:{pw}@{url}/{db}'.format(
 app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db = SQLAlchemy(app)
+db = SQLAlchemy(app)'''
