@@ -1,3 +1,7 @@
+from flask import Flask, render_template, session
+from werkzeug.security import check_password_hash, generate_password
+from app import db, app
+
 '''import json
 
 from helpers import findItemsByKeywords, findItemsAdvanced, findItemsBySeller
@@ -14,3 +18,4 @@ resp2 = findItemsBySeller(endpoint, api_key, 'balearic1', keywords=limit10, as_j
 
 #print(json.dumps(json.loads(resp.read())["findItemsAdvancedResponse"], indent=4))
 print(json.dumps(resp2["findItemsAdvancedResponse"], indent=2))'''
+
