@@ -1,6 +1,6 @@
-#from flask import Flask, render_template, session
-#from werkzeug.security import check_password_hash, generate_password
-#from app import db, app
+from flask import Flask, render_template, session
+from werkzeug.security import check_password_hash, generate_password
+from app import db, app
 
 '''import json
 

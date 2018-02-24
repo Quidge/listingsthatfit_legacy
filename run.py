@@ -1,3 +1,5 @@
 from app import app
 
-app.run(debug=True)
+print(dir())
+
+#app.run(debug=True)
