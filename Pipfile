@@ -13,6 +13,9 @@ sqlalchemy = "*"
 flask-migrate = "*"
 sqlalchemy-migrate = "*"
 flask-session = "*"
+flask-login = "*"
+flask-wtf = "*"
+wtforms = "*"
 
 
 [dev-packages]

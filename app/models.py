@@ -1,9 +1,41 @@
 from app import db
+from werkzeug.security import generate_password_hash, check_password_hash
 
 class User(db.Model):
+
 	id = db.Column(db.Integer, primary_key=True)
-	email = db.Column(db.String(120), index=True, unique=True)
-	password = db.Column(db.String(32), unique=False)
+	email = db.Column(db.String(64), index=True, unique=True)
+	password_hash = db.Column(db.String(255))
+
+	@property
+	def password(self):
+		raise AttributeError('password is read only')
+
+	@password.setter
+	def password(self, password):
+		self.password_hash = generate_password_hash(password)
+
+	def verify_password(self, password):
+		return check_password_hash(self.password_hash, password)
+
+	@property
+	def is_authenticated(self):
+		"""Returns True if user is authenticated."""
+		return True
+
+	@property
+	def is_active(self):
+		"""True, as all users are active."""
+		return True
+
+	def get_id(self):
+		"""Return a user ID to satisfy Flask-login requirements."""
+		return str(self.id)
+
+	@property
+	def is_anonymous(self):
+		"""False. Anonymous users are not supported."""
+		return False
 
 	def __repr__(self):
 		return '<User id: %r, email: %r, password: %r>' % (self.id, self.email, self.password)

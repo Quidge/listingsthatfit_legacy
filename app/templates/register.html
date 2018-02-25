@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+
+{% block title %}
+	Registration
+{% endblock %}
+
+{% block main %}
+	<form method="POST" action="/register">
+		{{ form.email.label }} {{ form.email(size=40) }}
+		{{ form.password.label }} {{ form.password(size=32) }}
+		<button type="submit">Register</button>
+	</form>
+{% endblock %}
