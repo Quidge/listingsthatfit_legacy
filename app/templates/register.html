@@ -8,6 +8,7 @@
 	<form method="POST" action="/register">
 		{{ form.email.label }} {{ form.email(size=40) }}
 		{{ form.password.label }} {{ form.password(size=32) }}
+		{{ form.confirm.label }} {{ form.confirm(size=32) }}
 		<button type="submit">Register</button>
 	</form>
 {% endblock %}

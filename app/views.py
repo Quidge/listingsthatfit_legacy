@@ -1,8 +1,8 @@
 from flask import render_template, flash, redirect, session, request
 from flask_login import login_user
 from app import app, db, lm
-from .models import User
-from .forms import RegistrationForm
+from app.models import User
+from app.forms import RegistrationForm
 
 @lm.user_loader
 def user_loader(user_id):
@@ -57,11 +57,11 @@ def register():
 		flash("Account created successfully!")
 
 		return render_template('index.html')
+	
 	elif not form.validate():
 		flash("Form failed")
 
-	else:
-		return render_template('register.html', form=form)
+	return render_template('register.html', form=form)
 
 
 

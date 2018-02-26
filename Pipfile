@@ -10,12 +10,12 @@ name = "pypi"
 flask = "*"
 flask-sqlalchemy = "*"
 sqlalchemy = "*"
-flask-migrate = "*"
 sqlalchemy-migrate = "*"
 flask-session = "*"
 flask-login = "*"
 flask-wtf = "*"
 wtforms = "*"
+flask-migrate = "*"
 
 
 [dev-packages]
