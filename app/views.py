@@ -1,5 +1,5 @@
 from flask import render_template, flash, redirect, session, request
-from flask_login import login_user
+from flask_login import login_user, logout_user, login_required
 from app import app, db, lm
 from app.models import User
 from app.forms import RegistrationForm
@@ -18,29 +18,10 @@ def index():
 def login():
 	"""Log user in"""
 
-	'''form = RegistrationForm(request.form)
+	form = LoginForm(request.form)
 
-	if request.method == "POST" and form.validate():
-		user = User(email=form.email.data, password=form.password.data)
-		db.session.add(user)
-		db.session.commit()
-		login_user(user)
-
-		flash("Account created successfully!")
-
-		return render_template('index.html')
-
-		# Form validating (replace with WTF form login template soon)
-		if not request.form.get("email"):
-			flash('Missing email')
-			return render_template("login.html")
-		elif not request.form.get("password"):
-			flash('Missing password')
-			return render_template("login.html")
-	else:
-		return render_template('login.html')
-
-	email = request.form.get("email")'''
+	if request.method == "POST":
+		
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -63,5 +44,9 @@ def register():
 
 	return render_template('register.html', form=form)
 
-
+@app.route('/logout')
+@login_required
+def logout():
+	logout_user()
+	return redirect('/login')
 
