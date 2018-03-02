@@ -8,6 +8,7 @@ app.config.from_envvar('DEV_CONFIG_SETTINGS')
 
 lm = LoginManager()
 lm.init_app(app)
+lm.login_view = "login"
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
