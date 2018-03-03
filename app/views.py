@@ -27,8 +27,8 @@ def preferences():
 def preferences_clothing(category):
 	category = tolower(category)
 
-	if category in ['suits', 'shirts', 'shoes', 'outerwear', 'pants']:
-		return render_template('/preferences/clothing/%s' % category,
+	if category in ['suits', 'sportcoats', 'shirts', 'shoes', 'outerwear', 'pants']:
+		return render_template('/preferences/clothing/%s.html' % category,
 			sizes=user_sizes, brands=user_brands)
 	else:
 		return abort(404)
