@@ -38,7 +38,7 @@ class User(db.Model):
 		return False
 
 	def __repr__(self):
-		return '<User id: %r, email: %r, password: %r>' % (self.id, self.email, self.password)
+		return '<User id: %r, email: %r, password_hash: %r>' % (self.id, self.email, self.password_hash)
 
 # Size Key Tables
 class SizeKeyShirtDressSleeve(db.Model):
