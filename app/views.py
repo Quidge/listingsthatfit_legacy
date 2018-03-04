@@ -19,7 +19,7 @@ def index():
 def preferences():'''
 
 @app.route('/preferences')
-@lm.login_required
+@login_required
 def preferences():
 	return redirect('/preferences/clothing/suits')
 
