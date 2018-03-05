@@ -69,7 +69,7 @@ def login():
 @app.route('/logout')
 def logout():
 	logout_user()
-	return redirect('login.html')
+	return redirect('/login')
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -78,7 +78,11 @@ def register():
 
 	form = RegistrationForm(request.form)
 
-	if request.method == "POST" and form.validate():
+	if request.method == "POST":
+		if not form.validate():
+			flash_errors(form)
+			return render_template('register.html', form=form)
+
 		user = User(email=form.email.data, password=form.password.data)
 		db.session.add(user)
 		db.session.commit()
@@ -87,9 +91,7 @@ def register():
 		flash("Account created successfully!")
 
 		return render_template('index.html')
-	
-	elif not form.validate():
-		flash("Form failed")
 
-	return render_template('register.html', form=form)
+	else:
+		return render_template('register.html', form=form)
 
