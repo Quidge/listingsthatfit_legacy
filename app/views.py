@@ -14,10 +14,6 @@ def user_loader(user_id):
 def index():
 	return render_template('index.html')
 
-'''@app.route('/preferences')
-@lm.login_required
-def preferences():'''
-
 @app.route('/preferences')
 @login_required
 def preferences():
