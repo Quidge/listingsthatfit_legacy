@@ -3,6 +3,15 @@ from flask_login import login_user, logout_user, login_required
 from app import app, db, lm
 from app.models import User
 from app.forms import RegistrationForm, LoginForm
+from wtforms.validators import ValidationError
+
+def flash_errors(form):
+    for field, errors in form.errors.items():
+        for error in errors:
+            flash(u"Error in the %s field - %s" % (
+                getattr(form, field).label.text,
+                error
+            ))
 
 @lm.user_loader
 def user_loader(user_id):
@@ -37,14 +46,23 @@ def login():
 
 	form = LoginForm(request.form)
 
-	if request.method == "POST" and form.validate():
-		user = User.query.filter_by(email=form.email.data).first_or_404()
-		if user.verify_password(form.password.data):
-			login_user(user)
-			return redirect('index.html')
+	if request.method == "POST":
+		if not form.validate():
+			flash_errors(form)
+			return render_template('login.html', form=form)
+
+		user = User.query.filter_by(email=form.email.data).first()
+
+		if not user:
+			flash("Cannot find an account under %s" % form.email.data)
+			return render_template('login.html', form=form)
+		elif not user.verify_password(form.password.data):
+			flash("Incorrect password")
+			return render_template('login.html', form=form)
 		else:
-			flash('Incorrect email or password.')
-			return redirect('login.html')
+			login_user(user)
+			return redirect('/index')
+
 	else:
 		return render_template('login.html', form=form)
 
