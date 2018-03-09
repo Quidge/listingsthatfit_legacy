@@ -10,8 +10,13 @@ name = "pypi"
 flask = "*"
 flask-sqlalchemy = "*"
 sqlalchemy = "*"
+sqlalchemy-migrate = "*"
+flask-session = "*"
+flask-login = "*"
+flask-wtf = "*"
+wtforms = "*"
 flask-migrate = "*"
-"psycopg2-binary" = "*"
 
 
 [dev-packages]
+
