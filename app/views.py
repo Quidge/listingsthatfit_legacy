@@ -16,7 +16,7 @@ def flash_errors(form):
 @lm.user_loader
 def user_loader(user_id):
 	"""Given *user_id*, return the associated User object."""
-	return User.query.get(id)
+	return User.query.get(user_id)
 
 @app.route('/')
 @app.route('/index', methods=['GET', 'POST'])

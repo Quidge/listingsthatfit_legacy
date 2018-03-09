@@ -20,12 +20,14 @@ class User(db.Model):
 
 	@property
 	def is_authenticated(self):
-		"""Returns True if user is authenticated."""
+		"""Returns True if user is authenticated.
+		Required for Flask-login."""
 		return True
 
 	@property
 	def is_active(self):
-		"""True, as all users are active."""
+		"""True, as all users are active.
+		Required for Flask-login."""
 		return True
 
 	def get_id(self):
@@ -34,7 +36,8 @@ class User(db.Model):
 
 	@property
 	def is_anonymous(self):
-		"""False. Anonymous users are not supported."""
+		"""False. Anonymous users are not supported.
+		Required for Flask-login."""
 		return False
 
 	def __repr__(self):

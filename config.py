@@ -7,4 +7,4 @@ SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join('..', 'app.db')
 #SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
 #SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
 SQLALCHEMY_TRACK_MODIFICATIONS = False
-SECRET_KEY = 'damn' # change to hash at some point
+SECRET_KEY = 'this one' # change to hash at some point
