@@ -3,7 +3,7 @@ from flask_login import login_user, logout_user, login_required
 from app import app, db, lm
 from app.models import User
 from app.forms import RegistrationForm, LoginForm
-from wtforms.validators import ValidationError
+from app.utils import SUPPORTED_CLOTHING, cat_size_prefs
 
 def flash_errors(form):
     for field, errors in form.errors.items():
@@ -30,13 +30,17 @@ def preferences():
 
 @app.route('/preferences/clothing/<category>')
 def preferences_clothing(category):
-	category = tolower(category)
+	category = str.lower(category)
 
-	if category in ['suits', 'sportcoats', 'shirts', 'shoes', 'outerwear', 'pants']:
-		return render_template('/preferences/clothing/%s.html' % category,
+	user_sizes = cat_size_prefs(category, User.id)
+
+	user_brands = {}
+	print(user_sizes)
+	if category in SUPPORTED_CLOTHING:
+		return render_template('/preferences/clothing/{}.html'.format(category),
 			sizes=user_sizes, brands=user_brands)
 	else:
-		return abort(404)
+		return redirect(404)
 
 
 
