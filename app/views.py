@@ -33,13 +33,21 @@ def preferences():
 def preferences_clothing(category):
 	category = str.lower(category)
 
-	user_sizes = current_user.sz.
+	user_sizes = {}
 
-	user_brands = {}
-	print(user_sizes)
+	if category == 'shirts':
+		user_sizes = {
+			"sleeves": current_user.sz_shirt_dress_sleeve,
+			"necks": current_user.sz_shirt_dress_neck,
+			"casuals": current_user.sz_shirt_casual
+		}
+		#user_sizes.sleeves = current_user.sz_shirt_dress_sleeve
+		#user_sizes.neck = current_user.sz_shirt_dress_neck
+		#user_sizes.casual = current_user.sz_shirt_casual
+
 	if category in SUPPORTED_CLOTHING:
 		return render_template('/preferences/clothing/{}.html'.format(category),
-			sizes=user_sizes)
+			user_sizes=user_sizes)
 	else:
 		return redirect(404)
 

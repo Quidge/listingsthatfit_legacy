@@ -1,14 +1,25 @@
 {% extends 'preferences/layout_preferences.html' %}
+<!-- Passed user_sizes object with user_sizes.sleeves, .necks, .casuals lists -->
 
 {% block prefpage_title %}
 	Shirt Preferences
 {% endblock %}
 
 {% block prefpane %}
-	<div class="jumbotron">
+	<div class="container">
+		{% for size_type, sizes in user_sizes.items() %}
+			<h6>{{size_type|title}}</h6>
+			<ul>
+				{% for size in sizes %}
+					<li>{{size}}</li>
+				{% endfor %}
+			</ul>
+		{% endfor %}
+	</div>
+	<!--<div class="jumbotron">
 		<div class="container">
 			<h1> Not a damn thing here.</h1>
 			<p class="lead">This is a placeholder page. Deal.</p>
 		</div>
-	</div>
+	</div>-->
 {% endblock %}

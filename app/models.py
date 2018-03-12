@@ -31,7 +31,7 @@ class User(db.Model):
 		'SizeKeyShirtDressSleeve', secondary=LinkUserSizeShirtDressSleeve, backref=db.backref('users', lazy='dynamic'))
 	sz_shirt_dress_neck = db.relationship(
 		'SizeKeyShirtDressNeck', secondary=LinkUserSizeShirtDressNeck, backref=db.backref('users', lazy='dynamic'))
-	sz_shirt_dress_neck = db.relationship(
+	sz_shirt_casual = db.relationship(
 		'SizeKeyShirtCasual', secondary=LinkUserSizeShirtCasual, backref=db.backref('users', lazy='dynamic'))
 
 	@property
