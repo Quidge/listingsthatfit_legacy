@@ -17,7 +17,7 @@ def cat_size_prefs(category, user_id):
 # range function with floats
 def frange(start, stop, jump):
 	i = start
-	while i < stop:
+	while i <= stop:
 		yield i
 		i += jump
 
@@ -26,7 +26,7 @@ def frange(start, stop, jump):
 def populate_size_tables():
 
 	shirt_dress_neck_values = []
-	for i in frange(14.00, 20.00, .50):
+	for i in frange(14.00, 20.00, .25):
 		size = app.models.SizeKeyShirtDressNeck(size=i)
 		shirt_dress_neck_values.append(size)
 
@@ -44,12 +44,14 @@ def populate_size_tables():
 			size_short=shirt_casual_shorts[i], size_long=shirt_casual_longs[i])
 		shirt_casual_values.append(size)
 
-	print(shirt_casual_values)
+	#print(shirt_casual_values)
+	#print(shirt_dress_sleeve_values)
+	#print(shirt_dress_neck_values)
 
-	#db.session.add_all(shirt_dress_neck_values)
-	#db.session.add_all(shirt_dress_sleeve_values)
-	#db.session.add_all(shirt_casual_values)
-	#db.session.commit()
+	db.session.add_all(shirt_dress_neck_values)
+	db.session.add_all(shirt_dress_sleeve_values)
+	db.session.add_all(shirt_casual_values)
+	db.session.commit()
 
 
 

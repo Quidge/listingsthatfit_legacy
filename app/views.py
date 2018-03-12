@@ -1,5 +1,5 @@
 from flask import render_template, flash, redirect, session, request
-from flask_login import login_user, logout_user, login_required
+from flask_login import login_user, logout_user, login_required, current_user
 from app import app, db, lm
 from app.models import User
 from app.forms import RegistrationForm, LoginForm
@@ -29,16 +29,17 @@ def preferences():
 	return redirect('/preferences/clothing/suits')
 
 @app.route('/preferences/clothing/<category>')
+@login_required
 def preferences_clothing(category):
 	category = str.lower(category)
 
-	user_sizes = cat_size_prefs(category, User.id)
+	user_sizes = current_user.sz.
 
 	user_brands = {}
 	print(user_sizes)
 	if category in SUPPORTED_CLOTHING:
 		return render_template('/preferences/clothing/{}.html'.format(category),
-			sizes=user_sizes, brands=user_brands)
+			sizes=user_sizes)
 	else:
 		return redirect(404)
 
