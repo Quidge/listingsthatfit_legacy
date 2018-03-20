@@ -26,9 +26,10 @@ def index():
 @app.route('/preferences')
 @login_required
 def preferences():
-	return redirect('/preferences/clothing/suits')
+	#return redirect('/preferences/clothing/suits')
+	return redirect('/preferences/clothing')
 
-@app.route('/preferences/clothing/<category>')
+'''@app.route('/preferences/clothing/<category>')
 @login_required
 def preferences_clothing(category):
 	category = str.lower(category)
@@ -49,8 +50,49 @@ def preferences_clothing(category):
 		return render_template('/preferences/clothing/{}.html'.format(category),
 			user_sizes=user_sizes)
 	else:
-		return redirect(404)
+		return redirect(404)'''
 
+@app.route('/preferences/clothing', methods=["GET", "POST"])
+def preferences_clothing():
+
+	if request.method == "POST":
+		''' The situation if POSTed should be a user attempted to update size preferences.
+		So, request should hold some object that contains the new additions(?) and update the DB.
+		After DB is updated, re-serve the page with updated user preferences.
+		'''
+		pass
+
+	'''
+	I have to figure out how to recreate this query with SQLAlchemy:
+
+	select 	
+		size, 
+   		case 	when link_user_size_shirt_dress_sleeve.size_id is not null 
+   				then 'true' else 'false' end as present
+		from size_key_shirt_dress_sleeve 
+		left join link_user_size_shirt_dress_sleeve
+		on size_key_shirt_dress_sleeve.id = link_user_size_shirt_dress_sleeve.size_id
+	;
+	'''
+
+	user_sizes = {
+		"Shirting": {
+			"sleeves": current_user.sz_shirt_dress_sleeve,
+			"necks": current_user.sz_shirt_dress_neck,
+			"casuals": current_user.sz_shirt_casual
+		}
+	}
+	possible_sizes = {
+		"Shirting": {
+			"sleeves": None,
+			"necks": None,
+			"casuals": None
+		}
+	}
+
+	user_plus_possible
+
+	return render_template('/preferences/user_sizes.html', user_sizes=user_sizes)
 
 
 @app.route('/login', methods=['GET', 'POST'])

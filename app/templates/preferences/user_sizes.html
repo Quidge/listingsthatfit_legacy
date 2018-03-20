@@ -1,0 +1,20 @@
+{% extends 'preferences/layout_preferences.html' %}
+
+<!-- Rendered with user_sizes dict that contains all account sizes for each category -->
+
+{% block prefpage_title %}
+	Account Sizes
+{% endblock %}
+
+{% block prefpane %}
+	<div class="container-fluid">
+		{% for clothing_cat, specifics in user_sizes.items() %}
+			<div class="container-fluid">
+				<h5>{{ clothing_cat|title }}</h4>
+				{% for specific_title, sizes_list in specifics.items() %}
+					<p>{{ specific_title|title }}: {{sizes_list|join(', ')|default('No preferences added') }}</p>
+				{% endfor %}
+			</div>
+		{% endfor %}
+	</div>
+{% endblock %}
