@@ -1,9 +1,10 @@
 from flask import render_template, flash, redirect, session, request
 from flask_login import login_user, logout_user, login_required, current_user
 from app import app, db, lm
-from app.models import User
+from app.models import User, SizeKeyShirtDressSleeve, LinkUserSizeShirtDressSleeve
 from app.forms import RegistrationForm, LoginForm
 from app.utils import SUPPORTED_CLOTHING, cat_size_prefs
+from sqlalchemy import select
 
 def flash_errors(form):
     for field, errors in form.errors.items():
@@ -62,6 +63,9 @@ def preferences_clothing():
 		'''
 		pass
 
+	
+
+
 	'''
 	I have to figure out how to recreate this query with SQLAlchemy:
 
@@ -75,22 +79,22 @@ def preferences_clothing():
 	;
 	'''
 
+	user_link_table = (select([LinkUserSizeShirtDressSleeve])
+		.where(LinkUserSizeShirtDressSleeve.c.user_id==current_user.id)
+		.alias())
+
+	shirt_sleeve_sizes = (db.session
+		.query(SizeKeyShirtDressSleeve.size, user_link_table.c.size_id != None)
+		.outerjoin(user_link_table, user_link_table.c.size_id == SizeKeyShirtDressSleeve.id)
+		.all())
+
 	user_sizes = {
 		"Shirting": {
-			"sleeves": current_user.sz_shirt_dress_sleeve,
-			"necks": current_user.sz_shirt_dress_neck,
-			"casuals": current_user.sz_shirt_casual
+			"sleeves": shirt_sleeve_sizes
+			#"necks": current_user.sz_shirt_dress_neck,
+			#"casuals": current_user.sz_shirt_casual
 		}
 	}
-	possible_sizes = {
-		"Shirting": {
-			"sleeves": None,
-			"necks": None,
-			"casuals": None
-		}
-	}
-
-	user_plus_possible
 
 	return render_template('/preferences/user_sizes.html', user_sizes=user_sizes)
 

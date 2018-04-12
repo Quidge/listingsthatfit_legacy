@@ -10,10 +10,22 @@
 	<div class="container-fluid">
 		{% for clothing_cat, specifics in user_sizes.items() %}
 			<div class="container-fluid">
-				<h5>{{ clothing_cat|title }}</h4>
-				{% for specific_title, sizes_list in specifics.items() %}
-					<p>{{ specific_title|title }}: {{sizes_list|join(', ')|default('No preferences added') }}</p>
-				{% endfor %}
+				<form>
+					<h4>{{ clothing_cat|title }}</h4>
+					{% for specific_title, sizes_list in specifics.items() %}
+						<h5>{{ specific_titles|title }}</h5>
+						{% for value, subscription in sizes_list %}
+							<span>{{ value }}</span>
+							<span> {{ susbcription }}</span>
+							{% if subscription == true %}
+								<input type="checkbox" checked>
+							{% else %}
+								<input type="checkbox">
+							{% endif %}
+						{% endfor %}
+						
+					{% endfor %}
+				</form>
 			</div>
 		{% endfor %}
 	</div>
