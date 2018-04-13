@@ -56,16 +56,6 @@ def preferences_clothing(category):
 @app.route('/preferences/clothing', methods=["GET", "POST"])
 def preferences_clothing():
 
-	if request.method == "POST":
-		''' The situation if POSTed should be a user attempted to update size preferences.
-		So, request should hold some object that contains the new additions(?) and update the DB.
-		After DB is updated, re-serve the page with updated user preferences.
-		'''
-		pass
-
-	
-
-
 	'''
 	I have to figure out how to recreate this query with SQLAlchemy:
 
@@ -90,11 +80,24 @@ def preferences_clothing():
 
 	user_sizes = {
 		"Shirting": {
-			"sleeves": shirt_sleeve_sizes
+			"Sleeve": {"sizes": shirt_sleeve_sizes, "cat": "shirt-dress-sleeve"}
 			#"necks": current_user.sz_shirt_dress_neck,
 			#"casuals": current_user.sz_shirt_casual
 		}
 	}
+
+	if request.method == "POST":
+		''' The situation if POSTed should be a user attempted to update size preferences.
+		So, request should hold some object that contains the new additions(?) and update the DB.
+		After DB is updated, re-serve the page with updated user preferences.
+		'''
+
+		f = request.form
+		for key in f.keys():
+			for value in f.getlist(key):
+				print(key,":",value)
+
+		
 
 	return render_template('/preferences/user_sizes.html', user_sizes=user_sizes)
 

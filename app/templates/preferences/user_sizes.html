@@ -8,23 +8,23 @@
 
 {% block prefpane %}
 	<div class="container-fluid">
-		{% for clothing_cat, specifics in user_sizes.items() %}
+		{% for clothing_cat, size_cat in user_sizes.items() %}
 			<div class="container-fluid">
-				<form>
+				<form method="POST" action="/preferences/clothing">
 					<h4>{{ clothing_cat|title }}</h4>
-					{% for specific_title, sizes_list in specifics.items() %}
-						<h5>{{ specific_titles|title }}</h5>
-						{% for value, subscription in sizes_list %}
-							<span>{{ value }}</span>
-							<span> {{ susbcription }}</span>
-							{% if subscription == true %}
-								<input type="checkbox" checked>
+					{% for size_cat_title, sizes_dict in size_cat.items() %}
+						<h5>{{ size_cat_title|title }}</h5>
+						{% for item in sizes_dict.sizes %}
+							
+							{% if item[1] == true %}
+								<input type="checkbox" id="{{sizes_dict.cat}}_{{ item[0] }}" name="{{sizes_dict.cat}}" value={{item[0]}} checked>
 							{% else %}
-								<input type="checkbox">
+								<input type="checkbox" id="{{sizes_dict.cat}}_{{ item[0] }}" name="{{sizes_dict.cat}}" value={{item[0]}} >
 							{% endif %}
+							<label for="{{sizes_dict.cat}}_{{ item[0] }}" >{{item[0]}}</label>
 						{% endfor %}
-						
 					{% endfor %}
+					<button class="btn" type="submit">Update with changes</button>
 				</form>
 			</div>
 		{% endfor %}
