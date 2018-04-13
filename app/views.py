@@ -80,17 +80,34 @@ def preferences_clothing():
 
 	user_sizes = {
 		"Shirting": {
-			"Sleeve": {"sizes": shirt_sleeve_sizes, "cat": "shirt-dress-sleeve"}
+			"Sleeve": {"sizes": dict(shirt_sleeve_sizes), "cat": "shirt-dress-sleeve"}
 			#"necks": current_user.sz_shirt_dress_neck,
 			#"casuals": current_user.sz_shirt_casual
 		}
 	}
+
+	#print(dict(shirt_sleeve_sizes))
+	#for key, value in dict(shirt_sleeve_sizes).items():
+	#	print(key,":",value)
 
 	if request.method == "POST":
 		''' The situation if POSTed should be a user attempted to update size preferences.
 		So, request should hold some object that contains the new additions(?) and update the DB.
 		After DB is updated, re-serve the page with updated user preferences.
 		'''
+
+		''' Update process:
+			- Compose presence/lack of input values from form AND user_sizes to build a dict with the NEW updated values.
+				- update dict format is {size_cat: {size_specific: [list of values]}} 
+			- Pass this new 'update values' dict to a function that:
+				- Parses the dict
+				- Determines which tables to update
+				- Updates table
+				- Commits session
+			- Re-query for sizes
+			- Re-serve page
+		'''
+
 
 		f = request.form
 		for key in f.keys():
