@@ -2,6 +2,7 @@ from app import app, db
 from app.models import User, SizeKeyShirtDressSleeve, LinkUserSizeShirtDressSleeve
 from sqlalchemy import select
 
+
 def update_user_sizes(updates_dict, user_object):
 	"""
 	Controls the addition or removal of sizes from a User in the database.
@@ -21,6 +22,7 @@ def update_user_sizes(updates_dict, user_object):
 	None
 	"""
 	pass
+
 
 def get_user_sizes(user_object):
 	"""
@@ -48,26 +50,26 @@ def get_user_sizes(user_object):
 
 	"""
 
-	user_link_table = (select([LinkUserSizeShirtDressSleeve])
-		.where(LinkUserSizeShirtDressSleeve.c.user_id==user_object.id)
+	user_link_table = (
+		select([LinkUserSizeShirtDressSleeve])
+		.where(LinkUserSizeShirtDressSleeve.c.user_id == user_object.id)
 		.alias())
 
-	shirt_sleeve_sizes = (db.session
-		.query(SizeKeyShirtDressSleeve.size, user_link_table.c.size_id != None)
+	shirt_sleeve_sizes = (
+		db.session
+		.query(SizeKeyShirtDressSleeve.size, user_link_table.c.size_id is not None)
 		.outerjoin(user_link_table, user_link_table.c.size_id == SizeKeyShirtDressSleeve.id)
 		.all())
 
 	user_sizes = {
 		"Shirting": {
 			"Sleeve": {"values": shirt_sleeve_sizes, "cat_key": "shirt-dress-sleeve"}
-			#"necks": user_object.sz_shirt_dress_neck,
-			#"casuals": user_object.sz_shirt_casual
+			# "necks": user_object.sz_shirt_dress_neck,
+			# "casuals": user_object.sz_shirt_casual
 		}
 	}
 
 	return user_sizes
-
-
 
 
 
