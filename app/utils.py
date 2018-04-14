@@ -41,10 +41,13 @@ def diff_preference_changes(user_sizes_dict, request_form_dict):
 	-------
 	dict
 		Dictionary in form:
-		{"size-shirt-dress": [(30.00, True), (30.25, False)]} 
+		{
+			"shirt-dress-sleeve": [(30.00, True), (30.25, False)],
+			"pants-length": [(32, True), (30, False)]
+		}
 		
-		# Where each tuple represents a disparity. Values that haven't
-		# changed are not listed
+		Where each tuple represents a disparity. Values that haven't changed are not listed.
+		Items in this dict are separated this way so that each item has a corresponding DB table.
 	"""
 	pass
 
