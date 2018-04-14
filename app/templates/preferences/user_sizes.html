@@ -14,7 +14,7 @@
 					<h4>{{ clothing_cat|title }}</h4>
 					{% for size_cat_title, sizes_dict in size_cat.items() %}
 						<h5>{{ size_cat_title|title }}</h5>
-						{% for sz_val, boolean in sizes_dict.sizes %}
+						{% for sz_val, boolean in sizes_dict.sizes.items() %}
 							
 							{% if boolean == true %}
 								<input type="checkbox" id="{{sizes_dict.cat}}_{{ sz_val }}" name="{{sizes_dict.cat}}" value={{sz_val}} checked>

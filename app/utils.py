@@ -3,6 +3,51 @@ from app import db
 
 SUPPORTED_CLOTHING = ['suits', 'sportcoats', 'shirts', 'shoes', 'outerwear', 'pants']
 
+def diff_preference_changes(user_sizes_dict, request_form_dict):
+	"""
+	Generates and returns a dict which details the diffs between a user's sizes and 
+	new information from a preferences form.preferences
+	
+	diff_preference_changes compares user_sizes_dict, which is understood to be a dict copy
+	of the current size preferences for a User. The function takes these values and diffs
+	them against the presence or absence of values in request_form_object. 
+
+	Because request_form_object is coming from a view that generates checkboxes, the 'unchecking'
+	of a box causes the value to no longer be present. There isn't a way to log that a user
+	wishes to 'unsubscribe' from a size pref other than to compare the present 'checked' boxes
+	held in request_form_object and what is present in user_sizes_dict. A disparity indicates a 
+	change.
+
+	Parameters
+	----------
+	user_sizes_dict : dict
+		A dictionary in the form:
+		{
+			"Shirting": {
+				"Sleeve": {"30.00": True, ... , "38.00": False},
+				"Neck": {...}
+			},
+			"Sportcoat": {
+				"Chest": {...},
+				...
+			},
+			...
+		}
+	request_form_object : dict
+		A dictionary in the form:
+		{"size-shirt-dress": 30.00, "size-shirt-dress": 30.25}
+
+	Returns
+	-------
+	dict
+		Dictionary in form:
+		{"size-shirt-dress": [(30.00, True), (30.25, False)]} 
+		
+		# Where each tuple represents a disparity. Values that haven't
+		# changed are not listed
+	"""
+	pass
+
 def cat_size_prefs(category, user_id):
 	cat_prefs = {}
 

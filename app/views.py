@@ -5,6 +5,8 @@ from app.models import User, SizeKeyShirtDressSleeve, LinkUserSizeShirtDressSlee
 from app.forms import RegistrationForm, LoginForm
 from app.utils import SUPPORTED_CLOTHING, cat_size_prefs
 from sqlalchemy import select
+from utils import get_pref_updates
+from dbtouch import update_user_sizes, get_user_sizes
 
 def flash_errors(form):
     for field, errors in form.errors.items():
@@ -98,7 +100,10 @@ def preferences_clothing():
 
 		''' Update process:
 			- Compose presence/lack of input values from form AND user_sizes to build a dict with the NEW updated values.
-				- update dict format is {size_cat: {size_specific: [list of values]}} 
+				- update dict format is {size_cat: {size_specific: [list of values]}} 	
+			--		
+			IF differences detected between user_sizes and new sizes, then proceed
+			--
 			- Pass this new 'update values' dict to a function that:
 				- Parses the dict
 				- Determines which tables to update
@@ -108,11 +113,23 @@ def preferences_clothing():
 			- Re-serve page
 		'''
 
+		 
+	# Composes dict of updates.
+	# updates_dict is to have the form: {size_cat: {size_specific: [list of tuples in format (size_val, true/false for added/removed)]}}
+	# get_pref_updates must be passed user_sizes, because request.form WILL NOT return checkboxes that have been UNCHECKED. the absence of a value when present in user_sizes indicates that the user wishes to REMOVE the size from their preferences
+	updates_dict = get_pref_updates(user_sizes, request.form)
 
-		f = request.form
-		for key in f.keys():
-			for value in f.getlist(key):
-				print(key,":",value)
+	# touches the database
+	update_user_sizes(updates_dict, current_user)
+
+	# this will be new user sizes (also touches the database)
+	user_sizes = get_user_sizes(current_user)
+
+
+	f = request.form
+	for key in f.keys():
+		for value in f.getlist(key):
+			print(key,":",value)
 
 		
 
