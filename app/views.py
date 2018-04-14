@@ -1,12 +1,13 @@
 from flask import render_template, flash, redirect, session, request
 from flask_login import login_user, logout_user, login_required, current_user
+from sqlalchemy import select
+
 from app import app, db, lm
 from app.models import User, SizeKeyShirtDressSleeve, LinkUserSizeShirtDressSleeve
 from app.forms import RegistrationForm, LoginForm
 from app.utils import SUPPORTED_CLOTHING, cat_size_prefs
-from sqlalchemy import select
-from utils import get_pref_updates
-from dbtouch import update_user_sizes, get_user_sizes
+from app.utils import diff_preference_changes
+from app.dbtouch import update_user_sizes, get_user_sizes
 
 def flash_errors(form):
     for field, errors in form.errors.items():
@@ -70,7 +71,7 @@ def preferences_clothing():
 		on size_key_shirt_dress_sleeve.id = link_user_size_shirt_dress_sleeve.size_id
 	;
 	'''
-
+	'''
 	user_link_table = (select([LinkUserSizeShirtDressSleeve])
 		.where(LinkUserSizeShirtDressSleeve.c.user_id==current_user.id)
 		.alias())
@@ -82,11 +83,14 @@ def preferences_clothing():
 
 	user_sizes = {
 		"Shirting": {
-			"Sleeve": {"sizes": dict(shirt_sleeve_sizes), "cat": "shirt-dress-sleeve"}
+			"Sleeve": {"values": dict(shirt_sleeve_sizes), "cat_key": "shirt-dress-sleeve"}
 			#"necks": current_user.sz_shirt_dress_neck,
 			#"casuals": current_user.sz_shirt_casual
 		}
 	}
+	'''
+	user_sizes = get_user_sizes(current_user)
+	print(user_sizes["Shirting"]["Sleeve"].values)
 
 	#print(dict(shirt_sleeve_sizes))
 	#for key, value in dict(shirt_sleeve_sizes).items():
@@ -117,14 +121,14 @@ def preferences_clothing():
 	# Composes dict of updates.
 	# updates_dict is to have the form: {size_cat: {size_specific: [list of tuples in format (size_val, true/false for added/removed)]}}
 	# get_pref_updates must be passed user_sizes, because request.form WILL NOT return checkboxes that have been UNCHECKED. the absence of a value when present in user_sizes indicates that the user wishes to REMOVE the size from their preferences
-	updates_dict = get_pref_updates(user_sizes, request.form)
+	updates_dict = diff_preference_changes(user_sizes, request.form)
 
 	# touches the database
 	update_user_sizes(updates_dict, current_user)
 
 	# this will be new user sizes (also touches the database)
-	user_sizes = get_user_sizes(current_user)
-
+	#user_sizes = get_user_sizes(current_user)
+	print(user_sizes["Shirting"]["Sleeve"]["values"])
 
 	f = request.form
 	for key in f.keys():

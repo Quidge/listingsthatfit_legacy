@@ -14,14 +14,14 @@
 					<h4>{{ clothing_cat|title }}</h4>
 					{% for size_cat_title, sizes_dict in size_cat.items() %}
 						<h5>{{ size_cat_title|title }}</h5>
-						{% for sz_val, boolean in sizes_dict.sizes.items() %}
+						{% for item in sizes_dict['values'] %}
 							
-							{% if boolean == true %}
-								<input type="checkbox" id="{{sizes_dict.cat}}_{{ sz_val }}" name="{{sizes_dict.cat}}" value={{sz_val}} checked>
+							{% if item[1] == true %}
+								<input type="checkbox" id="{{sizes_dict.cat_key}}_{{ item[0] }}" name="{{sizes_dict.cat_key}}" value={{item[0]}} checked>
 							{% else %}
-								<input type="checkbox" id="{{sizes_dict.cat}}_{{ sz_val }}" name="{{sizes_dict.cat}}" value={{sz_val}}>
+								<input type="checkbox" id="{{sizes_dict.cat_key}}_{{ item[0] }}" name="{{sizes_dict.cat_key}}" value={{item[0]}}>
 							{% endif %}
-							<label for="{{sizes_dict.cat}}_{{ sz_val }}" >{{sz_val}}</label>
+							<label for="{{sizes_dict.cat_key}}_{{ item[0] }}" >{{item[0]}}</label>
 						{% endfor %}
 					{% endfor %}
 					<button class="btn" type="submit">Update with changes</button>

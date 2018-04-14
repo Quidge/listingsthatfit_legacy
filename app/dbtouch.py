@@ -1,4 +1,6 @@
 from app import app, db
+from app.models import User, SizeKeyShirtDressSleeve, LinkUserSizeShirtDressSleeve
+from sqlalchemy import select
 
 def update_user_sizes(updates_dict, user_object):
 	"""
@@ -40,7 +42,33 @@ def get_user_sizes(user_object):
 	dict
 		Returned dictionary will be a dictionary that composes all sizes a user is
 		susbscribed to (True), and all other possible values for that size category
-		specific (False)
+		specific (False). These values will be held as tuples in a list. In addition,
+		a sibling elemnt to that list of tuples will be a category key string
+		EX "shirt-dress-sleeve".
 
 	"""
-	pass
+
+	user_link_table = (select([LinkUserSizeShirtDressSleeve])
+		.where(LinkUserSizeShirtDressSleeve.c.user_id==user_object.id)
+		.alias())
+
+	shirt_sleeve_sizes = (db.session
+		.query(SizeKeyShirtDressSleeve.size, user_link_table.c.size_id != None)
+		.outerjoin(user_link_table, user_link_table.c.size_id == SizeKeyShirtDressSleeve.id)
+		.all())
+
+	user_sizes = {
+		"Shirting": {
+			"Sleeve": {"values": shirt_sleeve_sizes, "cat_key": "shirt-dress-sleeve"}
+			#"necks": user_object.sz_shirt_dress_neck,
+			#"casuals": user_object.sz_shirt_casual
+		}
+	}
+
+	return user_sizes
+
+
+
+
+
+
