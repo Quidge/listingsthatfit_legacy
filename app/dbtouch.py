@@ -24,9 +24,35 @@ def update_user_sizes(updates_dict, user_object):
 	pass
 
 
-def get_user_sizes(user_object):
+def get_user_sizes_subscribed(user_object):
 	"""
-	Returns size preferences for user_object.
+	Returns a dict of subscribed sizes in a list. Each dict key corresponds to a
+	different size table.
+
+	Parameters
+	----------
+	user_object : object
+		user_object is assumed to be a User model
+
+	Returns
+	-------
+	dict
+		Form:
+
+		{
+			"shirt-dress-sleeve": [30.00, 30.50, 31.00],
+			"shirt-dress-neck": [16.00, 16.25, 16.50],
+			"sportcoat-chest": ['40', '41']
+			"sportcoat-length": ['R', 'L']
+		}
+	"""
+	pass
+
+
+def get_user_sizes_join_with_all_possible(user_object):
+	"""
+	Returns both user_object associated sizes as well as all other possible category sizes.
+	Diffrentiated as tuples: (30.00, True), (30.25, False)
 
 	Composes all susbscribed sizes for a User, and OUTERJOINs that information with all
 	possible sizes for those specific size categories.

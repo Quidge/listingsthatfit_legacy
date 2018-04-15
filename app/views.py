@@ -7,7 +7,7 @@ from app.models import User, SizeKeyShirtDressSleeve, LinkUserSizeShirtDressSlee
 from app.forms import RegistrationForm, LoginForm
 from app.utils import SUPPORTED_CLOTHING, cat_size_prefs
 from app.utils import diff_preference_changes
-from app.dbtouch import update_user_sizes, get_user_sizes
+from app.dbtouch import update_user_sizes, get_user_sizes_join_with_all_possible
 
 
 def flash_errors(form):
@@ -92,7 +92,7 @@ def preferences_clothing():
 		}
 	}
 	'''
-	user_sizes = get_user_sizes(current_user)
+	user_sizes = get_user_sizes_join_with_all_possible(current_user)
 
 	# print(dict(shirt_sleeve_sizes))
 	# for key, value in dict(shirt_sleeve_sizes).items():
