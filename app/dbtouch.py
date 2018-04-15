@@ -42,6 +42,24 @@ def get_user_sizes(user_object):
 	Returns
 	-------
 	dict
+		Form:
+
+		{
+			"Shirting": {
+				"Sleeve": {"values": [list of tuples], "cat_key": "dress_sleeve"},
+				...,
+				"cat_key": "shirt"
+			}
+		}
+
+		Returned dict will be a category based heirarchy. Each tier will have a category
+		key ("cat_key"). The actual sizes, "values", will be a list of tuples in
+		(value, boolean). In this way all possible sizes in that category and sub
+		category will be listed, with True/False values listing whether a user is
+		subscribed to that size or not.
+
+		Further, at each tier is a sibling attribute "cat_key". These keys can be iteratively
+		embeded in HTML values, which can the be reparsed.
 		Returned dictionary will be a dictionary that composes all sizes a user is
 		susbscribed to (True), and all other possible values for that size category
 		specific (False). These values will be held as tuples in a list. In addition,
@@ -59,6 +77,7 @@ def get_user_sizes(user_object):
 		db.session
 		.query(SizeKeyShirtDressSleeve.size, user_link_table.c.size_id != None)
 		.outerjoin(user_link_table, user_link_table.c.size_id == SizeKeyShirtDressSleeve.id)
+		.order_by(SizeKeyShirtDressSleeve.size.asc())
 		.all())
 
 	user_sizes = {

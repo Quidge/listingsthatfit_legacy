@@ -17,11 +17,11 @@
 						{% for item in sizes_dict['values'] %}
 							
 							{% if item[1] == true %}
-								<input type="checkbox" id="{{size_cat['cat_key']}}-{{sizes_dict['cat_key']}}" name="{{size_cat['cat_key']}}-{{sizes_dict['cat_key']}}" value={{item[0]}} checked>
+								<input type="checkbox" id="{{size_cat['cat_key']}}-{{sizes_dict['cat_key']}}_{{item[0]}}" name="{{size_cat['cat_key']}}-{{sizes_dict['cat_key']}}" value={{item[0]}} checked>
 							{% else %}
-								<input type="checkbox" id="{{size_cat['cat_key']}}-{{sizes_dict['cat_key']}}" name="{{size_cat['cat_key']}}-{{sizes_dict['cat_key']}}" value={{item[0]}} >
+								<input type="checkbox" id="{{size_cat['cat_key']}}-{{sizes_dict['cat_key']}}_{{item[0]}}" name="{{size_cat['cat_key']}}-{{sizes_dict['cat_key']}}" value={{item[0]}} >
 							{% endif %}
-							<label for="{{clothing_cat.cat_key}}-{{size_cat.cat_key}}" >{{item[0]}}</label>
+							<label for="{{size_cat['cat_key']}}-{{sizes_dict['cat_key']}}_{{item[0]}}" >{{item[0]}}</label>
 						{% endfor %}
 					{% endfor %}
 					<button class="btn" type="submit">Update with changes</button>
