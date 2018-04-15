@@ -4,21 +4,40 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # Link Tables
 LinkUserSizeShirtDressSleeve = db.Table(
 	'link_user_size_shirt_dress_sleeve',
-	db.Column('size_id', db.Integer, db.ForeignKey('size_key_shirt_dress_sleeve.id'), primary_key=True),
-	db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True)
+	db.Column(
+		'size_id',
+		db.Integer,
+		db.ForeignKey('size_key_shirt_dress_sleeve.id'), primary_key=True),
+	db.Column(
+		'user_id',
+		db.Integer,
+		db.ForeignKey('user.id'), primary_key=True)
 )
 
 LinkUserSizeShirtDressNeck = db.Table(
 	'link_user_size_shirt_dress_neck',
-	db.Column('size_id', db.Integer, db.ForeignKey('size_key_shirt_dress_neck.id'), primary_key=True),
-	db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True)
+	db.Column(
+		'size_id',
+		db.Integer,
+		db.ForeignKey('size_key_shirt_dress_neck.id'), primary_key=True),
+	db.Column(
+		'user_id',
+		db.Integer,
+		db.ForeignKey('user.id'), primary_key=True)
 )
 
 LinkUserSizeShirtCasual = db.Table(
 	'link_user_size_shirt_casual',
-	db.Column('size_id', db.Integer, db.ForeignKey('size_key_shirt_casual.id'), primary_key=True),
-	db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True)
+	db.Column(
+		'size_id',
+		db.Integer,
+		db.ForeignKey('size_key_shirt_casual.id'), primary_key=True),
+	db.Column(
+		'user_id',
+		db.Integer,
+		db.ForeignKey('user.id'), primary_key=True)
 )
+
 
 class User(db.Model):
 
@@ -28,11 +47,17 @@ class User(db.Model):
 
 	# user many-to-many size associations (using link tables)
 	sz_shirt_dress_sleeve = db.relationship(
-		'SizeKeyShirtDressSleeve', secondary=LinkUserSizeShirtDressSleeve, backref=db.backref('users', lazy='dynamic'))
+		'SizeKeyShirtDressSleeve',
+		secondary=LinkUserSizeShirtDressSleeve,
+		backref=db.backref('users', lazy='dynamic'))
 	sz_shirt_dress_neck = db.relationship(
-		'SizeKeyShirtDressNeck', secondary=LinkUserSizeShirtDressNeck, backref=db.backref('users', lazy='dynamic'))
+		'SizeKeyShirtDressNeck',
+		secondary=LinkUserSizeShirtDressNeck,
+		backref=db.backref('users', lazy='dynamic'))
 	sz_shirt_casual = db.relationship(
-		'SizeKeyShirtCasual', secondary=LinkUserSizeShirtCasual, backref=db.backref('users', lazy='dynamic'))
+		'SizeKeyShirtCasual',
+		secondary=LinkUserSizeShirtCasual,
+		backref=db.backref('users', lazy='dynamic'))
 
 	@property
 	def password(self):
@@ -68,22 +93,26 @@ class User(db.Model):
 		return False
 
 	def __repr__(self):
-		return '<User id: %r, email: %r, password_hash: %r>' % (self.id, self.email, self.password_hash)
+		return '<User id: %r, email: %r, password_hash: %r>' % (
+			self.id, self.email, self.password_hash)
+
 
 # Size Key Tables
 class SizeKeyShirtDressSleeve(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
-	size = db.Column(db.Numeric(4,2))
+	size = db.Column(db.Numeric(4, 2))
 
 	def __repr__(self):
 		return 'Dress shirt sleeve size: %r' % self.size
 
+
 class SizeKeyShirtDressNeck(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
-	size = db.Column(db.Numeric(4,2))
+	size = db.Column(db.Numeric(4, 2))
 
 	def __repr__(self):
 		return 'Dress shirt neck size: %r' % self.size
+
 
 class SizeKeyShirtCasual(db.Model):
 	id = db.Column(db.Integer, primary_key=True)

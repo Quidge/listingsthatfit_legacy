@@ -8,20 +8,20 @@
 
 {% block prefpane %}
 	<div class="container-fluid">
-		{% for clothing_cat, size_cat in user_sizes.items() %}
+		{% for clothing_cat, size_cat in user_sizes.items() if clothing_cat != 'cat_key' %}
 			<div class="container-fluid">
 				<form method="POST" action="/preferences/clothing">
 					<h4>{{ clothing_cat|title }}</h4>
-					{% for size_cat_title, sizes_dict in size_cat.items() %}
+					{% for size_cat_title, sizes_dict in size_cat.items() if size_cat_title != 'cat_key' %}
 						<h5>{{ size_cat_title|title }}</h5>
 						{% for item in sizes_dict['values'] %}
 							
 							{% if item[1] == true %}
-								<input type="checkbox" id="{{sizes_dict.cat_key}}_{{ item[0] }}" name="{{sizes_dict.cat_key}}" value={{item[0]}} checked>
+								<input type="checkbox" id="{{size_cat['cat_key']}}-{{sizes_dict['cat_key']}}" name="{{size_cat['cat_key']}}-{{sizes_dict['cat_key']}}" value={{item[0]}} checked>
 							{% else %}
-								<input type="checkbox" id="{{sizes_dict.cat_key}}_{{ item[0] }}" name="{{sizes_dict.cat_key}}" value={{item[0]}}>
+								<input type="checkbox" id="{{size_cat['cat_key']}}-{{sizes_dict['cat_key']}}" name="{{size_cat['cat_key']}}-{{sizes_dict['cat_key']}}" value={{item[0]}} >
 							{% endif %}
-							<label for="{{sizes_dict.cat_key}}_{{ item[0] }}" >{{item[0]}}</label>
+							<label for="{{clothing_cat.cat_key}}-{{size_cat.cat_key}}" >{{item[0]}}</label>
 						{% endfor %}
 					{% endfor %}
 					<button class="btn" type="submit">Update with changes</button>

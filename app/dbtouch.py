@@ -57,13 +57,14 @@ def get_user_sizes(user_object):
 
 	shirt_sleeve_sizes = (
 		db.session
-		.query(SizeKeyShirtDressSleeve.size, user_link_table.c.size_id is not None)
+		.query(SizeKeyShirtDressSleeve.size, user_link_table.c.size_id != None)
 		.outerjoin(user_link_table, user_link_table.c.size_id == SizeKeyShirtDressSleeve.id)
 		.all())
 
 	user_sizes = {
 		"Shirting": {
-			"Sleeve": {"values": shirt_sleeve_sizes, "cat_key": "shirt-dress-sleeve"}
+			"Sleeve": {"values": shirt_sleeve_sizes, "cat_key": "dress-sleeve"},
+			"cat_key": "shirt"
 			# "necks": user_object.sz_shirt_dress_neck,
 			# "casuals": user_object.sz_shirt_casual
 		}
