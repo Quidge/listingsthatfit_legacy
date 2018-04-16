@@ -25,39 +25,30 @@ def diff_preference_changes(user_sizes_dict, request_form_dict):
 	Parameters
 	----------
 	user_sizes_dict : dict
-		- A dictionary in the form:
+		A dictionary in the form:
 		{
-			"Shirting": {
-				"Sleeve": {"values": [(30.00, True), ... , (38.00, False)], "cat_key":"shirt-dress-sleeve"},
-				"Neck": {...},
-			},
-			"Sportcoat": {
-				"Chest": {...},
-				...
-			},
-			...
+			"shirt-sleeve": [3000, 3100],
+			"shirt-neck": [1550, 1600],
+			"sportcoat-chest": [40, 41]
 		}
 	request_form_dict : dict
 		A dictionary in the form:
-		{"shirt-dress-sleeve": 30.00, "shirt-dress-sleeve": 30.25}
+		{
+			"shirt-dress-sleeve": 30.00,
+			"shirt-dress-sleeve": 30.25
+		}
 
 	Returns
 	-------
 	dict
 		- Dictionary in form:
 		{
-			"shirt-dress-sleeve": [(30.00, True), (30.25, False)],
-			"pants-length": [(32, True), (30, False)]
+			"shirt-dress-sleeve": {"add": [3000, 3100], "remove": [3200]},
+			"pants-length": {"add": [], "remove": [3300]}
 		}
-		- Where each tuple represents a disparity. Values that haven't
-		changed are not listed.
-		- Items in this dict are separated this way so that each item has a
-		corresponding DB table.
+		These values represent the set differences between user_sozes_dict and
+		request_form_dict.
 	"""
-	# diffs_dict = {}
-	# for title in request_form_dict.items():
-
-	# stuff = get_user_sizes_subscribed()
 
 	update_dict = {}
 
@@ -154,5 +145,32 @@ def populate_size_tables():
 	db.session.commit()
 
 
+def populate_size_tables2():
 
+	shirt_dress_neck_values = []
+	for i in range(1400, 2000, 25):
+		size = app.models.SizeKeyShirtDressNeck(size=i)
+		shirt_dress_neck_values.append(size)
 
+	shirt_dress_sleeve_values = []
+	for i in range(3000, 3800, 25):
+		size = app.models.SizeKeyShirtDressSleeve(size=i)
+		shirt_dress_sleeve_values.append(size)
+
+	shirt_casual_values = []
+	shirt_casual_shorts = ["XS", "S", "M", "L", "XL", "XXL"]
+	shirt_casual_longs = ["Exta Small", "Small", "Medium", "Large", "Extra Large", "Extra Extra Large"]
+
+	for i in range(len(shirt_casual_shorts)):
+		size = app.models.SizeKeyShirtCasual(
+			size_short=shirt_casual_shorts[i], size_long=shirt_casual_longs[i])
+		shirt_casual_values.append(size)
+
+	#print(shirt_casual_values)
+	#print(shirt_dress_sleeve_values)
+	#print(shirt_dress_neck_values)
+
+	db.session.add_all(shirt_dress_neck_values)
+	db.session.add_all(shirt_dress_sleeve_values)
+	db.session.add_all(shirt_casual_values)
+	db.session.commit()

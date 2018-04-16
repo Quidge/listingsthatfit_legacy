@@ -9,13 +9,18 @@ def update_user_sizes(updates_dict, user_object):
 	"""
 	Controls the addition or removal of sizes from a User in the database.
 
+	Each item in the dictionary is understood to represents a single table. The hierarchy
+	is flat: not organized by shirt: sleeve/neck/casual, but
+	shirt-sleeve/shirt-neck/shirt-casual.
+
 	Parameters
 	----------
 	updates_dict : dict
 		Dict is expected to be in the form:
-			{size_cat: {size_specific: [list of tuples (size_val, true/false)]}}
+			{size-cat-and-specific: {'add': [size_to_add], 'remove': [size_to_remove]},
+			nect-size-cat-and-specific: {'add': [...], 'remove': [...]}}
 
-			example: {'shirt-dress': {'sleeve': [(30.00, True), (31.25, False)]}}
+			example: {'shirt-sleeve': {'add': [30.00, 31.00], 'remove': [32.00]}}
 	user_object : object
 		user_object is assumed to be a User model
 
@@ -59,11 +64,14 @@ def get_user_sizes_subscribed(user_object):
 
 def get_user_sizes_join_with_all_possible(user_object):
 	"""
-	Returns both user_object associated sizes as well as all other possible category sizes.
-	Diffrentiated as tuples: (30.00, True), (30.25, False)
+	Returns a dictionary of both user_object associated sizes as well as all other
+	possible category sizes through lists of two value tuples: (size_value, boolean).
 
-	Composes all susbscribed sizes for a User, and OUTERJOINs that information with all
-	possible sizes for those specific size categories.
+	This dictionary is composed by grabbing the sizes associated with the user, and
+	outerjoining them with all possible sizes for that category. The result is a
+	hierarchical dictionary where the values are held in a list of two value tuple
+	pairs. Each hierarchical level has a "cat_key" attribute which diffrentiates it from
+	sibling levels.
 
 	For example, if a user is subscribed to Dress Shirt Sleeve Sizes 30.00 and 31.00,
 	the return dict object will have {"30.00":True, "30.25":False, ..., "31.00": True}
@@ -93,12 +101,7 @@ def get_user_sizes_join_with_all_possible(user_object):
 		subscribed to that size or not.
 
 		Further, at each tier is a sibling attribute "cat_key". These keys can be iteratively
-		embeded in HTML values, which can the be reparsed.
-		Returned dictionary will be a dictionary that composes all sizes a user is
-		susbscribed to (True), and all other possible values for that size category
-		specific (False). These values will be held as tuples in a list. In addition,
-		a sibling elemnt to that list of tuples will be a category key string
-		EX "shirt-dress-sleeve".
+		embeded in HTML values, which can the be re-parsed.
 
 	"""
 
