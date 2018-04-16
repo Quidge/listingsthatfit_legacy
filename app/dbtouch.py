@@ -1,5 +1,7 @@
 from app import app, db
-from app.models import User, SizeKeyShirtDressSleeve, LinkUserSizeShirtDressSleeve
+from app.models import User, SizeKeyShirtDressSleeve, SizeKeyShirtDressNeck, SizeKeyShirtCasual
+from app.models import LinkUserSizeShirtDressSleeve, LinkUserSizeShirtCasual, LinkUserSizeShirtDressNeck
+# from app.utils import get_size_vals_only
 from sqlalchemy import select
 
 
@@ -46,7 +48,13 @@ def get_user_sizes_subscribed(user_object):
 			"sportcoat-length": ['R', 'L']
 		}
 	"""
-	pass
+	user_sizes_subscribed = {
+		"shirt-sleeve": [size_obj.size for size_obj in user_object.sz_shirt_dress_sleeve],
+		"shirt-neck": [size_obj.size for size_obj in user_object.sz_shirt_dress_neck],
+		"shirt-casual": [size_obj.size for size_obj in user_object.sz_shirt_casual]
+	}
+
+	return user_sizes_subscribed
 
 
 def get_user_sizes_join_with_all_possible(user_object):
@@ -94,24 +102,51 @@ def get_user_sizes_join_with_all_possible(user_object):
 
 	"""
 
-	user_link_table = (
+	# -- Shirt Dress Sleeves
+	usr_lt_shirt_sleeve = (
 		select([LinkUserSizeShirtDressSleeve])
 		.where(LinkUserSizeShirtDressSleeve.c.user_id == user_object.id)
 		.alias())
 
 	shirt_sleeve_sizes = (
 		db.session
-		.query(SizeKeyShirtDressSleeve.size, user_link_table.c.size_id != None)
-		.outerjoin(user_link_table, user_link_table.c.size_id == SizeKeyShirtDressSleeve.id)
+		.query(SizeKeyShirtDressSleeve.size, usr_lt_shirt_sleeve.c.size_id != None)
+		.outerjoin(usr_lt_shirt_sleeve, usr_lt_shirt_sleeve.c.size_id == SizeKeyShirtDressSleeve.id)
 		.order_by(SizeKeyShirtDressSleeve.size.asc())
+		.all())
+
+	# -- Shirt Dress Neck
+	usr_lt_shirt_neck = (
+		select([LinkUserSizeShirtDressNeck])
+		.where(LinkUserSizeShirtDressNeck.c.user_id == user_object.id)
+		.alias())
+
+	shirt_neck_sizes = (
+		db.session
+		.query(SizeKeyShirtDressNeck.size, usr_lt_shirt_neck.c.size_id != None)
+		.outerjoin(usr_lt_shirt_neck, usr_lt_shirt_neck.c.size_id == SizeKeyShirtDressNeck.id)
+		.order_by(SizeKeyShirtDressNeck.size.asc())
+		.all())
+
+	# -- Shirt Casual
+	usr_lt_shirt_casual = (
+		select([LinkUserSizeShirtCasual])
+		.where(LinkUserSizeShirtCasual.c.user_id == user_object.id)
+		.alias())
+
+	shirt_casual_sizes = (
+		db.session
+		.query(SizeKeyShirtCasual.size_short, usr_lt_shirt_casual.c.size_id != None)
+		.outerjoin(usr_lt_shirt_casual, usr_lt_shirt_casual.c.size_id == SizeKeyShirtCasual.id)
+		.order_by(SizeKeyShirtCasual.size_short.asc())
 		.all())
 
 	user_sizes = {
 		"Shirting": {
-			"Sleeve": {"values": shirt_sleeve_sizes, "cat_key": "dress-sleeve"},
+			"Sleeve": {"values": shirt_sleeve_sizes, "cat_key": "sleeve"},
+			"Neck": {"values": shirt_neck_sizes, "cat_key": "neck"},
+			"Casual": {"values": shirt_casual_sizes, "cat_key": "casual"},
 			"cat_key": "shirt"
-			# "necks": user_object.sz_shirt_dress_neck,
-			# "casuals": user_object.sz_shirt_casual
 		}
 	}
 

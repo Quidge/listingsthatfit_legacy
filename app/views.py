@@ -6,7 +6,7 @@ from app import app, db, lm
 from app.models import User, SizeKeyShirtDressSleeve, LinkUserSizeShirtDressSleeve
 from app.forms import RegistrationForm, LoginForm
 from app.utils import SUPPORTED_CLOTHING, cat_size_prefs
-from app.utils import diff_preference_changes
+from app.utils import diff_preference_changes, get_user_sizes_subscribed
 from app.dbtouch import update_user_sizes, get_user_sizes_join_with_all_possible
 
 
@@ -93,6 +93,12 @@ def preferences_clothing():
 	}
 	'''
 	user_sizes = get_user_sizes_join_with_all_possible(current_user)
+	stuff = get_user_sizes_subscribed(current_user)
+	#print(stuff)
+
+	#for key, values in stuff.items():
+	#	val_list = [val.size for val in values]
+	#	print(key, ": ", val_list)
 
 	# print(dict(shirt_sleeve_sizes))
 	# for key, value in dict(shirt_sleeve_sizes).items():
@@ -130,11 +136,24 @@ def preferences_clothing():
 		# user_sizes = get_user_sizes(current_user)
 		# print(user_sizes["Shirting"]["Sleeve"]["values"])
 
+		for key, val_list in stuff.items():
+			print(key, ": ", val_list)
+
+		updated_prefs = {}
 		f = request.form
+
 		for key in f.keys():
-			# for value in f.getlist(key):
-			#	print(key, ":", value)
-			print(key, ":", f.getlist(key))
+			updated_prefs[key] = f.getlist(key)
+
+		# print(updated_prefs)
+		# print(diff_preference_changes(stuff, updated_prefs))
+		# diff_preference_changes(stuff, updated_prefs)
+
+		#f = request.form
+		#for key in f.keys():
+		#	# for value in f.getlist(key):
+		#	#	print(key, ":", value)
+		#	print(key, ":", f.getlist(key))
 
 	return render_template('/preferences/user_sizes.html', user_sizes=user_sizes)
 
