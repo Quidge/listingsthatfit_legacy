@@ -15,7 +15,7 @@ flask-session = "*"
 flask-login = "*"
 flask-wtf = "*"
 wtforms = "*"
-flask-migrate = "*"
+alembic = "*"
 
 
 [dev-packages]
