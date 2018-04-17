@@ -56,21 +56,15 @@ def upgrade():
 		new_column_name='size'
 	)
 
-    # create new column ('tempname') that is old_col*100
-    # drop 'size'
-    # rename 'tempname' to 'size'
+	# create new column ('tempname') that is old_col*100
+	# drop 'size'
+	# rename 'tempname' to 'size'
 
 
 def downgrade():
-    conn = op.get_bind()
+	conn = op.get_bind()
 
-    op.add_column(
-		'size_key_shirt_dress_sleeve',
-		sa.Column(
-			'sizeasdec',
-			sa.Numeric(4, 2)
-		)
-	)
+	op.add_column('size_key_shirt_dress_sleeve', sa.Column('sizeasdec', sa.Numeric(4, 2)))
 
 	for row in conn.execute(decimal_to_int_helper_shirt_sleeve.select()):
 		int_val = row.size
