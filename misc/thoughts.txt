@@ -1,0 +1,64 @@
+What do I know? 
+
+- user_sizes has all subscribed sizes AND unsubbed sizes in true/false
+- changes has subscribed sizes 
+
+information asymetry:
+
+testing for two things: the absence of information OR the presence of information
+
+assume i can do the string parsing to correlate the request_form_dict to the right user_sizes sub-sict. work from there.
+
+list needs to be in the form {"shirt_dress_sleeve": [(30.00, DEL), (31, ADD)], "other_table": [(tuple, pairs)]}
+
+idea 1: 
+	1) turn user_sizes tuple list into dict
+		{"30.00": True, "31.00": False}
+
+	2) list comp request form item ("shirt_dress_sleeve") into dict
+		{"31.00": True}
+	3) iterate through user_sizes_dict checking values
+		- if user_sizes.30 == True && request_form.30 == None:
+			export.shirt_dress_sleeve.append((30, DEL))
+		- elif user_sizes.30 == False && request_form.30 == True:
+			export.shirt_dress_sleeve.append((30, ADD))
+
+idea 2:
+	Not all categories will be updated. So, only perform idea 1 on categories that need to be updated. 
+	1) shirt_dress_sleeve
+
+iterate through keys
+
+this is dumb. i should just query the individual tables to return back lists. diff against those and build updates.
+
+
+okay, so
+
+user_sizes = {'shirt-sleeve': [30, 31] <- sorted, 'shirt-neck': [16]}
+
+form_fields = {'shirt-sleeve': [30, 31, 32], 'shirt-neck': []}
+
+idea 1.1)
+	1) if user_sizes['shirt-sleeve'][i] not in form_fields['shirt-sleeve']:
+		updates_export['shirt-sleeve'].append((user_sizes['shirt-sleeve'][i]))
+
+
+
+for name, values_list in user_sizes_dict:
+	db_set = set(values_list)
+	form_set = set(form_fields[name])
+
+	remove = db_set - form_set
+	add = form_set - db_set
+	
+
+
+
+for DB_val in user_sizes['shirt-sleeve']
+
+
+
+
+
+
+
