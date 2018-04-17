@@ -32,10 +32,7 @@ def upgrade():
 
 	op.add_column(
 		'size_key_shirt_dress_sleeve',
-		sa.Column(
-			'sizeasint',
-			sa.Integer,
-		)
+		sa.Column('sizeasint', sa.Integer)
 	)
 
 	for row in conn.execute(decimal_to_int_helper_shirt_sleeve.select()):
@@ -64,7 +61,10 @@ def upgrade():
 def downgrade():
 	conn = op.get_bind()
 
-	op.add_column('size_key_shirt_dress_sleeve', sa.Column('sizeasdec', sa.Numeric(4, 2)))
+	op.add_column(
+		'size_key_shirt_dress_sleeve',
+		sa.Column('sizeasdec', sa.Numeric(4, 2))
+	)
 
 	for row in conn.execute(decimal_to_int_helper_shirt_sleeve.select()):
 		int_val = row.size
