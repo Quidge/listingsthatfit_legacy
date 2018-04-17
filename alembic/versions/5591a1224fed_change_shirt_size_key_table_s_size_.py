@@ -22,7 +22,8 @@ decimal_to_int_helper_shirt_sleeve = sa.Table(
 	sa.MetaData(),
 	sa.Column('id', sa.Integer, primary_key=True),
 	sa.Column('size', sa.Numeric(4, 2)),
-	sa.Column('sizeasint', sa.Integer)
+	sa.Column('sizeasint', sa.Integer),
+	sa.Column('sizeasdesc', sa.Integer)
 )
 
 
