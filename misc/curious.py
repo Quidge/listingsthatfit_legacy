@@ -9,6 +9,7 @@ for name, values_list in user_sizes_dict:
 	add = form_set - db_set
 '''
 
+'''
 vals = [3225, 3200, 3250]
 for val in vals:
 	getcontext().prec = 4
@@ -18,3 +19,8 @@ for val in vals:
 	print('val type: ', type(val))
 	print('dec type: ', type(dec))
 	print('new_val type: ', type(new_val))
+'''
+
+dec = 32.50
+
+print(dec, type(dec), int(dec*100))

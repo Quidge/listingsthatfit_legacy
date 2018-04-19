@@ -22,8 +22,7 @@ decimal_to_int_helper_shirt_sleeve = sa.Table(
 	sa.MetaData(),
 	sa.Column('id', sa.Integer, primary_key=True),
 	sa.Column('size', sa.Numeric(4, 2)),
-	sa.Column('sizeasint', sa.Integer),
-	sa.Column('sizeasdec', sa.Numeric(4, 2))
+	sa.Column('sizeasint', sa.Integer)
 )
 
 
@@ -38,12 +37,7 @@ def upgrade():
 	for row in conn.execute(decimal_to_int_helper_shirt_sleeve.select()):
 		dec_val = row.size
 		int_val = int(dec_val * 100)
-		conn.execute(
-			(decimal_to_int_helper_shirt_sleeve
-				.update()
-				.where(decimal_to_int_helper_shirt_sleeve.c.id == row.id)
-				.values(sizeasint=int_val))
-		)
+		conn.execute(decimal_to_int_helper_shirt_sleeve.update().where(decimal_to_int_helper_shirt_sleeve.c.id == row.id).values(sizeasint=int_val))
 
 	op.drop_column('size_key_shirt_dress_sleeve', 'size')
 
@@ -59,7 +53,7 @@ def upgrade():
 
 
 def downgrade():
-	conn = op.get_bind()
+	'''conn = op.get_bind()
 
 	op.add_column(
 		'size_key_shirt_dress_sleeve',
@@ -69,17 +63,13 @@ def downgrade():
 	for row in conn.execute(decimal_to_int_helper_shirt_sleeve.select()):
 		int_val = row.size
 		dec_val = Decimal(int_val) / Decimal(100)
-		conn.execute(
-			(decimal_to_int_helper_shirt_sleeve
-				.update()
-				.where(decimal_to_int_helper_shirt_sleeve.c.id == row.id)
-				.values(sizeasdec=dec_val))
-		)
+		conn.execute(decimal_to_int_helper_shirt_sleeve.update().where(decimal_to_int_helper_shirt_sleeve.c.id == row.id).values(sizeasdec=dec_val))
 
 	op.drop_column('size_key_shirt_dress_sleeve', 'size')
 
 	op.alter_column(
 		'size_key_shirt_dress_sleeve',
 		'sizeasdec',
-		new_column_name='size')
+		new_column_name='size')'''
+	pass
 
