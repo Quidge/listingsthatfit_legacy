@@ -7,6 +7,7 @@ Create Date: 2018-04-16 12:01:09.868529
 """
 from alembic import op
 import sqlalchemy as sa
+from sqlalchemy import INTEGER, Column
 from decimal import Decimal
 
 
@@ -38,6 +39,33 @@ def upgrade():
 		dec_val = row.size
 		int_val = int(dec_val * 100)
 		conn.execute(decimal_to_int_helper_shirt_sleeve.update().where(decimal_to_int_helper_shirt_sleeve.c.id == row.id).values(sizeasint=int_val))
+
+	# create temp table
+
+	op.create_table(
+		'temp_sleeve_backup',
+		Column('id', INTEGER, primary_key=True),
+		Column('size', INTEGER)
+	)
+
+	temp_table = sa.Table(
+		'temp_sleeve_backup',
+		sa.Column('id', sa.Integer, primary_key=True),
+		sa.Column('size', sa.Integer)
+	)
+
+	# copy id, sizeasint from decimal_to_in_helper_shirt_sleeve to temp table
+
+	for row in conn.execute(decimal_to_int_helper_shirt_sleeve.select()):
+		conn.execute(temp_table.insert().values(id=temp_table.id, size=temp_table.size))
+
+	# drop size_key_shirt_dress_sleeve
+
+	# create another size_key_shirt_dress_sleeve table with only id, size rows
+
+	# populate new size_key_shirt_dress_sleeve with values from temp_table
+
+	# drop temp table
 
 	op.drop_column('size_key_shirt_dress_sleeve', 'size')
 
