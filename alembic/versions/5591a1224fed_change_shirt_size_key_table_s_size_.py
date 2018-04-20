@@ -28,7 +28,20 @@ decimal_to_int_helper_shirt_sleeve = sa.Table(
 
 
 def upgrade():
+	# Goal: get all this DDL stuff inside the same transaction so it can
+	# be rolled back. This upgrade leaves me in a transition state when it fails.
+	# sucks.
+	# http://sqlite.1065341.n5.nabble.com/DDL-statements-in-transactions-td37849.html
+	# The above link indicates that DDL statements such as these can be rolled back.
+
+	# get bind
 	conn = op.get_bind()
+
+	# make a session connceting to the above bind
+
+	# .begin() the session
+
+	# do all this stuff, rolling back if an error presents
 
 	op.add_column(
 		'size_key_shirt_dress_sleeve',
