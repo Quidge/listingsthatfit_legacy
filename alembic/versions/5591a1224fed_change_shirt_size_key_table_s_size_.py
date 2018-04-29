@@ -26,8 +26,58 @@ decimal_to_int_helper_shirt_sleeve = sa.Table(
 	sa.Column('sizeasint', sa.Integer)
 )
 
-
 def upgrade():
+	conn = op.get_bind()
+
+	# add new integer conversion column to old_table
+	op.add_column(
+		'size_key_shirt_dress_sleeve',
+		sa.Column('sizeasint', sa.Integer)
+	)
+
+	# populate new column by converting values from old column
+	for row in conn.execute(decimal_to_int_helper_shirt_sleeve.select()):
+		dec_val = row.size
+		int_val = int(dec_val * 100)
+		conn.execute(
+			(
+				decimal_to_int_helper_shirt_sleeve
+				.update()
+				.where(decimal_to_int_helper_shirt_sleeve.c.id == row.id)
+				.values(sizeasint=int_val)
+			)
+		)
+
+	# create a holding table and store it for use later
+	temp_table = op.create_table(
+		'temp_sleeve_backup',
+		sa.Column('id', sa.Integer, primary_key=True),
+		sa.Column('sizeasint', sa.Integer)
+	)
+
+	# copy over values from old_table to temp table
+	for row in conn.execute(decimal_to_int_helper_shirt_sleeve.select()):
+		conn.execute(temp_table.insert().values(id=row.id, sizeasint=row.sizeasint))
+
+	# drop the old_table
+	op.drop_table('size_key_shirt_dress_sleeve')
+
+	# create a new table with the same name, but this one has only the columns we want
+	new_table = op.create_table(
+		'size_key_shirt_dress_sleeve',
+		sa.Column('id', sa.Integer, primary_key=True),
+		sa.Column('size', sa.Integer)
+	)
+
+	# copy values from temp table into new table
+	for row in conn.execute(temp_table.select()):
+		conn.execute(new_table.insert().values(id=row.id, size=row.sizeasint))
+
+	# drop temp table
+	op.drop_table('temp_sleeve_backup')
+
+
+'''def upgrade2():
 	# Goal: get all this DDL stuff inside the same transaction so it can
 	# be rolled back. This upgrade leaves me in a transition state when it fails.
 	# sucks.
@@ -38,6 +88,7 @@ def upgrade():
 	conn = op.get_bind()
 
 	# make a session connceting to the above bind
+	
 
 	# .begin() the session
 
@@ -91,7 +142,7 @@ def upgrade():
 	# create new column ('tempname') that is old_col*100
 	# drop 'size'
 	# rename 'tempname' to 'size'
-
+'''
 
 def downgrade():
 	'''conn = op.get_bind()
