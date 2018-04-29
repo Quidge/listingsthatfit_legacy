@@ -7,9 +7,6 @@ Create Date: 2018-04-16 12:01:09.868529
 """
 from alembic import op
 import sqlalchemy as sa
-from sqlalchemy import INTEGER, Column
-from decimal import Decimal
-
 
 # revision identifiers, used by Alembic.
 revision = '5591a1224fed'
@@ -18,16 +15,18 @@ branch_labels = None
 depends_on = None
 
 
-decimal_to_int_helper_shirt_sleeve = sa.Table(
-	'size_key_shirt_dress_sleeve',
-	sa.MetaData(),
-	sa.Column('id', sa.Integer, primary_key=True),
-	sa.Column('size', sa.Numeric(4, 2)),
-	sa.Column('sizeasint', sa.Integer)
-)
-
 def upgrade():
+
 	conn = op.get_bind()
+
+	# define helper table
+	dec_to_int_helper_table = sa.Table(
+		'size_key_shirt_dress_sleeve',
+		sa.MetaData(),
+		sa.Column('id', sa.Integer, primary_key=True),
+		sa.Column('size', sa.Numeric(4, 2)),
+		sa.Column('sizeasint', sa.Integer),
+	)
 
 	# add new integer conversion column to old_table
 	op.add_column(
@@ -36,14 +35,14 @@ def upgrade():
 	)
 
 	# populate new column by converting values from old column
-	for row in conn.execute(decimal_to_int_helper_shirt_sleeve.select()):
+	for row in conn.execute(dec_to_int_helper_table.select()):
 		dec_val = row.size
 		int_val = int(dec_val * 100)
 		conn.execute(
 			(
-				decimal_to_int_helper_shirt_sleeve
+				dec_to_int_helper_table
 				.update()
-				.where(decimal_to_int_helper_shirt_sleeve.c.id == row.id)
+				.where(dec_to_int_helper_table.c.id == row.id)
 				.values(sizeasint=int_val)
 			)
 		)
@@ -56,7 +55,7 @@ def upgrade():
 	)
 
 	# copy over values from old_table to temp table
-	for row in conn.execute(decimal_to_int_helper_shirt_sleeve.select()):
+	for row in conn.execute(dec_to_int_helper_table.select()):
 		conn.execute(temp_table.insert().values(id=row.id, sizeasint=row.sizeasint))
 
 	# drop the old_table
@@ -77,91 +76,85 @@ def upgrade():
 	op.drop_table('temp_sleeve_backup')
 
 
-'''def upgrade2():
-	# Goal: get all this DDL stuff inside the same transaction so it can
-	# be rolled back. This upgrade leaves me in a transition state when it fails.
-	# sucks.
-	# http://sqlite.1065341.n5.nabble.com/DDL-statements-in-transactions-td37849.html
-	# The above link indicates that DDL statements such as these can be rolled back.
+# this will do the above but in reverse. same process.
+def downgrade():
+	from decimal import Decimal
 
-	# get bind
 	conn = op.get_bind()
 
-	# make a session connceting to the above bind
-	
-
-	# .begin() the session
-
-	# do all this stuff, rolling back if an error presents
-
-	op.add_column(
+	# define helper table
+	int_to_dec_helper_table = sa.Table(
 		'size_key_shirt_dress_sleeve',
-		sa.Column('sizeasint', sa.Integer)
-	)
-
-	for row in conn.execute(decimal_to_int_helper_shirt_sleeve.select()):
-		dec_val = row.size
-		int_val = int(dec_val * 100)
-		conn.execute(decimal_to_int_helper_shirt_sleeve.update().where(decimal_to_int_helper_shirt_sleeve.c.id == row.id).values(sizeasint=int_val))
-
-	# create temp table
-
-	op.create_table(
-		'temp_sleeve_backup',
-		Column('id', INTEGER, primary_key=True),
-		Column('size', INTEGER)
-	)
-
-	temp_table = sa.Table(
-		'temp_sleeve_backup',
+		sa.MetaData(),
 		sa.Column('id', sa.Integer, primary_key=True),
-		sa.Column('size', sa.Integer)
+		sa.Column('size', sa.Integer),
+		sa.Column('sizeasdec', sa.Numeric(4, 2)),
 	)
 
-	# copy id, sizeasint from decimal_to_in_helper_shirt_sleeve to temp table
-
-	for row in conn.execute(decimal_to_int_helper_shirt_sleeve.select()):
-		conn.execute(temp_table.insert().values(id=temp_table.id, size=temp_table.size))
-
-	# drop size_key_shirt_dress_sleeve
-
-	# create another size_key_shirt_dress_sleeve table with only id, size rows
-
-	# populate new size_key_shirt_dress_sleeve with values from temp_table
-
-	# drop temp table
-
-	op.drop_column('size_key_shirt_dress_sleeve', 'size')
-
-	op.alter_column(
-		'size_key_shirt_dress_sleeve',
-		'sizeasint',
-		new_column_name='size'
-	)
-
-	# create new column ('tempname') that is old_col*100
-	# drop 'size'
-	# rename 'tempname' to 'size'
-'''
-
-def downgrade():
-	'''conn = op.get_bind()
-
+	# add new column to prep for decimal values
 	op.add_column(
 		'size_key_shirt_dress_sleeve',
 		sa.Column('sizeasdec', sa.Numeric(4, 2))
 	)
 
-	for row in conn.execute(decimal_to_int_helper_shirt_sleeve.select()):
+	# now all columns exist in DB as defined in helper table, so select() will run
+	# without whining that it can't find a column
+
+	# convert extant integer values to decimal representations.
+	# with these new values, populate the new column
+	for row in conn.execute(int_to_dec_helper_table.select()):
 		int_val = row.size
-		dec_val = Decimal(int_val) / Decimal(100)
-		conn.execute(decimal_to_int_helper_shirt_sleeve.update().where(decimal_to_int_helper_shirt_sleeve.c.id == row.id).values(sizeasdec=dec_val))
+		dec_val = Decimal(int_val) / 100
+		conn.execute(
+			(
+				int_to_dec_helper_table
+				.update()
+				.where(int_to_dec_helper_table.c.id == row.id)
+				.values(sizeasdec=dec_val)
+			)
+		)
 
-	op.drop_column('size_key_shirt_dress_sleeve', 'size')
+	# create a holding table and store it for use later
+	temp_table = op.create_table(
+		'temp_sleeve_to_dec',
+		sa.Column('id', sa.Integer, primary_key=True),
+		sa.Column('sizeasdec', sa.Numeric(4, 2))
+	)
 
-	op.alter_column(
+	# copy over values from old_table to temp table
+	for row in conn.execute(int_to_dec_helper_table.select()):
+		conn.execute(temp_table.insert().values(id=row.id, sizeasdec=row.sizeasdec))
+
+	# drop the old table
+	op.drop_table('size_key_shirt_dress_sleeve')
+
+	# create a new table with the same name, but this one only has the columns we want
+	new_table = op.create_table(
 		'size_key_shirt_dress_sleeve',
-		'sizeasdec',
-		new_column_name='size')'''
-	pass
+		sa.Column('id', sa.Integer, primary_key=True),
+		sa.Column('size', sa.Numeric(4, 2))
+	)
+
+	for row in conn.execute(temp_table.select()):
+		conn.execute(new_table.insert().values(id=row.id, size=row.sizeasdec))
+
+	# drop temp table
+	op.drop_table('temp_sleeve_to_dec')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
