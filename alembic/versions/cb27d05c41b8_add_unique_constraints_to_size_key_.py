@@ -6,7 +6,6 @@ Create Date: 2018-04-29 14:00:17.072224
 
 """
 from alembic import op
-from app.models import SizeKeyShirtDressNeck
 import sqlalchemy as sa
 
 
@@ -17,33 +16,56 @@ branch_labels = None
 depends_on = None
 
 
-'''def upgrade2():
+def upgrade():
+	# Rename table to allow creation of new table with constraint
 	op.rename_table('size_key_shirt_dress_neck', 'old_neck')
+
+	# Grab this old table
+	old_table = sa.Table(
+		'old_neck',
+		sa.MetaData(),
+		sa.Column('id', sa.Integer, primary_key=True),
+		sa.Column('size', sa.Integer)
+	)
+
+	# Create new table with constraint
 	new_table = op.create_table(
 		'size_key_shirt_dress_neck',
 		sa.Column('id', sa.Integer, primary_key=True),
 		sa.Column('size', sa.Integer),
 		sa.UniqueConstraint('size', name='uq_size')
 	)
-'''
 
+	# Open connection
+	conn = op.get_bind()
 
-def upgrade():
-	'''new_table = op.create_table(
-		'temp',
-		sa.Column('id', sa.Integer, primary_key=True),
-		sa.Column('size', sa.Integer),
-		sa.UniqueConstraint('size', name='uq_size')
-	)
+	# Fill columns in new table with for loop because I'm scared of using op.bulk_insert
+	for row in conn.execute(old_table.select()):
+		conn.execute(new_table.insert().values(id=row.id, size=row.size))
 
-	records = SizeKeyShirtDressNeck.__table__
+	# Drop the old table
+	op.drop_table('old_neck')
 
-	op.bulk_insert(new_table, )'''
-	pass
 
 def downgrade():
-	#op.drop_constraint(
-	#	'uq_size_key',
-	#	'size_key_shirt_dress_sleeve'
-	#)
-	pass
+	op.rename_table('size_key_shirt_dress_neck', 'old_neck')
+
+	old_table = sa.Table(
+		'old_neck',
+		sa.MetaData(),
+		sa.Column('id', sa.Integer, primary_key=True),
+		sa.Column('size', sa.Integer)
+	)
+
+	new_table = op.create_table(
+		'size_key_shirt_dress_neck',
+		sa.Column('id', sa.Integer, primary_key=True),
+		sa.Column('size', sa.Integer)
+	)
+
+	conn = op.get_bind()
+
+	for row in conn.execute(old_table.select()):
+		conn.execute(new_table.insert().values(id=row.id, size=row.size))
+
+	op.drop_table('old_neck')
