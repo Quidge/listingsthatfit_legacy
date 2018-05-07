@@ -1,8 +1,8 @@
-"""Add unique constraints to size neck table. (>1 entry for the numerical size shouldn't be possible
+"""Add unique constraint to size column for size_key_shirt_dress_sleeve. Sizes should be unique.
 
-Revision ID: cb27d05c41b8
-Revises: 929822e572b8
-Create Date: 2018-04-29 14:00:17.072224
+Revision ID: dbd7787057e9
+Revises: cb27d05c41b8
+Create Date: 2018-05-07 11:58:42.501545
 
 """
 from alembic import op
@@ -10,19 +10,19 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'cb27d05c41b8'
-down_revision = '929822e572b8'
+revision = 'dbd7787057e9'
+down_revision = 'cb27d05c41b8'
 branch_labels = None
 depends_on = None
 
 
 def upgrade():
 	# Rename table to allow creation of new table with constraint
-	op.rename_table('size_key_shirt_dress_neck', 'old_neck')
+	op.rename_table('size_key_shirt_dress_sleeve', 'old_sleeve')
 
 	# Grab this old table
 	old_table = sa.Table(
-		'old_neck',
+		'old_sleeve',
 		sa.MetaData(),
 		sa.Column('id', sa.Integer, primary_key=True),
 		sa.Column('size', sa.Integer)
@@ -30,7 +30,7 @@ def upgrade():
 
 	# Create new table with constraint
 	new_table = op.create_table(
-		'size_key_shirt_dress_neck',
+		'size_key_shirt_dress_sleeve',
 		sa.Column('id', sa.Integer, primary_key=True),
 		sa.Column('size', sa.Integer),
 		sa.UniqueConstraint('size', name='uq_size')
@@ -44,21 +44,21 @@ def upgrade():
 		conn.execute(new_table.insert().values(id=row.id, size=row.size))
 
 	# Drop the old table
-	op.drop_table('old_neck')
+	op.drop_table('old_sleeve')
 
 
 def downgrade():
-	op.rename_table('size_key_shirt_dress_neck', 'old_neck')
+	op.rename_table('size_key_shirt_dress_sleeve', 'old_sleeve')
 
 	old_table = sa.Table(
-		'old_neck',
+		'old_sleeve',
 		sa.MetaData(),
 		sa.Column('id', sa.Integer, primary_key=True),
 		sa.Column('size', sa.Integer)
 	)
 
 	new_table = op.create_table(
-		'size_key_shirt_dress_neck',
+		'size_key_shirt_dress_sleeve',
 		sa.Column('id', sa.Integer, primary_key=True),
 		sa.Column('size', sa.Integer)
 	)
@@ -68,4 +68,4 @@ def downgrade():
 	for row in conn.execute(old_table.select()):
 		conn.execute(new_table.insert().values(id=row.id, size=row.size))
 
-	op.drop_table('old_neck')
+	op.drop_table('old_sleeve')
