@@ -21,7 +21,11 @@
 							{% else %}
 								<input type="checkbox" id="{{size_cat['cat_key']}}-{{sizes_dict['cat_key']}}_{{item[0]}}" name="{{size_cat['cat_key']}}-{{sizes_dict['cat_key']}}" value={{item[0]}} >
 							{% endif %}
-							<label for="{{size_cat['cat_key']}}-{{sizes_dict['cat_key']}}_{{item[0]}}" >{{item[0]}}</label>
+							{% if item[0] is number %}
+								<label for="{{size_cat['cat_key']}}-{{sizes_dict['cat_key']}}_{{item[0]}}" >{{item[0]|int_to_decimal}}</label>
+							{% else %}
+								<label for="{{size_cat['cat_key']}}-{{sizes_dict['cat_key']}}_{{item[0]}}" >{{item[0]}}</label>
+							{% endif %}
 						{% endfor %}
 					{% endfor %}
 					<button class="btn" type="submit">Update with changes</button>

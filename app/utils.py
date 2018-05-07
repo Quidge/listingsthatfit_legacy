@@ -5,6 +5,25 @@ from app.dbtouch import get_user_sizes_subscribed
 SUPPORTED_CLOTHING = ['suits', 'sportcoats', 'shirts', 'shoes', 'outerwear', 'pants']
 
 
+def int_to_decimal(integer):
+	"""
+	Takes integer, divides it by 100, and returns a string formatted to preserve 2
+	decimal places
+
+	Parameters
+	----------
+	integer : integer
+
+	Returns
+	-------
+	String : str
+		In format: {:.2f}
+	"""
+
+	string = "{:.2f}".format(integer / 100)
+	return string
+
+
 def diff_preference_changes(user_sizes_dict, request_form_dict):
 	"""
 	Generates and returns a dict which details the diffs between a user's sizes and

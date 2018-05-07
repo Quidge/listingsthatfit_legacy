@@ -9,6 +9,11 @@ from app.utils import SUPPORTED_CLOTHING, cat_size_prefs
 from app.utils import diff_preference_changes, get_user_sizes_subscribed
 from app.dbtouch import update_user_sizes, get_user_sizes_join_with_all_possible
 
+from app.utils import int_to_decimal
+
+# Custom filter
+app.jinja_env.filters["int_to_decimal"] = int_to_decimal
+
 
 def flash_errors(form):
     for field, errors in form.errors.items():
