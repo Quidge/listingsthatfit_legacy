@@ -65,6 +65,7 @@ def preferences_clothing(category):
 		return redirect(404)'''
 
 @app.route('/preferences/clothing', methods=["GET", "POST"])
+@login_required
 def preferences_clothing():
 
 	'''
