@@ -100,7 +100,7 @@ class User(db.Model):
 # Size Key Tables
 class SizeKeyShirtDressSleeve(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
-	size = db.Column(db.Numeric(4, 2))
+	size = db.Column(db.Integer)
 
 	def __repr__(self):
 		return 'Dress shirt sleeve size: %r' % self.size
@@ -108,7 +108,7 @@ class SizeKeyShirtDressSleeve(db.Model):
 
 class SizeKeyShirtDressNeck(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
-	size = db.Column(db.Numeric(4, 2))
+	size = db.Column(db.Integer)
 
 	def __repr__(self):
 		return 'Dress shirt neck size: %r' % self.size
