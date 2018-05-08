@@ -73,6 +73,8 @@ def diff_preference_changes(user_sizes_dict, request_form_dict):
 	update_dict = {}
 
 	for name, values_list in user_sizes_dict.items():
+		# If working properly, user_sizes_dict will have a name for ALL possible
+		# size categories, even if the values_list is empty.
 		db_set = set(values_list)
 		try:
 			form_set = set(request_form_dict[name])
