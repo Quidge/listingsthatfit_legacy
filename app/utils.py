@@ -51,10 +51,10 @@ def diff_preference_changes(user_sizes_dict, request_form_dict):
 			"sportcoat-chest": [40, 41]
 		}
 	request_form_dict : dict
-		A dictionary in the form:
+		A dictionary also in the form:
 		{
-			"shirt-dress-sleeve": 30.00,
-			"shirt-dress-sleeve": 30.25
+			"shirt-sleeve": [3100, 3200], # Notice this list has different values
+			"shirt-neck": [1500, 1475]
 		}
 
 	Returns
@@ -65,29 +65,32 @@ def diff_preference_changes(user_sizes_dict, request_form_dict):
 			"shirt-dress-sleeve": {"add": [3000, 3100], "remove": [3200]},
 			"pants-length": {"add": [], "remove": [3300]}
 		}
-		These values represent the set differences between user_sozes_dict and
-		request_form_dict.
+		These values represent the set differences between user_sizes_dict and
+		request_form_dict. These differences represent CHANGES the user wishes
+		to make to the state held in DB.
 	"""
 
 	update_dict = {}
 
 	for name, values_list in user_sizes_dict.items():
 		db_set = set(values_list)
-		form_set = set(request_form_dict[name])
+		try:
+			form_set = set(request_form_dict[name])
+		except KeyError:
+			form_set = set()
 
 		remove = db_set - form_set
-		print("db_set: ", db_set)
-		print("form_set: ", form_set)
-		print("db_set - form_set:", remove)
+		#print("db_set for {}: ".format(name), db_set)
+		#print("form_set for {}: ".format(name), form_set)
+		#print("db_set - form_set:", remove)
 		#print(remove)
 		add = form_set - db_set
-		print("form_set - db_set:", add)
+		#print("form_set - db_set:", add)
 
 		update_dict[name] = {"add": [x for x in add], "remove": [x for x in remove]}
-		print(update_dict)
+		#print(update_dict)
 
-	pass
-	#return update_dict
+	return update_dict
 
 
 def get_size_vals_only(db_sizes_table):

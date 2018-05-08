@@ -100,6 +100,10 @@ def preferences_clothing():
 	'''
 	user_sizes = get_user_sizes_join_with_all_possible(current_user)
 	stuff = get_user_sizes_subscribed(current_user)
+
+	print(user_sizes)
+	print('---')
+	print(stuff)
 	#print(stuff)
 
 	#for key, values in stuff.items():
@@ -142,18 +146,18 @@ def preferences_clothing():
 		# user_sizes = get_user_sizes(current_user)
 		# print(user_sizes["Shirting"]["Sleeve"]["values"])
 
-		for key, val_list in stuff.items():
-			print(key, ": ", val_list)
+		#for key, val_list in stuff.items():
+		#	print(key, ": ", val_list)
 
 		updated_prefs = {}
 		f = request.form
 
 		for key in f.keys():
-			updated_prefs[key] = f.getlist(key)
+			updated_prefs[key] = [int(val) if val.isdigit() else val for val in f.getlist(key)]
 
-		# print(updated_prefs)
-		# print(diff_preference_changes(stuff, updated_prefs))
-		# diff_preference_changes(stuff, updated_prefs)
+		print('updated: ', updated_prefs)
+		#print(diff_preference_changes(stuff, updated_prefs))
+		print(diff_preference_changes(stuff, updated_prefs))
 
 		#f = request.form
 		#for key in f.keys():
