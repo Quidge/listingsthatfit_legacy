@@ -28,7 +28,87 @@ def update_user_sizes(updates_dict, user_object):
 	-------
 	None
 	"""
+	'''
+	ud = updates_dict
+	if len(ud['shirt-sleeve']['add']) != 0 or len(ud['shirt-sleeve']['remove']) != 0:
+		from app.models import SizeKeyShirtDressSleeve
+		if len(ud['shirt-sleeve']['add']) != 0:
+			append_list_of_sizes_to_relationship(
+				user_object.sz_shirt_dress_sleeve,
+				SizeKeyShirtDressSleeve,
+				ud['shirt-sleeve']['add']
+			)
+		if len(ud['shirt-sleeve']['remove']) != 0:
+			remove_list_of_sizes_from_relationship(
+				user_object.sz_shirt_dress_sleeve,
+				SizeKeyShirtDressSleeve,
+				ud['shirt-sleeve']['remove']
+			)
+	'''
 	pass
+
+
+def append_list_of_sizes_to_relationship(relationship, model, values_list, match_attr):
+	"""
+	Associates a list of primitive values contained in values_list with a model and
+	appends each of those size models to the provided relationship.
+
+	Issues a rollback if any exceptions are raised.
+
+	Parameters
+	----------
+	relationship : SQLAlchemy relationship()
+		Say model was SizeKeyShirtDressSleeve - relationship would be User.sz_shirt_dress_sleeve
+	model : SQLAlchemy model
+		Model will correspond to the model type for the relationship
+	values_list : list
+		For example, a list of values for SizeShirtDressSleeve [3000, 3150, 3100]
+	match_attr : the attribute name on the model that each value in values_list
+					will be matched against
+
+	Returns
+	-------
+	None
+	"""
+	try:
+		for value in values_list:
+			size_obj = db.session.query(model).filter(model[match_attr] == value).first()
+			relationship.append(size_obj)
+	except BaseException:
+		db.session.rollback()
+		raise
+
+
+def remove_list_of_sizes_from_relationship(relationship, model, values_list, match_attr):
+	"""
+	Associates a list of primitive values contained in values_list with a model and
+	removes each of those size models from the provided relationship (expected to be
+	a User size relationship).
+
+	Issues a rollback if any exceptions are raised.
+
+	Parameters
+	----------
+	relationship : SQLAlchemy relationship()
+		Say model was SizeKeyShirtDressSleeve - relationship would be User.sz_shirt_dress_sleeve
+	model : SQLAlchemy model
+		Model will correspond to the model type for the relationship
+	values_list : list
+		For example, a list of values for SizeShirtDressSleeve [3000, 3150, 3100]
+	match_attr : the attribute name on the model that each value in values_list
+					will be matched against
+
+	Returns
+	-------
+	None
+	"""
+	try:
+		for value in values_list:
+			size_obj = db.session.query(model).filter(model[match_attr] == value).first()
+			relationship.remove(size_obj)
+	except BaseException:
+		db.session.rollback()
+		raise
 
 
 def get_user_sizes_subscribed(user_object):
