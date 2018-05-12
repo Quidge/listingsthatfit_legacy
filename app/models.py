@@ -1,3 +1,4 @@
+import sqlalchemy as sa
 from app import db
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -49,15 +50,37 @@ class User(db.Model):
 	sz_shirt_dress_sleeve = db.relationship(
 		'SizeKeyShirtDressSleeve',
 		secondary=LinkUserSizeShirtDressSleeve,
-		backref=db.backref('users', lazy='dynamic'))
+		backref=db.backref('users', lazy='dynamic'),
+		order_by="asc(SizeKeyShirtDressSleeve.id)")
 	sz_shirt_dress_neck = db.relationship(
 		'SizeKeyShirtDressNeck',
 		secondary=LinkUserSizeShirtDressNeck,
-		backref=db.backref('users', lazy='dynamic'))
+		backref=db.backref('users', lazy='dynamic'),
+		order_by="asc(SizeKeyShirtDressNeck.id)")
 	sz_shirt_casual = db.relationship(
 		'SizeKeyShirtCasual',
 		secondary=LinkUserSizeShirtCasual,
-		backref=db.backref('users', lazy='dynamic'))
+		backref=db.backref('users', lazy='dynamic'),
+		order_by="asc(SizeKeyShirtCasual.id)")
+
+	# ready for easier organization and access in JSON-esque format
+	def all_sizes_in_dict(self):
+		self.sizes = {
+			'shirt-sleeve': {
+				'key': 'shirt-sleeve',
+				'relationship': self.sz_shirt_dress_sleeve
+			},
+			'shirt-neck': {
+				'key': 'shirt-neck',
+				'relationship': self.sz_shirt_dress_neck
+			},
+			'shirt-casual': {
+				'key': 'shirt-casual',
+				'relationship': self.sz_shirt_casual
+			}
+		}
+
+		return self
 
 	@property
 	def password(self):
