@@ -12,7 +12,8 @@ LinkUserSizeShirtDressSleeve = db.Table(
 	db.Column(
 		'user_id',
 		db.Integer,
-		db.ForeignKey('user.id'), primary_key=True)
+		db.ForeignKey('user.id'), primary_key=True),
+	sa.UniqueConstraint('size_id', 'user_id', name='uq_association')
 )
 
 LinkUserSizeShirtDressNeck = db.Table(
@@ -24,7 +25,8 @@ LinkUserSizeShirtDressNeck = db.Table(
 	db.Column(
 		'user_id',
 		db.Integer,
-		db.ForeignKey('user.id'), primary_key=True)
+		db.ForeignKey('user.id'), primary_key=True),
+	sa.UniqueConstraint('size_id', 'user_id', name='uq_association')
 )
 
 LinkUserSizeShirtCasual = db.Table(
@@ -36,7 +38,8 @@ LinkUserSizeShirtCasual = db.Table(
 	db.Column(
 		'user_id',
 		db.Integer,
-		db.ForeignKey('user.id'), primary_key=True)
+		db.ForeignKey('user.id'), primary_key=True),
+	sa.UniqueConstraint('size_id', 'user_id', name='uq_association')
 )
 
 

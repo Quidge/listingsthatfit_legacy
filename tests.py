@@ -24,6 +24,11 @@ class TestCase(unittest.TestCase):
 		db_should_have = set(['shirt-sleeve', 'shirt-neck', 'shirt-casual'])
 		self.assertEqual(db_has, db_should_have)
 
+	def test_duplicate_size_association_to_user(self):
+		# This should assert that it is not possible to associate a size with a user
+		# twice. This should test every size table.
+		pass
+
 
 def main():
 	unittest.main()
