@@ -187,3 +187,13 @@ class SizeKeyShirtCasual(db.Model):
 	def __repr__(self):
 		return 'Casual shirt size "%r" (long: "%r")' % (self.size_short, self.size_long)
 
+# Size Key Table dict
+model_directory_dict = {
+	'shirt-sleeve': SizeKeyShirtDressSleeve,
+	'shirt-neck': SizeKeyShirtDressNeck,
+	'shirt-casual': SizeKeyShirtCasual
+}
+
+
+
+

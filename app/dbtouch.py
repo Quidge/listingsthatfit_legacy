@@ -9,55 +9,14 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 
 
-def update_user_sizes(updates_dict, user_object):
-	"""
-	Controls the addition or removal of sizes from a User in the database.
-
-	Each item in the dictionary is understood to represents a single table. The hierarchy
-	is flat: not organized by shirt: sleeve/neck/casual, but
-	shirt-sleeve/shirt-neck/shirt-casual.
-
-	Parameters
-	----------
-	updates_dict : dict
-		Dict is expected to be in the form:
-			{size-cat-and-specific: {'add': [size_to_add], 'remove': [size_to_remove]},
-			nect-size-cat-and-specific: {'add': [...], 'remove': [...]}}
-
-			example: {'shirt-sleeve': {'add': [30.00, 31.00], 'remove': [32.00]}}
-	user_object : object
-		user_object is assumed to be a User model
-
-	Returns
-	-------
-	None
-	"""
-	'''
-	ud = updates_dict
-	if len(ud['shirt-sleeve']['add']) != 0 or len(ud['shirt-sleeve']['remove']) != 0:
-		from app.models import SizeKeyShirtDressSleeve
-		if len(ud['shirt-sleeve']['add']) != 0:
-			append_list_of_sizes_to_relationship(
-				user_object.sz_shirt_dress_sleeve,
-				SizeKeyShirtDressSleeve,
-				ud['shirt-sleeve']['add']
-			)
-		if len(ud['shirt-sleeve']['remove']) != 0:
-			remove_list_of_sizes_from_relationship(
-				user_object.sz_shirt_dress_sleeve,
-				SizeKeyShirtDressSleeve,
-				ud['shirt-sleeve']['remove']
-			)
-	'''
-	pass
-
-
 def append_list_of_sizes_to_relationship(relationship, model, values_list):
 	"""
 	Associates a list of primitive values contained in values_list with a model and
 	attempts to append each of those size models to the provided relationship.
 
-	Issues a rollback if any a value cannot be correctly associated with a model.
+	Issues a rollback if *any* value cannot be correctly associated with a model.
+
+	Issues a warning if size model is already present in relationship.
 
 	Parameters
 	----------
@@ -77,10 +36,15 @@ def append_list_of_sizes_to_relationship(relationship, model, values_list):
 	"""
 	try:
 		for value in values_list:
-			# Consider instead model(size=value) for fewer queries 
+			# Consider instead model(size=value) for fewer queries
 			# (but possibility of adding size that doesn't exist)
 			size_obj = model.query.filter(model.size == value).one()
-			relationship.append(size_obj)
+			try:
+				relationship.append(size_obj)
+			except ValueError as e:
+				warnings.warn('Value "{}" already present in relationship. \
+					Duplicate not added'.format(e))
+				pass
 	except NoResultFound:
 		db.session.rollback()
 		raise
@@ -108,12 +72,12 @@ def remove_list_of_sizes_from_relationship(relationship, model, values_list):
 	-------
 	None
 	"""
-	
+
 	for value in values_list:
+		# Consider instead model(size=value) for fewer queries
+		# (but possibility of adding size that doesn't exist)
+		size_obj = model.query.filter(model.size == value).one()
 		try:
-			# Consider instead model(size=value) for fewer queries 
-			# (but possibility of adding size that doesn't exist)
-			size_obj = model.query.filter(model.size == value).one()
 			relationship.remove(size_obj)
 		except KeyError as e:
 			warnings.warn('Value "{}" not found in relationship'.format(e))
@@ -136,8 +100,8 @@ def get_user_sizes_subscribed(user_object):
 		Form:
 
 		{
-			"shirt-dress-sleeve": [30.00, 30.50, 31.00],
-			"shirt-dress-neck": [16.00, 16.25, 16.50],
+			"shirt-sleeve": [30.00, 30.50, 31.00],
+			"shirt-neck": [16.00, 16.25, 16.50],
 			"sportcoat-chest": ['40', '41']
 			"sportcoat-length": ['R', 'L']
 		}
@@ -150,6 +114,57 @@ def get_user_sizes_subscribed(user_object):
 
 	return user_sizes_subscribed
 
+
+def update_user_sizes(updates_dict, user_object):
+	"""
+	Controls the addition or removal of sizes from a User in the database.
+
+	Each item in the dictionary is understood to represents a single table. The
+	organization is flat, not heirarchical: instead of being organized as
+	shirt(sleeve/neck/casual), it is (shirt-sleeve/shirt-neck/shirt-casual).
+
+	Issues a db.flush() if successful.
+
+	Parameters
+	----------
+	updates_dict : dict
+		Dict is expected to be in the form:
+			{size-cat-and-specific: {'add': [size_to_add], 'remove': [size_to_remove]},
+			nect-size-cat-and-specific: {'add': [...], 'remove': [...]}}
+
+			example: {'shirt-sleeve': {'add': [30.00, 31.00], 'remove': [32.00]}}
+	user_object : object
+		user_object is assumed to be a User model
+
+	Returns
+	-------
+	None
+	"""
+
+	relationships_dict = user_object.all_sizes_in_dict()
+
+	for key, change_dicts in updates_dict.items():
+		if len(change_dicts['add']) > 0:
+			try:
+				append_list_of_sizes_to_relationship(
+					relationships_dict[key]['relationship'],
+					app.models.model_directory_dict[key],
+					change_dicts['add'])
+			except ValueError:
+				raise
+		if len(change_dicts['remove']) > 0:
+			try:
+				remove_list_of_sizes_from_relationship(
+					relationships_dict[key]['relationship'],
+					app.models.model_directory_dict[key],
+					change_dicts['remove'])
+			except NoResultFound:
+				raise
+	try:
+		db.session.flush()
+	except IntegrityError:
+		db.session.rollback()
+		raise
 
 def get_user_sizes_join_with_all_possible(user_object):
 	"""

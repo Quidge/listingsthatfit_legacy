@@ -1,6 +1,10 @@
 import app.models
 from app import db
-from app.dbtouch import get_user_sizes_subscribed
+from app.dbtouch import get_user_sizes_subscribed, \
+	append_list_of_sizes_to_relationship, \
+	remove_list_of_sizes_from_relationship
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm.exc import NoResultFound
 
 SUPPORTED_CLOTHING = ['suits', 'sportcoats', 'shirts', 'shoes', 'outerwear', 'pants']
 
@@ -22,6 +26,60 @@ def int_to_decimal(integer):
 
 	string = "{:.2f}".format(integer / 100)
 	return string
+
+
+def update_user_sizes(updates_dict, user_object):
+	"""
+	Controls the addition or removal of sizes from a User in the database.
+
+	Each item in the dictionary is understood to represents a single table. The
+	organization is flat, not heirarchical: instead of being organized as
+	shirt(sleeve/neck/casual), it is (shirt-sleeve/shirt-neck/shirt-casual).
+
+	Issues a db.flush() if successful.
+
+	Parameters
+	----------
+	updates_dict : dict
+		Dict is expected to be in the form:
+			{size-cat-and-specific: {'add': [size_to_add], 'remove': [size_to_remove]},
+			nect-size-cat-and-specific: {'add': [...], 'remove': [...]}}
+
+			example: {'shirt-sleeve': {'add': [30.00, 31.00], 'remove': [32.00]}}
+	user_object : object
+		user_object is assumed to be a User model
+
+	Returns
+	-------
+	None
+	"""
+
+	user_object.all_sizes_in_dict()
+	relationships_dict = user_object.sizes
+	ud = updates_dict
+
+	for key, change_dicts in ud.items():
+		if len(change_dicts['add']) > 0:
+			try:
+				append_list_of_sizes_to_relationship(
+					relationships_dict[key]['relationship'],
+					app.models.model_directory_dict[key],
+					change_dicts['add'])
+			except ValueError:
+				raise
+		if len(change_dicts['remove']) > 0:
+			try:
+				remove_list_of_sizes_from_relationship(
+					relationships_dict[key]['relationship'],
+					app.models.model_directory_dict[key],
+					change_dicts['remove'])
+			except NoResultFound:
+				raise
+	try:
+		db.session.flush()
+	except IntegrityError:
+		db.session.rollback()
+		raise
 
 
 def diff_preference_changes(user_sizes_dict, request_form_dict):
@@ -82,15 +140,9 @@ def diff_preference_changes(user_sizes_dict, request_form_dict):
 			form_set = set()
 
 		remove = db_set - form_set
-		#print("db_set for {}: ".format(name), db_set)
-		#print("form_set for {}: ".format(name), form_set)
-		#print("db_set - form_set:", remove)
-		#print(remove)
 		add = form_set - db_set
-		#print("form_set - db_set:", add)
 
 		update_dict[name] = {"add": [x for x in add], "remove": [x for x in remove]}
-		#print(update_dict)
 
 	return update_dict
 

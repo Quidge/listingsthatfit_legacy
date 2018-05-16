@@ -7,7 +7,7 @@ from app.models import User, SizeKeyShirtDressSleeve, LinkUserSizeShirtDressSlee
 from app.forms import RegistrationForm, LoginForm
 from app.utils import SUPPORTED_CLOTHING, cat_size_prefs
 from app.utils import diff_preference_changes, get_user_sizes_subscribed
-from app.dbtouch import update_user_sizes, get_user_sizes_join_with_all_possible
+from app.dbtouch import get_user_sizes_join_with_all_possible
 
 from app.utils import int_to_decimal
 
