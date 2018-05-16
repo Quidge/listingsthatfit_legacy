@@ -3,3 +3,5 @@ __pycache__/
 notes/
 app.db
 test.db
+temp_test.db
+test_env.py

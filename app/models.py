@@ -2,6 +2,39 @@ import sqlalchemy as sa
 from app import db
 from werkzeug.security import generate_password_hash, check_password_hash
 
+
+class UniqueSet(object):
+	"""
+	This class behaves just like a set type collection, but will error if
+	a duplicate is added to the collection.
+	"""
+
+	__emulates__ = set
+
+	def __init__(self):
+		self.data = set()
+
+	@sa.orm.collections.collection.appender
+	def append(self, item):
+		"""Performs set.add(element) unless element is already present in
+		the set, in which case a ValueError will be raised."""
+		try:
+			assert item not in self.data
+		except AssertionError:
+			raise ValueError('Value "{}" already exists in set'.format(item))
+		else:
+			self.data.add(item)
+
+	def remove(self, item):
+		self.data.remove(item)
+
+	def __iter__(self):
+		return iter(self.data)
+
+	def __repr__(self):
+		return str(self.data)
+
+
 # Link Tables
 LinkUserSizeShirtDressSleeve = db.Table(
 	'link_user_size_shirt_dress_sleeve',
@@ -54,17 +87,23 @@ class User(db.Model):
 		'SizeKeyShirtDressSleeve',
 		secondary=LinkUserSizeShirtDressSleeve,
 		backref=db.backref('users', lazy='dynamic'),
-		order_by="asc(SizeKeyShirtDressSleeve.id)")
+		order_by="asc(SizeKeyShirtDressSleeve.id)",
+		collection_class=lambda: UniqueSet()
+	)
 	sz_shirt_dress_neck = db.relationship(
 		'SizeKeyShirtDressNeck',
 		secondary=LinkUserSizeShirtDressNeck,
 		backref=db.backref('users', lazy='dynamic'),
-		order_by="asc(SizeKeyShirtDressNeck.id)")
+		order_by="asc(SizeKeyShirtDressNeck.id)",
+		collection_class=lambda: UniqueSet()
+	)
 	sz_shirt_casual = db.relationship(
 		'SizeKeyShirtCasual',
 		secondary=LinkUserSizeShirtCasual,
 		backref=db.backref('users', lazy='dynamic'),
-		order_by="asc(SizeKeyShirtCasual.id)")
+		order_by="asc(SizeKeyShirtCasual.id)",
+		collection_class=lambda: UniqueSet()
+	)
 
 	# ready for easier organization and access in JSON-esque format
 	def all_sizes_in_dict(self):

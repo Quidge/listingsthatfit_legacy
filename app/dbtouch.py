@@ -1,8 +1,12 @@
+import warnings
+
 from app import app, db
 from app.models import User, SizeKeyShirtDressSleeve, SizeKeyShirtDressNeck, SizeKeyShirtCasual
 from app.models import LinkUserSizeShirtDressSleeve, LinkUserSizeShirtCasual, LinkUserSizeShirtDressNeck
 # from app.utils import get_size_vals_only
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm.exc import NoResultFound
 
 
 def update_user_sizes(updates_dict, user_object):
@@ -48,23 +52,24 @@ def update_user_sizes(updates_dict, user_object):
 	pass
 
 
-def append_list_of_sizes_to_relationship(relationship, model, values_list, match_attr):
+def append_list_of_sizes_to_relationship(relationship, model, values_list):
 	"""
 	Associates a list of primitive values contained in values_list with a model and
-	appends each of those size models to the provided relationship.
+	attempts to append each of those size models to the provided relationship.
 
-	Issues a rollback if any exceptions are raised.
+	Issues a rollback if any a value cannot be correctly associated with a model.
 
 	Parameters
 	----------
 	relationship : SQLAlchemy relationship()
 		Say model was SizeKeyShirtDressSleeve - relationship would be User.sz_shirt_dress_sleeve
+		User size relationships are SQLAlchemy collections modeled after sets. Unlike
+		sets, these collections will raise ValueErrors if the addition of a
+		duplicate value is attempted.
 	model : SQLAlchemy model
 		Model will correspond to the model type for the relationship
 	values_list : list
 		For example, a list of values for SizeShirtDressSleeve [3000, 3150, 3100]
-	match_attr : the attribute name on the model that each value in values_list
-					will be matched against
 
 	Returns
 	-------
@@ -72,43 +77,47 @@ def append_list_of_sizes_to_relationship(relationship, model, values_list, match
 	"""
 	try:
 		for value in values_list:
-			size_obj = db.session.query(model).filter(model[match_attr] == value).first()
+			# Consider instead model(size=value) for fewer queries 
+			# (but possibility of adding size that doesn't exist)
+			size_obj = model.query.filter(model.size == value).one()
 			relationship.append(size_obj)
-	except BaseException:
+	except NoResultFound:
 		db.session.rollback()
 		raise
 
 
-def remove_list_of_sizes_from_relationship(relationship, model, values_list, match_attr):
+def remove_list_of_sizes_from_relationship(relationship, model, values_list):
 	"""
 	Associates a list of primitive values contained in values_list with a model and
 	removes each of those size models from the provided relationship (expected to be
 	a User size relationship).
 
-	Issues a rollback if any exceptions are raised.
+	Issues warning for any (and each) value in values_list not found in relationship.
 
 	Parameters
 	----------
 	relationship : SQLAlchemy relationship()
 		Say model was SizeKeyShirtDressSleeve - relationship would be User.sz_shirt_dress_sleeve
+		User size relationships are collections modeled after sets.
 	model : SQLAlchemy model
 		Model will correspond to the model type for the relationship
 	values_list : list
 		For example, a list of values for SizeShirtDressSleeve [3000, 3150, 3100]
-	match_attr : the attribute name on the model that each value in values_list
-					will be matched against
 
 	Returns
 	-------
 	None
 	"""
-	try:
-		for value in values_list:
-			size_obj = db.session.query(model).filter(model[match_attr] == value).first()
+	
+	for value in values_list:
+		try:
+			# Consider instead model(size=value) for fewer queries 
+			# (but possibility of adding size that doesn't exist)
+			size_obj = model.query.filter(model.size == value).one()
 			relationship.remove(size_obj)
-	except BaseException:
-		db.session.rollback()
-		raise
+		except KeyError as e:
+			warnings.warn('Value "{}" not found in relationship'.format(e))
+			pass
 
 
 def get_user_sizes_subscribed(user_object):
