@@ -107,6 +107,22 @@ class User(db.Model):
 
 	# ready for easier organization and access in JSON-esque format
 	def all_sizes_in_dict(self):
+		"""Initializes self.sizes, which is a dict directory of size-key-types
+		mapped to an object holding the relationship and (redundant) size-key.
+
+		Returns
+		-------
+		self.sizes : dict
+			self.sizes is a dict in the form:
+				{
+					'shirt-sleeve': {
+						'key': 'shirt-sleeve',
+						'relationship': self.sz_shirt_sleeve
+					},
+					...
+				}
+		"""
+
 		self.sizes = {
 			'shirt-sleeve': {
 				'key': 'shirt-sleeve',
@@ -122,7 +138,7 @@ class User(db.Model):
 			}
 		}
 
-		return self
+		return self.sizes
 
 	@property
 	def password(self):
@@ -181,11 +197,11 @@ class SizeKeyShirtDressNeck(db.Model):
 
 class SizeKeyShirtCasual(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
-	size_short = db.Column(db.Text(6), unique=True)
+	size = db.Column(db.Text(6), unique=True)
 	size_long = db.Column(db.Text(20), unique=True)
 
 	def __repr__(self):
-		return 'Casual shirt size "%r" (long: "%r")' % (self.size_short, self.size_long)
+		return 'Casual shirt size "%r" (long: "%r")' % (self.size, self.size_long)
 
 # Size Key Table dict
 model_directory_dict = {

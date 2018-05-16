@@ -7,7 +7,7 @@ from app.models import User, SizeKeyShirtDressSleeve, LinkUserSizeShirtDressSlee
 from app.forms import RegistrationForm, LoginForm
 from app.utils import SUPPORTED_CLOTHING, cat_size_prefs
 from app.utils import diff_preference_changes, get_user_sizes_subscribed
-from app.dbtouch import get_user_sizes_join_with_all_possible
+from app.dbtouch import get_user_sizes_join_with_all_possible, update_user_sizes
 
 from app.utils import int_to_decimal
 
@@ -68,51 +68,8 @@ def preferences_clothing(category):
 @login_required
 def preferences_clothing():
 
-	'''
-	I have to figure out how to recreate this query with SQLAlchemy:
-
-	select 	
-		size, 
-   		case 	when link_user_size_shirt_dress_sleeve.size_id is not null 
-   				then 'true' else 'false' end as present
-		from size_key_shirt_dress_sleeve 
-		left join link_user_size_shirt_dress_sleeve
-		on size_key_shirt_dress_sleeve.id = link_user_size_shirt_dress_sleeve.size_id
-	;
-	'''
-	'''
-	user_link_table = (select([LinkUserSizeShirtDressSleeve])
-		.where(LinkUserSizeShirtDressSleeve.c.user_id==current_user.id)
-		.alias())
-
-	shirt_sleeve_sizes = (db.session
-		.query(SizeKeyShirtDressSleeve.size, user_link_table.c.size_id != None)
-		.outerjoin(user_link_table, user_link_table.c.size_id == SizeKeyShirtDressSleeve.id)
-		.all())
-
-	user_sizes = {
-		"Shirting": {
-			"Sleeve": {"values": dict(shirt_sleeve_sizes), "cat_key": "shirt-dress-sleeve"}
-			#"necks": current_user.sz_shirt_dress_neck,
-			#"casuals": current_user.sz_shirt_casual
-		}
-	}
-	'''
 	user_sizes = get_user_sizes_join_with_all_possible(current_user)
-	stuff = get_user_sizes_subscribed(current_user)
-
-	print(user_sizes)
-	print('---')
-	print(stuff)
-	#print(stuff)
-
-	#for key, values in stuff.items():
-	#	val_list = [val.size for val in values]
-	#	print(key, ": ", val_list)
-
-	# print(dict(shirt_sleeve_sizes))
-	# for key, value in dict(shirt_sleeve_sizes).items():
-	#	print(key,":",value)
+	user_subscribed_sizes = get_user_sizes_subscribed(current_user)
 
 	if request.method == "POST":
 		''' The situation if POSTed should be a user attempted to update size preferences.
@@ -134,36 +91,18 @@ def preferences_clothing():
 			- Re-query for sizes
 			- Re-serve page
 		'''
-		# Composes dict of updates.
-		# updates_dict is to have the form: {size_cat: {size_specific: [list of tuples in format (size_val, true/false for added/removed)]}}
-		# get_pref_updates must be passed user_sizes, because request.form WILL NOT return checkboxes that have been UNCHECKED. the absence of a value when present in user_sizes indicates that the user wishes to REMOVE the size from their preferences
-		# updates_dict = diff_preference_changes(user_sizes, request.form)
 
-		# touches the database
-		# update_user_sizes(updates_dict, current_user)
-
-		# this will be new user sizes (also touches the database)
-		# user_sizes = get_user_sizes(current_user)
-		# print(user_sizes["Shirting"]["Sleeve"]["values"])
-
-		#for key, val_list in stuff.items():
-		#	print(key, ": ", val_list)
-
-		updated_prefs = {}
 		f = request.form
+		ready_for_diffing = {}
 
 		for key in f.keys():
-			updated_prefs[key] = [int(val) if val.isdigit() else val for val in f.getlist(key)]
+			ready_for_diffing[key] = [int(val) if val.isdigit() else val for val in f.getlist(key)]
 
-		print('updated: ', updated_prefs)
-		#print(diff_preference_changes(stuff, updated_prefs))
-		print(diff_preference_changes(stuff, updated_prefs))
+		diffs_from_db = diff_preference_changes(user_subscribed_sizes, ready_for_diffing)
+		update_user_sizes(diffs_from_db, current_user)
+		db.session.commit()
 
-		#f = request.form
-		#for key in f.keys():
-		#	# for value in f.getlist(key):
-		#	#	print(key, ":", value)
-		#	print(key, ":", f.getlist(key))
+		user_sizes = get_user_sizes_join_with_all_possible(current_user)
 
 	return render_template('/preferences/user_sizes.html', user_sizes=user_sizes)
 

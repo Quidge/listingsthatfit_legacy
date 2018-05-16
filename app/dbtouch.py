@@ -3,6 +3,7 @@ import warnings
 from app import app, db
 from app.models import User, SizeKeyShirtDressSleeve, SizeKeyShirtDressNeck, SizeKeyShirtCasual
 from app.models import LinkUserSizeShirtDressSleeve, LinkUserSizeShirtCasual, LinkUserSizeShirtDressNeck
+from app.models import model_directory_dict
 # from app.utils import get_size_vals_only
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
@@ -141,30 +142,32 @@ def update_user_sizes(updates_dict, user_object):
 	None
 	"""
 
-	relationships_dict = user_object.all_sizes_in_dict()
+	user_object.all_sizes_in_dict()
+	relationships_dict = user_object.sizes
 
-	for key, change_dicts in updates_dict.items():
-		if len(change_dicts['add']) > 0:
-			try:
-				append_list_of_sizes_to_relationship(
-					relationships_dict[key]['relationship'],
-					app.models.model_directory_dict[key],
-					change_dicts['add'])
-			except ValueError:
-				raise
-		if len(change_dicts['remove']) > 0:
-			try:
-				remove_list_of_sizes_from_relationship(
-					relationships_dict[key]['relationship'],
-					app.models.model_directory_dict[key],
-					change_dicts['remove'])
-			except NoResultFound:
-				raise
 	try:
+		for key, change_dicts in updates_dict.items():
+			if len(change_dicts['add']) > 0:
+				try:
+					append_list_of_sizes_to_relationship(
+						relationships_dict[key]['relationship'],
+						model_directory_dict[key],
+						change_dicts['add'])
+				except ValueError:
+					raise
+			if len(change_dicts['remove']) > 0:
+				try:
+					remove_list_of_sizes_from_relationship(
+						relationships_dict[key]['relationship'],
+						model_directory_dict[key],
+						change_dicts['remove'])
+				except NoResultFound:
+					raise
 		db.session.flush()
-	except IntegrityError:
+	except Exception:
 		db.session.rollback()
 		raise
+
 
 def get_user_sizes_join_with_all_possible(user_object):
 	"""
@@ -243,9 +246,9 @@ def get_user_sizes_join_with_all_possible(user_object):
 
 	shirt_casual_sizes = (
 		db.session
-		.query(SizeKeyShirtCasual.size_short, usr_lt_shirt_casual.c.size_id != None)
+		.query(SizeKeyShirtCasual.size, usr_lt_shirt_casual.c.size_id != None)
 		.outerjoin(usr_lt_shirt_casual, usr_lt_shirt_casual.c.size_id == SizeKeyShirtCasual.id)
-		.order_by(SizeKeyShirtCasual.size_short.asc())
+		.order_by(SizeKeyShirtCasual.id.asc())
 		.all())
 
 	user_sizes = {
