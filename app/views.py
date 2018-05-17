@@ -35,11 +35,11 @@ def user_loader(user_id):
 def index():
 	return render_template('index.html')
 
-@app.route('/preferences')
+
+@app.route('/preferences/')
 @login_required
 def preferences():
-	#return redirect('/preferences/clothing/suits')
-	return redirect('/preferences/clothing')
+	return redirect('/preferences/sizes')
 
 '''@app.route('/preferences/clothing/<category>')
 @login_required
@@ -64,9 +64,10 @@ def preferences_clothing(category):
 	else:
 		return redirect(404)'''
 
-@app.route('/preferences/clothing', methods=["GET", "POST"])
+
+@app.route('/preferences/sizes', methods=["GET", "POST"])
 @login_required
-def preferences_clothing():
+def clothing_preferences_settings():
 
 	user_sizes = get_user_sizes_join_with_all_possible(current_user)
 	user_subscribed_sizes = get_user_sizes_subscribed(current_user)
@@ -104,7 +105,31 @@ def preferences_clothing():
 
 		user_sizes = get_user_sizes_join_with_all_possible(current_user)
 
-	return render_template('/preferences/user_sizes.html', user_sizes=user_sizes)
+	return render_template('/preferences/user_sizes_settings.html', user_sizes=user_sizes)
+
+
+@app.route('/preferences/seller_subscriptions', methods=["GET"])
+@login_required
+def seller_subscription_settings():
+	return render_template('/preferences/seller_subscription_settings.html')
+
+
+@app.route('/preferences/notifications', methods=["GET"])
+@login_required
+def notification_settings():
+	return render_template('/preferences/notification_settings.html')
+
+
+@app.route('/preferences/account', methods=["GET"])
+@login_required
+def account_settings():
+	return render_template('/preferences/account_settings.html')
+
+
+@app.route('/preferences/password', methods=["GET"])
+@login_required
+def password_settings():
+	return render_template('/preferences/password_settings.html')
 
 
 @app.route('/login', methods=['GET', 'POST'])
