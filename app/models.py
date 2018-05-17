@@ -76,11 +76,36 @@ LinkUserSizeShirtCasual = db.Table(
 )
 
 
+class EbaySeller(db.model):
+	__tablename__ = 'ebay_sellers'
+	id = db.Column(db.Integer, primary_key=True)
+	seller_id = db.Column(db.Text(255))
+	db.UniqueConstraint('seller_id', name='uq_seller_id')
+
+	def __repr__(self):
+		return 'eBay seller id: "%r"' % (self.seller_id)
+
+
+LinkUserSubscribedSeller = db.Table(
+	'link_user_subscribed_seller',
+	db.Column('seller_id', db.Integer, db.ForeignKey('ebay_sellers.id')),
+	db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+	db.UniqueConstraint('seller_id', 'user_id', name='uq_seller_user_subscription')
+)
+
+
 class User(db.Model):
 
 	id = db.Column(db.Integer, primary_key=True)
 	email = db.Column(db.String(64), index=True, unique=True)
 	password_hash = db.Column(db.String(255))
+
+	subbed_sellers = db.relationship(
+		'EbaySeller',
+		secondary=LinkUserSubscribedSeller,
+		backref=db.backref('ebay_sellers', lazy='dynamic'),
+		collection_class=lambda: UniqueSet()
+	)
 
 	# user many-to-many size associations (using link tables)
 	sz_shirt_dress_sleeve = db.relationship(
@@ -203,13 +228,13 @@ class SizeKeyShirtCasual(db.Model):
 	def __repr__(self):
 		return 'Casual shirt size "%r" (long: "%r")' % (self.size, self.size_long)
 
+
 # Size Key Table dict
 model_directory_dict = {
 	'shirt-sleeve': SizeKeyShirtDressSleeve,
 	'shirt-neck': SizeKeyShirtDressNeck,
 	'shirt-casual': SizeKeyShirtCasual
 }
-
 
 
 
