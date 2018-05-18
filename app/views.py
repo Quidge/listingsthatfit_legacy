@@ -114,9 +114,18 @@ def clothing_preferences_settings():
 @app.route('/preferences/seller_subscriptions', methods=["GET"])
 @login_required
 def seller_subscription_settings():
-	user_subbed = [seller for seller in current_user.user_subbed]
+	subbed_sellers = []
+	for model in current_user.subbed_sellers:
+		seller_dict = {
+			"seller_id": model.seller_id,
+			"store_url": model.store_url,
+			"all_items_url": model.all_items_url
+		}
+		subbed_sellers.append(seller_dict)
 
-	return render_template('/preferences/seller_subscription_settings.html', user_subbed=user_subbed)
+	print(subbed_sellers[0])
+
+	return render_template('/preferences/seller_subscription_settings.html', user_subbed=subbed_sellers)
 
 
 @app.route('/preferences/notifications', methods=["GET"])

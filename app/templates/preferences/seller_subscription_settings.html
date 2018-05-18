@@ -6,24 +6,22 @@
 
 {% block prefpane %}
 	<div class="container-fluid">
-		{% if length(user_subbed) == 0 %}
+		{% if user_subbed|length == 0 %}
 			<div class="jumbotron">
 				<h4>You are not subscribed to any sellers.</h4>
 			</div>
 		{% else %}
 			<h4>Subscribed to:</h4>
-			<li>
-				<ul>
-					{% for s in user_subbed %}
-						<ul>
-							{{s.s_id}}
-							 [<a href="{{s.items_url}}">items</a>]
-							 {% if s.store_url is not None %}[<a href="{{s.store_url">store</a>]{% endif %}
-						</ul>
-					{% endfor %}
-
-
-
+			<ul>
+				{% for s in user_subbed %}
+					<li>
+						{{s.seller_id}}
+						 {% if s.all_items_url is not none %}[<a href="{{s.all_items_url}}">items</a>]{% endif %}
+						 {% if s.store_url is not none %}[<a href="{{s.store_url}}">store</a>]{% endif %}
+					</li>
+				{% endfor %}
+			</ul>
+		{% endif %}
 	</div>
 
 

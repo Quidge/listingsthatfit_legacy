@@ -79,8 +79,9 @@ LinkUserSizeShirtCasual = db.Table(
 class EbaySeller(db.Model):
 	__tablename__ = 'ebay_sellers'
 	id = db.Column(db.Integer, primary_key=True)
-	seller_id = db.Column(db.Text(255))
-	db.UniqueConstraint('seller_id', name='uq_seller_id')
+	seller_id = db.Column(db.Text(255), unique=True)
+	store_url = db.Column(db.Text(255), unique=False, nullable=True)
+	all_items_url = db.Column(db.Text(255), unique=False, nullable=True)
 
 	def __repr__(self):
 		return 'eBay seller id: "%r"' % (self.seller_id)
