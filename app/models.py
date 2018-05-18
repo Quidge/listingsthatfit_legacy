@@ -76,7 +76,7 @@ LinkUserSizeShirtCasual = db.Table(
 )
 
 
-class EbaySeller(db.model):
+class EbaySeller(db.Model):
 	__tablename__ = 'ebay_sellers'
 	id = db.Column(db.Integer, primary_key=True)
 	seller_id = db.Column(db.Text(255))

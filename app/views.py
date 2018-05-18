@@ -80,7 +80,10 @@ def clothing_preferences_settings():
 
 		''' Update process:
 			- Compose presence/lack of input values from form AND user_sizes to build a dict with the NEW updated values.
-				- update dict format is {size_cat: {size_specific: [list of values]}} 	
+				- update dict format is:
+					{size_specific: [list of values],
+					...,
+					next_size_specific: [list of values]}
 			--		
 			IF differences detected between user_sizes and new sizes, then proceed
 			--
@@ -111,7 +114,9 @@ def clothing_preferences_settings():
 @app.route('/preferences/seller_subscriptions', methods=["GET"])
 @login_required
 def seller_subscription_settings():
-	return render_template('/preferences/seller_subscription_settings.html')
+	user_subbed = [seller for seller in current_user.user_subbed]
+
+	return render_template('/preferences/seller_subscription_settings.html', user_subbed=user_subbed)
 
 
 @app.route('/preferences/notifications', methods=["GET"])
