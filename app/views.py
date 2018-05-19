@@ -123,8 +123,6 @@ def seller_subscription_settings():
 		}
 		subbed_sellers.append(seller_dict)
 
-	print(subbed_sellers[0])
-
 	return render_template('/preferences/seller_subscription_settings.html', user_subbed=subbed_sellers)
 
 
