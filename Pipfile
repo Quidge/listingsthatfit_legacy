@@ -16,6 +16,7 @@ flask-login = "*"
 flask-wtf = "*"
 wtforms = "*"
 alembic = "*"
+ebaysdk = "*"
 
 
 [dev-packages]
