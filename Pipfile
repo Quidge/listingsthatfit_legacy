@@ -17,6 +17,7 @@ flask-wtf = "*"
 wtforms = "*"
 alembic = "*"
 ebaysdk = "*"
+requests = "*"
 
 
 [dev-packages]
