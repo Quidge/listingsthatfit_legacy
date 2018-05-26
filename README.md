@@ -21,3 +21,22 @@ Roadmap
     * Subscribed sellers
     * Notification schedule 
 4. Have a MVP for the site I've wanted to build since 2014
+
+# Rough MVP todo (I actually update this)
+---
+* [X] BeautifulSoup patterns to match sportcoat measurement templates
+* [sorta] measurementType model
+* [X] measurements link table
+* [ ] fully flesh out items table
+* [ ] script to scour template using BS and create item entry
+* [ ] script to pull down all items and create entries for items
+* [ ] script to update items table once items have expired
+* [ ] add user measurements (+ tolerances) to user model
+* [ ] UI to add measurements (+ tolerances) to user account
+* [ ] query to search for all items that match user measurements
+* [ ] query to search for all items that match user sizes
+* [ ] UI display for all matches (sizes and measurements)
+* [ ] email functionality
+* [ ] buy URL
+* [ ] deploy to server
+* [ ] link URL to server
