@@ -1,8 +1,29 @@
 import app.models
 from app import db
 from app.dbtouch import get_user_sizes_subscribed
+import re
+from decimal import Decimal
 
 SUPPORTED_CLOTHING = ['suits', 'sportcoats', 'shirts', 'shoes', 'outerwear', 'pants']
+
+
+def str_dec_to_dec_type(str_with_dec_value):
+	"""Uses regex pattern \[\d.]+\ to find first instance of a decimal number.
+	Converts that string instance to a Decimal and returns that decimal number.
+
+	Parameters
+	----------
+	str_with_dec_value : str
+
+	Returns
+	-------
+	decimal : Decimal
+
+	"""
+	digit_pattern = re.compile('[\d.]+')
+	decimal_string = re.search(digit_pattern, str_with_dec_value).group(0)
+	decimal = Decimal(decimal_string)
+	return decimal
 
 
 def int_to_decimal(integer):

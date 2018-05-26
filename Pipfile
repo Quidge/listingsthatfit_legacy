@@ -18,6 +18,7 @@ wtforms = "*"
 alembic = "*"
 ebaysdk = "*"
 requests = "*"
+"bs4" = "*"
 
 
 [dev-packages]
