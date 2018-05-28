@@ -20,7 +20,7 @@ def upgrade():
 	op.create_table(
 		'measurement_types',
 		sa.Column('id', sa.Integer, primary_key=True),
-		sa.Column('type', sa.Text(80), unique=True)
+		sa.Column('type_name', sa.Text(80), unique=True)
 	)
 
 	op.create_table(

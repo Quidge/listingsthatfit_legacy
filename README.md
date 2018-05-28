@@ -23,7 +23,6 @@ Roadmap
 4. Have a MVP for the site I've wanted to build since 2014
 
 # Rough MVP todo (I actually update this)
----
 * [X] BeautifulSoup patterns to match sportcoat measurement templates
 * [sorta] measurementType model
 * [X] measurements link table

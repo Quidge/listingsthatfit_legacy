@@ -19,6 +19,7 @@ alembic = "*"
 ebaysdk = "*"
 requests = "*"
 "bs4" = "*"
+"iso8601" = "*"
 
 
 [dev-packages]

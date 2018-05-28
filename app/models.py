@@ -204,6 +204,52 @@ class User(db.Model):
 			self.id, self.email, self.password_hash)
 
 
+class ItemMeasurementAssociation(db.Model):
+	__tablename__ = 'link_measurement_values_types'
+	measurement_id = db.Column(db.Integer, db.ForeignKey('measurement_types.id'), primary_key=True)
+	ebay_item = db.Column(db.Integer, db.ForeignKey('ebay_items.id'), primary_key=True)
+	measurement_value = db.Column(db.Integer)
+
+	measurement_type = db.relationship('MeasurementType')
+
+'''
+LinkMeasurementValueTypes = db.Table(
+	'link_measurement_values_types',
+	db.Column('measurement_id', db.Integer),
+	db.Column('ebay_item_id', db.Integer),
+	db.Column('measurement_value', db.Integer)
+)'''
+
+
+class MeasurementType(db.Model):
+	__tablename__ = 'measurement_types'
+	id = db.Column(db.Integer, primary_key=True)
+	type_name = db.Column(db.Text, unique=True)
+
+	def __repr__(self):
+		return 'type_id: %r, type_name: %r' % (self.id, self.type_name)
+
+
+class Item(db.Model):
+	__tablename__ = 'ebay_items'
+	id = db.Column(db.Integer, primary_key=True)
+	ebay_item_id = db.Column(db.Integer, unique=False)  # explicitely False
+	end_date = db.Column(db.DateTime)
+	last_access_date = db.Column(db.DateTime)
+	ebay_title = db.Column(db.Text(80))
+	ebay_primary_category_id = db.Column(db.Integer)
+	current_price = db.Column(db.Integer)
+	ebay_URL = db.Column(db.Text)
+	ebay_affiliate_url = db.Column(db.Text)
+
+	measurements = db.relationship('ItemMeasurementAssociation')
+	# sizes = None  # An association of all the sizes (and types) for this listing
+
+	def __repr__(self):
+		return 'ebay_id: %r, ebay_title: %r..., end_date: %r, last_access_date: %r' % (
+			self.ebay_item_id, self.ebay_title[:20], self.end_date, self.last_access_date)
+
+
 # Size Key Tables
 class SizeKeyShirtDressSleeve(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
