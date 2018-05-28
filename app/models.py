@@ -215,14 +215,6 @@ class ItemMeasurementAssociation(db.Model):
 	def __repr__(self):
 		return '<%r, %r>' % (self.measurement_type, self.measurement_value)
 
-'''
-LinkMeasurementValueTypes = db.Table(
-	'link_measurement_values_types',
-	db.Column('measurement_id', db.Integer),
-	db.Column('ebay_item_id', db.Integer),
-	db.Column('measurement_value', db.Integer)
-)'''
-
 
 class MeasurementType(db.Model):
 	__tablename__ = 'measurement_types'
