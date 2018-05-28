@@ -224,10 +224,14 @@ LinkMeasurementValueTypes = db.Table(
 class MeasurementType(db.Model):
 	__tablename__ = 'measurement_types'
 	id = db.Column(db.Integer, primary_key=True)
-	type_name = db.Column(db.Text(), unique=True)
+	attribute = db.Column(db.Text())
+	clothing_category = db.Column(db.Text())
+	# There's also a combined UniqueConstraint set on attribute and clothing_combined.
+	# I don't know how to represent that in the class.
 
 	def __repr__(self):
-		return 'type_id: %r, type_name: %r' % (self.id, self.type_name)
+		return 'id: %r, clothing_category: %r, attribute: %r' % (
+			self.id, self.clothing_category, self.attribute)
 
 
 class Item(db.Model):
