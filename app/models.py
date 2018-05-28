@@ -224,7 +224,7 @@ LinkMeasurementValueTypes = db.Table(
 class MeasurementType(db.Model):
 	__tablename__ = 'measurement_types'
 	id = db.Column(db.Integer, primary_key=True)
-	type_name = db.Column(db.Text, unique=True)
+	type_name = db.Column(db.Text(), unique=True)
 
 	def __repr__(self):
 		return 'type_id: %r, type_name: %r' % (self.id, self.type_name)
@@ -239,8 +239,8 @@ class Item(db.Model):
 	ebay_title = db.Column(db.Text(80))
 	ebay_primary_category_id = db.Column(db.Integer)
 	current_price = db.Column(db.Integer)
-	ebay_URL = db.Column(db.Text)
-	ebay_affiliate_url = db.Column(db.Text)
+	ebay_url = db.Column(db.Text())
+	ebay_affiliate_url = db.Column(db.Text())
 
 	measurements = db.relationship('ItemMeasurementAssociation')
 	# sizes = None  # An association of all the sizes (and types) for this listing
