@@ -212,6 +212,9 @@ class ItemMeasurementAssociation(db.Model):
 
 	measurement_type = db.relationship('MeasurementType')
 
+	def __repr__(self):
+		return '<%r, %r>' % (self.measurement_type, self.measurement_value)
+
 '''
 LinkMeasurementValueTypes = db.Table(
 	'link_measurement_values_types',
@@ -230,7 +233,7 @@ class MeasurementType(db.Model):
 	# I don't know how to represent that in the class.
 
 	def __repr__(self):
-		return 'id: %r, clothing_category: %r, attribute: %r' % (
+		return '<id: %r, clothing_category: %r, attribute: %r>' % (
 			self.id, self.clothing_category, self.attribute)
 
 
@@ -250,8 +253,8 @@ class Item(db.Model):
 	# sizes = None  # An association of all the sizes (and types) for this listing
 
 	def __repr__(self):
-		return 'ebay_id: %r, ebay_title: %r..., end_date: %r, last_access_date: %r' % (
-			self.ebay_item_id, self.ebay_title[:20], self.end_date, self.last_access_date)
+		return '<ebay_id: %r, ebay_title: %r..., end_date: %r, last_access_date: %r>' % (
+			self.ebay_item_id, self.ebay_title, self.end_date, self.last_access_date)
 
 
 # Size Key Tables
