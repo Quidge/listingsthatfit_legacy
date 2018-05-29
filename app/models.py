@@ -83,6 +83,8 @@ class EbaySeller(db.Model):
 	store_url = db.Column(db.Text(255), unique=False, nullable=True)
 	all_items_url = db.Column(db.Text(255), unique=False, nullable=True)
 
+	items = db.relationship('Item', back_populates='seller')
+
 	def __repr__(self):
 		return 'eBay seller id: "%r"' % (self.seller_id)
 
@@ -240,6 +242,9 @@ class Item(db.Model):
 	current_price = db.Column(db.Integer)
 	ebay_url = db.Column(db.Text())
 	ebay_affiliate_url = db.Column(db.Text())
+
+	seller_id = db.Column(db.Integer, db.ForeignKey('ebay_sellers.id'))
+	seller = db.relationship('seller', back_populates='items')
 
 	measurements = db.relationship('ItemMeasurementAssociation')
 	# sizes = None  # An association of all the sizes (and types) for this listing

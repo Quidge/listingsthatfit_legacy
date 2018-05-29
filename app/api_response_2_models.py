@@ -52,7 +52,10 @@ def build_item_from_response(
 		raise
 
 	if clothing_cat == 3002:
-		item = build_sportcoat_item(single_item_response, item_description_present, item_description_present)
+		item = build_sportcoat_item(
+			single_item_response,
+			item_description_present=item_description_present,
+			item_specifics_present=item_specifics_present)
 	else:
 		raise BaseException('eBay item is not recognized')
 
