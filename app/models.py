@@ -250,7 +250,8 @@ class Item(db.Model):
 	seller_id = db.Column(db.Integer, db.ForeignKey('ebay_sellers.id'))
 	seller = db.relationship('EbaySeller', back_populates='items')
 
-	measurements = db.relationship('ItemMeasurementAssociation')
+	measurements = db.relationship(
+		'ItemMeasurementAssociation', cascade="all, delete-orphan")
 	# sizes = None  # An association of all the sizes (and types) for this listing
 
 	def __repr__(self):
