@@ -24,7 +24,7 @@ Roadmap
 
 # Rough MVP todo (I actually update this)
 * [X] BeautifulSoup patterns to match sportcoat measurement templates
-* [sorta] measurementType model
+* [X] measurementType model
 * [X] measurements link table
 * [X] fully flesh out items table
 * [X] script to scour template using BS and create item entry (only sportcoats for now)
