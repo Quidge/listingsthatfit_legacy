@@ -26,8 +26,8 @@ Roadmap
 * [X] BeautifulSoup patterns to match sportcoat measurement templates
 * [sorta] measurementType model
 * [X] measurements link table
-* [ ] fully flesh out items table
-* [ ] script to scour template using BS and create item entry
+* [X] fully flesh out items table
+* [X] script to scour template using BS and create item entry (only sportcoats for now)
 * [ ] script to pull down all items and create entries for items
 * [ ] script to update items table once items have expired
 * [ ] add user measurements (+ tolerances) to user model
