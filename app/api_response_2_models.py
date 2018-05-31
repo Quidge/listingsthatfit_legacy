@@ -100,8 +100,3 @@ def build_pants_item(
 	pass
 
 
-def build_pants_item(
-	single_item_response,
-	item_description_present=False,
-	item_specifics_present=False):
-	pass

@@ -2,13 +2,13 @@ from app.utils import str_dec_to_dec_type
 from bs4 import BeautifulSoup
 
 
-def get_sportcoat_measurements(html_template):
+def get_sportcoat_measurements(html_description):
 	"""Parses a sportcoat listing from seller balearic1 and returns the measurements
 	as a dict.
 
 	Parameters
 	----------
-	html_template : string
+	html_description : string
 
 	Returns
 	-------
@@ -25,7 +25,7 @@ def get_sportcoat_measurements(html_template):
 			# listing * 1000 and converted to integer
 	"""
 
-	soup = BeautifulSoup(html_template, 'html.parser')
+	soup = BeautifulSoup(html_description, 'html.parser')
 
 	data = (
 		soup

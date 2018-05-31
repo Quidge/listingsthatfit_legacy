@@ -86,7 +86,7 @@ class EbaySeller(db.Model):
 	items = db.relationship('Item', back_populates='seller')
 
 	def __repr__(self):
-		return 'eBay seller id: "%r"' % (self.seller_id)
+		return '<eBay seller id: %r>' % (self.seller_id)
 
 
 LinkUserSubscribedSeller = db.Table(
@@ -209,7 +209,9 @@ class User(db.Model):
 class ItemMeasurementAssociation(db.Model):
 	__tablename__ = 'link_measurement_values_types'
 	measurement_id = db.Column(db.Integer, db.ForeignKey('measurement_types.id'), primary_key=True)
-	ebay_item = db.Column(db.Integer, db.ForeignKey('ebay_items.id'), primary_key=True)
+
+	# ebay_item_id is a confusing name. This refers to the items table internal id, NOT ebay's item id.
+	ebay_item_id = db.Column(db.Integer, db.ForeignKey('ebay_items.id'), primary_key=True)
 	measurement_value = db.Column(db.Integer)
 
 	measurement_type = db.relationship('MeasurementType')
@@ -225,6 +227,8 @@ class MeasurementType(db.Model):
 	clothing_category = db.Column(db.Text())
 	# There's also a combined UniqueConstraint set on attribute and clothing_combined.
 	# I don't know how to represent that in the class.
+
+	SUPPORTED_CATEGORIES_EBAY_VALUES = {3002: 'sportcoat'}
 
 	def __repr__(self):
 		return '<id: %r, clothing_category: %r, attribute: %r>' % (
@@ -244,14 +248,14 @@ class Item(db.Model):
 	ebay_affiliate_url = db.Column(db.Text())
 
 	seller_id = db.Column(db.Integer, db.ForeignKey('ebay_sellers.id'))
-	seller = db.relationship('seller', back_populates='items')
+	seller = db.relationship('EbaySeller', back_populates='items')
 
 	measurements = db.relationship('ItemMeasurementAssociation')
 	# sizes = None  # An association of all the sizes (and types) for this listing
 
 	def __repr__(self):
 		return '<ebay_id: %r, ebay_title: %r..., end_date: %r, last_access_date: %r>' % (
-			self.ebay_item_id, self.ebay_title, self.end_date, self.last_access_date)
+			self.ebay_item_id, self.ebay_title, str(self.end_date), str(self.last_access_date))
 
 
 # Size Key Tables
