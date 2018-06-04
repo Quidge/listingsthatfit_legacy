@@ -7,4 +7,5 @@ temp_test.db
 test_env.py
 test_env2.py
 test_env3.py
+test_env4.py
 populate_size_types.py
