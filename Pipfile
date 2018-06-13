@@ -1,16 +1,12 @@
 [[source]]
-
-url = "https://pypi.python.org/simple"
+url = "https://pypi.org/simple"
 verify_ssl = true
 name = "pypi"
 
-
 [packages]
-
+"psycopg2" = "*"
 flask = "*"
 flask-sqlalchemy = "*"
-sqlalchemy = "*"
-sqlalchemy-migrate = "*"
 flask-session = "*"
 flask-login = "*"
 flask-wtf = "*"
@@ -22,6 +18,7 @@ requests = "*"
 "iso8601" = "*"
 celery = "*"
 
-
 [dev-packages]
 
+[requires]
+python_version = "3.6"
