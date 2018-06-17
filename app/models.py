@@ -37,7 +37,7 @@ class UniqueSet(object):
 
 # Link Tables
 LinkUserSizeShirtDressSleeve = db.Table(
-	'link_user_size_shirt_dress_sleeve',
+	'link_user_accounts_size_shirt_dress_sleeve',
 	db.Column(
 		'size_id',
 		db.Integer,
@@ -45,12 +45,12 @@ LinkUserSizeShirtDressSleeve = db.Table(
 	db.Column(
 		'user_id',
 		db.Integer,
-		db.ForeignKey('user.id'), primary_key=True),
+		db.ForeignKey('user_accounts.id'), primary_key=True),
 	sa.UniqueConstraint('size_id', 'user_id', name='uq_association')
 )
 
 LinkUserSizeShirtDressNeck = db.Table(
-	'link_user_size_shirt_dress_neck',
+	'link_user_accounts_size_shirt_dress_neck',
 	db.Column(
 		'size_id',
 		db.Integer,
@@ -58,12 +58,12 @@ LinkUserSizeShirtDressNeck = db.Table(
 	db.Column(
 		'user_id',
 		db.Integer,
-		db.ForeignKey('user.id'), primary_key=True),
+		db.ForeignKey('user_accounts.id'), primary_key=True),
 	sa.UniqueConstraint('size_id', 'user_id', name='uq_association')
 )
 
 LinkUserSizeShirtCasual = db.Table(
-	'link_user_size_shirt_casual',
+	'link_user_accounts_size_accounts_shirt_casual',
 	db.Column(
 		'size_id',
 		db.Integer,
@@ -71,7 +71,7 @@ LinkUserSizeShirtCasual = db.Table(
 	db.Column(
 		'user_id',
 		db.Integer,
-		db.ForeignKey('user.id'), primary_key=True),
+		db.ForeignKey('user_accounts.id'), primary_key=True),
 	sa.UniqueConstraint('size_id', 'user_id', name='uq_association')
 )
 
@@ -79,26 +79,26 @@ LinkUserSizeShirtCasual = db.Table(
 class EbaySeller(db.Model):
 	__tablename__ = 'ebay_sellers'
 	id = db.Column(db.Integer, primary_key=True)
-	seller_id = db.Column(db.Text(255), unique=True)
+	ebay_seller_id = db.Column(db.Text(255), unique=True)
 	store_url = db.Column(db.Text(255), unique=False, nullable=True)
 	all_items_url = db.Column(db.Text(255), unique=False, nullable=True)
 
 	items = db.relationship('Item', back_populates='seller')
 
 	def __repr__(self):
-		return '<eBay seller id: %r>' % (self.seller_id)
+		return '<eBay seller id: %r>' % (self.ebay_seller_id)
 
 
 LinkUserSubscribedSeller = db.Table(
-	'link_user_subscribed_seller',
+	'link_user_accounts_subscribed_seller',
 	db.Column('seller_id', db.Integer, db.ForeignKey('ebay_sellers.id')),
-	db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
-	db.UniqueConstraint('seller_id', 'user_id', name='uq_seller_user_subscription')
+	db.Column('user_accounts_id', db.Integer, db.ForeignKey('user_accounts.id')),
+	db.UniqueConstraint('seller_id', 'user_accounts_id', name='uq_seller_user_subscription')
 )
 
 
 class User(db.Model):
-
+	__tablename__ = 'user_accounts'
 	id = db.Column(db.Integer, primary_key=True)
 	email = db.Column(db.String(64), index=True, unique=True)
 	password_hash = db.Column(db.String(255))
@@ -208,10 +208,10 @@ class User(db.Model):
 
 class ItemMeasurementAssociation(db.Model):
 	__tablename__ = 'link_measurement_values_types'
-	measurement_id = db.Column(db.Integer, db.ForeignKey('measurement_types.id'), primary_key=True)
+	fk_measurement_id = db.Column(db.Integer, db.ForeignKey('measurement_types.id'), primary_key=True)
 
 	# ebay_item_id is a confusing name. This refers to the items table internal id, NOT ebay's item id.
-	ebay_item_id = db.Column(db.Integer, db.ForeignKey('ebay_items.id'), primary_key=True)
+	fk_ebay_items_id = db.Column(db.BigInteger, db.ForeignKey('ebay_items.id'), primary_key=True)
 	measurement_value = db.Column(db.Integer)
 
 	measurement_type = db.relationship('MeasurementType')
@@ -238,16 +238,16 @@ class MeasurementType(db.Model):
 class Item(db.Model):
 	__tablename__ = 'ebay_items'
 	id = db.Column(db.Integer, primary_key=True)
-	ebay_item_id = db.Column(db.Integer, unique=False)  # explicitely False
-	end_date = db.Column(db.DateTime)
-	last_access_date = db.Column(db.DateTime)
-	ebay_title = db.Column(db.Text(80))
-	ebay_primary_category_id = db.Column(db.Integer)
+	ebay_item_id = db.Column(db.BigInteger, unique=False, nullable=False)  # explicitely False
+	end_date = db.Column(db.DateTime, nullable=False)
+	last_access_date = db.Column(db.DateTime, nullable=False)
+	ebay_title = db.Column(db.Text(), nullable=False)
+	ebay_primary_category = db.Column(db.Integer)
 	current_price = db.Column(db.Integer)
 	ebay_url = db.Column(db.Text())
 	ebay_affiliate_url = db.Column(db.Text())
 
-	seller_id = db.Column(db.Integer, db.ForeignKey('ebay_sellers.id'))
+	internal_seller_id = db.Column(db.Integer, db.ForeignKey('ebay_sellers.id'), nullable=False)
 	seller = db.relationship('EbaySeller', back_populates='items')
 
 	measurements = db.relationship(
@@ -255,7 +255,7 @@ class Item(db.Model):
 	# sizes = None  # An association of all the sizes (and types) for this listing
 
 	def __repr__(self):
-		return '<ebay_id: %r, ebay_title: %r..., end_date: %r, last_access_date: %r>' % (
+		return '<ebay_item_id: %r, ebay_title: %r..., end_date: %r, last_access_date: %r>' % (
 			self.ebay_item_id, self.ebay_title, str(self.end_date), str(self.last_access_date))
 
 
@@ -278,11 +278,10 @@ class SizeKeyShirtDressNeck(db.Model):
 
 class SizeKeyShirtCasual(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
-	size = db.Column(db.Text(6), unique=True)
-	size_long = db.Column(db.Text(20), unique=True)
+	size = db.Column(db.Text(), unique=True)
 
 	def __repr__(self):
-		return 'Casual shirt size "%r" (long: "%r")' % (self.size, self.size_long)
+		return 'Casual shirt size "%r"' % (self.size)
 
 
 # Size Key Table dict

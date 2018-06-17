@@ -32,7 +32,10 @@ def gather_measurement_models_from_html_desc(
 	measurements_dict = utils.parse_html_for_measurements(
 		html_description, ebay_category_id, internal_seller_id)
 
+	# print(measurements_dict)
+
 	cat_name = MeasurementType.SUPPORTED_CATEGORIES_EBAY_VALUES[ebay_category_id]
+	print(cat_name)
 
 	measurement_models = []
 	for key, value in measurements_dict.items():
@@ -41,6 +44,7 @@ def gather_measurement_models_from_html_desc(
 			attribute=key,
 			measurement_value=value)
 		measurement_models.append(association)
+		print(association)
 
 	return measurement_models
 
@@ -60,12 +64,16 @@ def build_item_measurement(
 		measurement_type = MeasurementType.query.filter(
 			MeasurementType.clothing_category == clothing_cat_string_name,
 			MeasurementType.attribute == attribute).one()
-	except NoResultFound:
-		raise NoResultFound
+	except NoResultFound as e:
+		raise e
 
-	association = ItemMeasurementAssociation(
-		measurement_type=measurement_type,
-		measurement_value=measurement_value)
+	try:
+		association = ItemMeasurementAssociation(
+			measurement_type=measurement_type,
+			measurement_value=measurement_value)
+	except BaseException:
+		print('Item Measurement failed to associate')
+		raise
 
 	return association
 
@@ -82,7 +90,7 @@ def build_ebay_item_model(
 
 	try:
 		assert ebay_seller_id is not None
-		seller = EbaySeller.query.filter(EbaySeller.seller_id == ebay_seller_id).one()
+		seller = EbaySeller.query.filter(EbaySeller.ebay_seller_id == ebay_seller_id).one()
 	except AssertionError:
 		raise ValueError('ebay_seller_id not provided')
 	except NoResultFound:
@@ -102,7 +110,7 @@ def build_ebay_item_model(
 	m.ebay_item_id = int(r['ItemID'])
 	m.end_date = datetime.strptime(r['EndTime'], '%Y-%m-%dT%H:%M:%S.%fZ')
 	m.ebay_title = r['Title']
-	m.ebay_primary_category_id = int(r['PrimaryCategoryID'])
+	m.ebay_primary_category = int(r['PrimaryCategoryID'])
 	m.current_price = int(decimal.Decimal(r['ConvertedCurrentPrice']['value']) * 100)
 	m.ebay_url = r['ViewItemURLForNaturalSearch']
 	m.ebay_affiliate_url = affiliate_url
@@ -113,7 +121,7 @@ def build_ebay_item_model(
 		except KeyError:
 			raise KeyError('No HTML description found in response')
 		measurement_models = gather_measurement_models_from_html_desc(
-			html_desc, m.ebay_primary_category_id, seller.id)
+			html_desc, m.ebay_primary_category, seller.id)
 
 		# damn, list comprehensions are cool
 		[m.measurements.append(model) for model in measurement_models]

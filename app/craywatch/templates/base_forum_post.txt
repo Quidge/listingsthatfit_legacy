@@ -1,0 +1,6 @@
+[SIZE=6][COLOR=#660000]CRAYWATCH[/COLOR][/SIZE]
+{% block body %}
+	{% for item in items %}
+		{{item.title}} {{item.price}}
+	{% endfor %}
+{% endblock %}

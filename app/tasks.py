@@ -74,7 +74,8 @@ def lookup_single_item(ebay_item_id, html_description=False):
 	#	""".format(ebay_item_id, html_description))
 	payload = {'ItemID': ebay_item_id}
 	if html_description:
-		setattr(payload, 'IncludeSelector', 'Description')
+		# setattr(payload, 'IncludeSelector', 'Description')
+		payload['IncludeSelector'] = 'Description'
 	try:
 		response = s_api.execute('GetSingleItem', payload)
 	except ConnectionError:
@@ -152,7 +153,10 @@ def add_new_items_from_seller_to_db(
 
 
 def lookup_item_and_add(ebay_item_id):
-	workflow = chain(lookup_single_item.s(ebay_item_id), create_item_model.s(ebay_seller_id='balearic1'))
+	workflow = chain(
+		lookup_single_item.s(ebay_item_id, html_description=True),
+		create_item_model.s(ebay_seller_id='balearic1', with_measurements=True)
+	)
 	return workflow()
 
 
