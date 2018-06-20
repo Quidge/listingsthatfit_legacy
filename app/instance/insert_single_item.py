@@ -20,6 +20,19 @@ item_id = 362353925503
 #r_json = r.json()
 #print(r_json)
 
-def get_item():
-	r = s_api.execute('GetSingleItem', {'ItemID': item_id})
+def get_item(ebay_item_id, with_measurements=False):
+	payload = {'ItemID': ebay_item_id}
+	if with_measurements:
+		payload['IncludeSelector'] = 'Description'
+	r = s_api.execute('GetSingleItem', payload)
 	return r.json()
+
+def get_item_and_build_model(ebay_item_id, with_measurements=False, ebay_seller_id='balearic1'):
+	response = get_item(ebay_item_id, with_measurements)
+	model = build_ebay_item_model(
+		loads(response),
+		ebay_seller_id=ebay_seller_id,
+		with_measurements=with_measurements)
+	return model
+
+

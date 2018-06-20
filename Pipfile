@@ -17,8 +17,6 @@ requests = "*"
 "bs4" = "*"
 "iso8601" = "*"
 celery = "*"
+"jinja2" = "*"
 
 [dev-packages]
-
-[requires]
-python_version = "3.6"

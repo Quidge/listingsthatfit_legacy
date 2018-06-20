@@ -82,11 +82,25 @@ class EbaySeller(db.Model):
 	ebay_seller_id = db.Column(db.Text(255), unique=True)
 	store_url = db.Column(db.Text(255), unique=False, nullable=True)
 	all_items_url = db.Column(db.Text(255), unique=False, nullable=True)
+	
+	template_parser_id = db.Column(db.Integer, db.ForeignKey('template_parser.template_parser_id'))
+	template_parser = db.relationship('TemplateParser', back_populates='sellers')
 
 	items = db.relationship('Item', back_populates='seller')
 
 	def __repr__(self):
 		return '<eBay seller id: %r>' % (self.ebay_seller_id)
+
+
+class TemplateParser(db.Model):
+	__tablename__ = 'template_parser'
+	template_parser_id = db.Column(db.Integer, primary_key=True)
+	file_name_number = db.Column(db.Integer)
+	parser_file_description = db.Column(sa.String(140))
+	sellers = db.relationship('EbaySeller', back_populates='template_parser')
+
+	def __repr__(self):
+		return 'file_name_number: <{}> description: <"{}">'.format(self.file_name_number, self.parser_file_description)
 
 
 LinkUserSubscribedSeller = db.Table(

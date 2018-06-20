@@ -1,0 +1,7 @@
+[SIZE=6][COLOR=#660000][B]TITLE[/B][/COLOR][/SIZE]
+[SIZE=2][B]------------[/B][/SIZE]
+[COLOR=#0059b3][URL='https://nowhere'][B]Lorem ipsum dolor sit amet, consectetuer adipiscing elit. commodo ligula[/B][/URL][/COLOR] [B][COLOR=#00b359]$8281.84[/COLOR][/B]
+[URL='https://nowhere'][B]Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula[/B][/URL] [COLOR=#00b359][B]$661.00[/B][/COLOR]
+[COLOR=#0059b3][URL='https://nowhere'][B]Lorem ipsum dolor sit amet, consectetuer shortest title[/B][/URL][/COLOR] [COLOR=#00b359][B]$1228.77[/B][/COLOR]
+[URL='https://nowhere'][COLOR=#0059b3][B]Lorem ipsum dolor sit amet, consectetuer longer title by a little[/B][/COLOR][/URL] [COLOR=#00b359][B]$312.00[/B][/COLOR]
+[B][COLOR=#0059b3]Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean aggressively long[/COLOR][/B] [COLOR=#00b359][B]$1705.50[/B][/COLOR]

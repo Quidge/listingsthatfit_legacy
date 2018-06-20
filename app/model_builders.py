@@ -8,7 +8,7 @@ import decimal
 def gather_measurement_models_from_html_desc(
 	html_description,
 	ebay_category_id,
-	internal_seller_id):
+	parser_file_num):
 	"""Return a list of ItemMeasurementAssociation models, built from the
 	html_description param. The item association on these models is unset.
 
@@ -16,7 +16,7 @@ def gather_measurement_models_from_html_desc(
 	----------
 	html_description : str
 	ebay_category_id : int
-	internal_seller_id : int
+	parser_file_num : int
 		This is the primary id for an entry in the ebay_sellers table.
 
 	Returns
@@ -30,7 +30,7 @@ def gather_measurement_models_from_html_desc(
 			'Parsing for ebay_category_id <{}> not supported'.format(ebay_category_id))
 
 	measurements_dict = utils.parse_html_for_measurements(
-		html_description, ebay_category_id, internal_seller_id)
+		html_description, ebay_category_id, parser_file_num)
 
 	# print(measurements_dict)
 
@@ -120,8 +120,16 @@ def build_ebay_item_model(
 			html_desc = r['Description']
 		except KeyError:
 			raise KeyError('No HTML description found in response')
+		try:
+			assert seller.template_parser != None
+		except AssertionError:
+			raise ValueError('No template parser associated with <{}>'.format(seller.ebay_seller_id))
+		try:
+			parser_file_num = seller.template_parser.file_name_number
+		except:
+			raise
 		measurement_models = gather_measurement_models_from_html_desc(
-			html_desc, m.ebay_primary_category, seller.id)
+			html_desc, m.ebay_primary_category, parser_file_num)
 
 		# damn, list comprehensions are cool
 		[m.measurements.append(model) for model in measurement_models]

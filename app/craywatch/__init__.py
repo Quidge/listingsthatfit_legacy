@@ -1,4 +1,9 @@
 from ebaysdk.finding import Connection as Finding
+from jinja2 import Environment, PackageLoader
+
+jinja_env = Environment(
+	loader=PackageLoader('craywatch', 'templates')
+)
 
 finding_connection = Finding(
 	domain="svcs.ebay.com",

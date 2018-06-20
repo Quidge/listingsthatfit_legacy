@@ -1,0 +1,13 @@
+category: sportcoat | items sold: 389 | mean price: 69.50359897172236503856041131 | value at .90 percentile: 153.5 
+category: dress_shirt | items sold: 528 | mean price: 40.30094696969696969696969697 | value at .90 percentile: 80.0 
+category: casual_shirt | items sold: 141 | mean price: 44.94964539007092198581560284 | value at .90 percentile: 88.85 
+category: tie | items sold: 1085 | mean price: 40.18466359447004608294930876 | value at .90 percentile: 76.0 
+category: sweater | items sold: 505 | mean price: 106.6700396039603960396039604 | value at .90 percentile: 255.0 
+category: coats_and_jacket | items sold: 283 | mean price: 137.9487279151943462897526502 | value at .90 percentile: 316.11 
+category: pant | items sold: 262 | mean price: 50.61694656488549618320610687 | value at .90 percentile: 106.25 
+category: jeans | items sold: 61 | mean price: 57.33081967213114754098360656 | value at .90 percentile: 111.0 
+category: suit | items sold: 188 | mean price: 126.4762765957446808510638298 | value at .90 percentile: 305.0 
+category: vest | items sold: 62 | mean price: 44.86177419354838709677419355 | value at .90 percentile: 78.77 
+category: sleepwear_and_robe | items sold: 14 | mean price: 67.46857142857142857142857143 | value at .90 percentile: 142.5 
+category: swimwear | items sold: 1 | mean price: 11.51 | value at .90 percentile: 11.51 
+category: dress_shoes | items sold: 186 | mean price: 212.2885483870967741935483871 | value at .90 percentile: 520.0 

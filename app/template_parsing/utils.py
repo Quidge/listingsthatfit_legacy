@@ -4,7 +4,7 @@ from importlib import import_module
 def parse_html_for_measurements(
 	item_html_description,
 	clothing_category_id,
-	seller_id_num):
+	parser_file_id_num):
 	"""Takes html_description and seller_id number and returns a dictionary object of
 	measurements.
 
@@ -26,7 +26,7 @@ def parse_html_for_measurements(
 			}
 	"""
 	try:
-		module_name = 'seller_id_{}'.format(seller_id_num)
+		module_name = 'parser_id_{}'.format(parser_file_id_num)
 		measurements_parser = import_module('app.template_parsing.seller_patterns.{}'.format(module_name))
 	except ImportError:
 		raise

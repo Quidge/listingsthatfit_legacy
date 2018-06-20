@@ -5,13 +5,13 @@ from ebaysdk.exception import PaginationLimit
 
 def strip_prices_from_items_dict(items_dict, num_format='decimal'):
 	prices = []
-	if num_format is 'decimal':
+	if num_format == 'decimal':
 		prices = [Decimal(i['sellingStatus']['currentPrice']['value']) for i in items_dict]
-	elif num_format is 'integer':
+	elif num_format == 'integer':
 		price = [int(Decimal(i['sellingStatus']['currentPrice']['value']) * 100) for i in items_dict]
 	else:
 		raise ValueError(
-			'<num_format> parameter must be either "decimal" or "integer". Passed <{}>'.format(num_format))
+			'<num_format> arguement must be either "decimal" or "integer". Passed <{}>'.format(num_format))
 	return prices
 
 

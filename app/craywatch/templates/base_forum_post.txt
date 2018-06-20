@@ -1,6 +1,6 @@
-[SIZE=6][COLOR=#660000]CRAYWATCH[/COLOR][/SIZE]
-{% block body %}
-	{% for item in items %}
-		{{item.title}} {{item.price}}
-	{% endfor %}
-{% endblock %}
+[SPOILER="CRAYWATCH"]
+[SIZE=6][B][COLOR=#660000]CRAYWATCH[/COLOR][/B][/SIZE]
+{%- for item in items %}
+[B][COLOR=#0059b3][URL='{{item['viewItemURL']}}']{{item.title}}[/URL][/COLOR] [COLOR=#00b359]${{item['sellingStatus']['currentPrice']['value']}}[/COLOR][/B]
+{%- endfor %}
+[/SPOILER]
