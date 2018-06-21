@@ -28,11 +28,20 @@ def get_item(ebay_item_id, with_measurements=False):
 	return r.json()
 
 def get_item_and_build_model(ebay_item_id, with_measurements=False, ebay_seller_id='balearic1'):
-	response = get_item(ebay_item_id, with_measurements)
+	response = get_item(ebay_item_id, with_measurements=with_measurements)
 	model = build_ebay_item_model(
 		loads(response),
 		ebay_seller_id=ebay_seller_id,
 		with_measurements=with_measurements)
 	return model
 
+def ad_hoc_parse_measurements():
+	item = loads(get_item(362353898404, with_measurements=True))
+	import app.template_parsing.seller_patterns.parser_id_1 as spoo_parser
+	msmts = spoo_parser.get_suit_measurements(item['Item']['Description'])
+	print(msmts)
+	return msmts
 
+# ad_hoc_parse_measurements()
+
+get_item_and_build_model(362353898404, with_measurements=True, ebay_seller_id='balearic1')
