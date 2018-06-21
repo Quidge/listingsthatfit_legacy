@@ -6,7 +6,8 @@ from decimal import Decimal
 def parse_html_for_measurements(
 	item_html_description,
 	clothing_category_id,
-	parser_file_id_num):
+	parser_file_id_num,
+	parse_strategy='naive'):
 	"""Takes html_description and seller_id number and returns a dictionary object of
 	measurements.
 
@@ -37,6 +38,8 @@ def parse_html_for_measurements(
 		return measurements_parser.get_sportcoat_measurements(item_html_description)
 	# elif clothing_category_id == other numbers
 		# return measurements_parser.other_item_parsers
+	elif clothing_category_id == 3001:
+		return measurements_parser.get_suit_measurements(item_html_description, parse_strategy=parse_strategy)
 	else:
 		raise AttributeError(
 			'Unable to parse items in category <{}>'.format(clothing_category_id))

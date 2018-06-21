@@ -38,10 +38,11 @@ def get_item_and_build_model(ebay_item_id, with_measurements=False, ebay_seller_
 def ad_hoc_parse_measurements():
 	item = loads(get_item(362353898404, with_measurements=True))
 	import app.template_parsing.seller_patterns.parser_id_1 as spoo_parser
-	msmts = spoo_parser.get_suit_measurements(item['Item']['Description'])
+	msmts = spoo_parser.get_suit_measurements(item['Item']['Description'], parse_strategy='smartv1')
 	print(msmts)
 	return msmts
 
 # ad_hoc_parse_measurements()
 
-get_item_and_build_model(362353898404, with_measurements=True, ebay_seller_id='balearic1')
+# m = get_item_and_build_model(362353898404, with_measurements=True, ebay_seller_id='balearic1')
+# print(m.measurements)

@@ -1,8 +1,8 @@
-from app.models import Item, MeasurementType, ItemMeasurementAssociation, EbaySeller
-from app.template_parsing import utils
-from sqlalchemy.orm.exc import NoResultFound
 from datetime import datetime
 import decimal
+from sqlalchemy.orm.exc import NoResultFound
+from app.models import Item, MeasurementType, ItemMeasurementAssociation, EbaySeller
+from app.template_parsing.utils import parse_html_for_measurements
 
 
 def gather_measurement_models_from_html_desc(
@@ -11,6 +11,11 @@ def gather_measurement_models_from_html_desc(
 	parser_file_num):
 	"""Return a list of ItemMeasurementAssociation models, built from the
 	html_description param. The item association on these models is unset.
+
+	Design philosophy: the parser should not be required to know anything
+	about the possible or proper database measurement type names. Because the parser
+	is ignorant, it falls to the model building functions to discern what the parser
+	reports back.
 
 	Parameters
 	----------
@@ -29,7 +34,7 @@ def gather_measurement_models_from_html_desc(
 		raise AttributeError(
 			'Parsing for ebay_category_id <{}> not supported'.format(ebay_category_id))
 
-	measurements_dict = utils.parse_html_for_measurements(
+	measurements_dict = parse_html_for_measurements(
 		html_description, ebay_category_id, parser_file_num)
 
 	# print(measurements_dict)
@@ -38,13 +43,36 @@ def gather_measurement_models_from_html_desc(
 	print(cat_name)
 
 	measurement_models = []
-	for key, value in measurements_dict.items():
-		association = build_item_measurement(
-			clothing_cat_string_name=cat_name,
-			attribute=key,
-			measurement_value=value)
-		measurement_models.append(association)
-		print(association)
+
+	# suits are special because they have pants waist and jacket waist
+	# attribute names reported from the parser are prepended with either 'jacket_'
+	# or 'pant_'
+	if ebay_category_id == 3001:
+		for key, msmt_value in measurements_dict.items():
+			cat_name = None
+			attribute = None
+			if key[:6] == 'jacket':
+				cat_name = 'sportcoat'
+				attribute = key[7:]
+			elif key[:4] == 'pant':
+				cat_name = 'pant'
+				attribute = key[5:]
+			
+			association = build_item_measurement(
+				clothing_cat_string_name=cat_name,
+				attribute=attribute,
+				measurement_value=msmt_value)
+			measurement_models.append(association)
+			# print(association)
+
+	else:
+		for key, msmt_value in measurements_dict.items():
+			association = build_item_measurement(
+				clothing_cat_string_name=cat_name,
+				attribute=key,
+				measurement_value=msmt_value)
+			measurement_models.append(association)
+			# print(association)
 
 	return measurement_models
 
@@ -53,12 +81,13 @@ def build_item_measurement(
 	clothing_cat_string_name=None,
 	attribute=None,
 	measurement_value=None):
-
+	
 	try:
 		assert clothing_cat_string_name is not None
 		assert attribute is not None
 		assert measurement_value is not None
 	except AssertionError:
+		print(clothing_cat_string_name, attribute, measurement_value)
 		raise
 	try:
 		measurement_type = MeasurementType.query.filter(
