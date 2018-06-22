@@ -44,5 +44,8 @@ def ad_hoc_parse_measurements():
 
 # ad_hoc_parse_measurements()
 
-# m = get_item_and_build_model(362353898404, with_measurements=True, ebay_seller_id='balearic1')
+m = get_item_and_build_model(362353898404, with_measurements=True, ebay_seller_id='balearic1')
+from app import db
+db.session.add(m)
+db.session.commit()
 # print(m.measurements)
