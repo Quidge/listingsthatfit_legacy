@@ -130,6 +130,7 @@ def get_suit_measurements(html_description, parse_strategy='naive'):
 			'Across Hips',
 			'Cuff height',
 			'Extra material under cuff',
+			'Width of hem opening',
 			'At cuff',
 			'sleeve',
 			'shoulder',
@@ -175,7 +176,9 @@ def get_suit_measurements(html_description, parse_strategy='naive'):
 			m_dict['pant_hips'] = possible_pairs['hips'][0]
 		
 		# Try leg opening
-		if len(possible_pairs['At cuff']) > 0:
+		if len(possible_pairs['Width of hem opening']) > 0:
+			m_dict['pant_leg_opening'] = possible_pairs['Width of hem opening'][0]
+		elif len(possible_pairs['At cuff']) > 0:
 			m_dict['pant_leg_opening'] = possible_pairs['At cuff'][0]
 		else:
 			m_dict['pant_leg_opening'] = max(possible_pairs['cuff'])
