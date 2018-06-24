@@ -1,10 +1,9 @@
 from bs4 import BeautifulSoup
-from app.utils import str_dec_to_dec_type
-from app.template_parsing.utils import find_paired_measurement_value as paired_val
+# from app.template_parsing.utils import find_paired_measurement_value as paired_val
 from app.template_parsing.utils import str_measurement_to_int as str2int
 
 
-def get_sportcoat_measurements(html_description):
+def get_sportcoat_measurements(html_description, parse_strategy='default'):
 	"""Parses a sportcoat listing from seller balearic1 and returns the measurements
 	as a dict.
 
@@ -39,16 +38,37 @@ def get_sportcoat_measurements(html_description):
 		.parent  # enclosing <table>
 	)
 
-	tds = data.find_all('td')
-	measurements_dict = {
-		'chest': int(str_dec_to_dec_type(tds[2].string) * 1000),
-		'sleeve': int(str_dec_to_dec_type(tds[4].string) * 1000),
-		'shoulders': int(str_dec_to_dec_type(tds[6].string) * 1000),
-		'waist': int(str_dec_to_dec_type(tds[8].string) * 1000),
-		'boc': int(str_dec_to_dec_type(tds[10].string) * 1000)
+	m_dict = {
+		'chest': None,
+		'sleeve': None,
+		'shoulders': None,
+		'waist': None,
+		'boc': None,
 	}
 
-	return measurements_dict
+	if parse_strategy == 'default':
+		tds = data.find_all('td')
+		m_dict = {
+			'chest': str2int(tds[2].string),
+			'sleeve': str2int(tds[4].string),
+			'shoulders': str2int(tds[6].string),
+			'waist': str2int(tds[8].string),
+			'boc': str2int(tds[10].string)
+		}
+	elif parse_strategy == 'simple_stripped_stringsv1':
+		strings = list(data.stripped_strings)
+		m_dict = {
+			'chest': str2int(strings[2]),
+			'sleeve': str2int(strings[4]),
+			'shoulders': str2int(strings[6]),
+			'waist': str2int(strings[8]),
+			'boc': str2int(strings[10])
+		}
+	else:
+		raise ValueError(
+			'Parsing strategy <{}> is not supported for this category'.format(parse_strategy))
+
+	return m_dict
 
 def get_suit_measurements(html_description, parse_strategy='naive'):
 	"""Parses a sportcoat listing from seller balearic1 and returns the measurements
