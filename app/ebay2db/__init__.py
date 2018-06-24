@@ -1,4 +1,4 @@
-from ebaysdk.exception import ConnectionError, PaginationLimit
+from ebaysdk.exception import ConnectionError
 from ebaysdk.finding import Connection as Finding
 
 from app.ebay2db.core import depaginate_search_result, compare_and_return_new_items
@@ -11,10 +11,10 @@ def lookup_and_add_new_items(
 	custom_payload=None,
 	use_affiliate=False):
 	"""High level abstractin. Executes findingApi to retrieve list of all items for a
-	a seller. From that list, a sub list of items that are not already held in the DB is constructed.
-	Against this sub list, GetSingleItem is executed and models are built for those items.
-	If possible, also constructs measurement and size models for each item and attaches
-	them to the item model before committing.
+	a seller. From that list, a sub list of items that are not already held in the DB is
+	constructed. Against this sub list, GetSingleItem is executed and models are built
+	for those items. If possible, also constructs measurement and size models for each
+	item and attaches them to the item model before committing.
 
 	payload_additions will be appended to the payload sent to Finding API, and if
 	duplicates are found* will overwrite those used in the default payload.
@@ -69,7 +69,6 @@ def lookup_and_add_new_items(
 		c.execute('findItemsAdvanced', payload)
 	except ConnectionError:
 		raise
-
 	# Build up a depaginated list of item IDs from the result.
 	all_items = depaginate_search_result(c)
 
@@ -79,12 +78,26 @@ def lookup_and_add_new_items(
 	# I believe this is a problem with ebaysdk, not that Spoo has duplicate listings.
 	# But I can't have duplicate ebay item IDs, so those are going to be dropped until
 	# I fix this bug.
-	all_item_ids = [i['itemId'] for i in all_items]
-	unique_item_ids = set(all_item_ids)
-	if len(all_item_ids) - len(unique_item_ids) > 0:
-		print('Duplicate items detected. Dropped: {} items.'.format(len(all_item_ids) - len(unique_item_ids)))
 
-	
+	"""
+	2018/06/24 Update: I'm quite certain that ebay is returning duplicate entries. To prove:
+	searchResult = all_items['searchResult']
+	dup_dict = dict()
+	for item in searchResult:
+		item_id = item['itemId']
+		if item_id in dup_dict:
+			dup_dict[item_id].append(item)
+		else:
+			dup_dict[item_id] = [item]
+	for _, stuff in dup_dict.items():
+		if len(stuff) > 1:
+			[print(i) for i in stuff]
+	"""
+	unique_item_ids = set([i['itemId'] for i in all_items['searchResult']])
+	paginationOutput = c.response.dict()['paginationOutput']['totalEntries']
+	print('TotalEntries reported: <{}>, uniques: <{}>'.format(
+		paginationOutput, len(unique_item_ids)))
+
 	return all_items
 
 

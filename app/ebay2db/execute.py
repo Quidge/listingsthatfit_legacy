@@ -8,4 +8,6 @@ fapi = Finding(
 	debug=False
 )
 
-lookup(fapi, 'balearic1')
+items = lookup(fapi, 'balearic1')
+#print(type(items))
+
