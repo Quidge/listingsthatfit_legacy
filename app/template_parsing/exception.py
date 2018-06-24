@@ -1,0 +1,2 @@
+class TemplateParsingError(Exception):
+	pass

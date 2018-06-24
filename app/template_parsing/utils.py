@@ -2,6 +2,8 @@ import re
 from importlib import import_module
 from decimal import Decimal
 
+from app.template_parsing.exception import TemplateParsingError
+
 
 def parse_html_for_measurements(
 	item_html_description,
@@ -30,21 +32,25 @@ def parse_html_for_measurements(
 	"""
 	try:
 		module_name = 'parser_id_{}'.format(parser_file_id_num)
-		measurements_parser = import_module('app.template_parsing.seller_patterns.{}'.format(module_name))
+		measurements_parser = import_module(
+			'app.template_parsing.seller_patterns.{}'.format(module_name))
 	except ImportError:
 		raise
 
 	if clothing_category_id == 3002:
-		return measurements_parser.get_sportcoat_measurements(item_html_description)
+		return measurements_parser.get_sportcoat_measurements(
+			item_html_description)
 	# elif clothing_category_id == other numbers
 		# return measurements_parser.other_item_parsers
 	elif clothing_category_id == 3001:
-		return measurements_parser.get_suit_measurements(item_html_description, parse_strategy=parse_strategy)
+		return measurements_parser.get_suit_measurements(
+			item_html_description, parse_strategy=parse_strategy)
 	else:
-		raise AttributeError(
+		raise TemplateParsingError(
 			'Unable to parse items in category <{}>'.format(clothing_category_id))
 
 	return None
+
 
 def find_paired_measurement_value(navigable_str):
 	"""Returns first(!) string measurement value '22.5"' that is found in the
