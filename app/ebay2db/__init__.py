@@ -4,26 +4,26 @@ from ebaysdk.exception import ConnectionError
 from ebaysdk.finding import Connection as Finding
 
 from app.ebay2db.core import depaginate_search_result, compare_and_return_new_items, lookup_single_item
-from app.model_builders import build_ebay_item_model
+# from app.model_builders import build_ebay_item_model
 from app.template_parsing.exception import TemplateParsingError
 
 ebay_clothing_categories = {
-	'sportcoat': 3002,
-	'dress_shirt': 57991,
-	'casual_shirt': 57990,
-	'tie': 15662,
-	'sweater': 11484,
-	'coats_and_jacket': 57988,
-	'pant': 57989,
-	'jeans': 11483,
-	'suit': 3001,
-	'vest': 15691,
-	'sleepwear_and_robe': 11510,
-	'swimwear': 15690,
-	'dress_shoes': 53120}
+	3002: 'sportcoat',
+	57991: 'dress_shirt',
+	57990: 'casual_shirt',
+	15662: 'tie',
+	11484: 'sweater',
+	57988: 'coats_and_jacket',
+	57989: 'pant',
+	11483: 'jeans',
+	3001: 'suit',
+	15691: 'vest',
+	11510: 'sleepwear_and_robe',
+	15690: 'swimwear',
+	53120: 'dress_shoes'}
 
 
-def lookup_and_add_new_items(
+'''def lookup_and_add_new_items(
 	finding_connection,
 	shopping_connection,
 	ebay_seller_id=None,
@@ -143,7 +143,7 @@ def lookup_and_add_new_items(
 			pass
 		else:
 			new_item_models.append(model)
-	return new_item_models
+	return new_item_models'''
 
 
 

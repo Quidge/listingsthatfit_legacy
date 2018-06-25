@@ -6,7 +6,11 @@ from app import db
 
 def compare_and_return_new_items(set_of_ebay_item_ids, ebay_seller_id=None):
 	"""Compares a set of ebay item ids against a DB query and returns a set of items
-	that are not represented in the db."""
+	that are not represented in the db.
+
+	Returns:
+	set_of_ebay_items : set
+	"""
 	if ebay_seller_id is not None:
 		try:
 			seller = db.session.query(
@@ -24,6 +28,12 @@ def compare_and_return_new_items(set_of_ebay_item_ids, ebay_seller_id=None):
 
 
 def lookup_single_item(connection, ebay_item_id, with_description=False):
+	"""Executes GetSingleItem method call to connection.
+
+	Returns
+	-------
+	r : ebaysdk connection response object
+	"""
 	payload = {'ItemID': ebay_item_id}
 	if with_description:
 		payload['IncludeSelector'] = 'Description'

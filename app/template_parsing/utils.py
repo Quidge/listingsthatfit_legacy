@@ -2,34 +2,31 @@ import re
 from importlib import import_module
 from decimal import Decimal
 
-from app.template_parsing.exception import TemplateParsingError
+from app.template_parsing.exception import UnsupportedClothingCategory
+from app.ebay2db import ebay_clothing_categories
 
 
 def parse_html_for_measurements(
 	item_html_description,
 	clothing_category_id,
 	parser_file_id_num,
-	parse_strategy='naive'):
+	parse_strategy='default'):
 	"""Takes html_description and seller_id number and returns a dictionary object of
 	measurements.
 
 	Parameters
 	----------
 	item_html_description : str
-	category_id : int
-	seller_id_num : int
+	clothing_category_id : int
+	parser_file_id_num : int
+	parse_strategy : str
+		This will be handed down to the individual parser file
 
 	Returns
 	-------
-	item_sizes : dict
-		In form:
-			{
-				"chest": 23000,
-				"shoulders": 19375,
-				... ,
-				etc
-			}
+	measurements_obj : MeasurementsCollection instance
 	"""
+
 	try:
 		module_name = 'parser_id_{}'.format(parser_file_id_num)
 		measurements_parser = import_module(
@@ -37,19 +34,25 @@ def parse_html_for_measurements(
 	except ImportError:
 		raise
 
-	if clothing_category_id == 3002:
-		return measurements_parser.get_sportcoat_measurements(
-			item_html_description)
-	# elif clothing_category_id == other numbers
-		# return measurements_parser.other_item_parsers
-	elif clothing_category_id == 3001:
-		return measurements_parser.get_suit_measurements(
-			item_html_description, parse_strategy=parse_strategy)
-	else:
-		raise TemplateParsingError(
-			'Unable to parse items in category <{}>'.format(clothing_category_id))
+	"""
+	If a parser (for a clothing category) has been written, it will be included in a
+	module 'directory' that is a dict with category ids key-ed to functions
+		ie: {3001: get_suit_measurements}
+	"""
+	if clothing_category_id not in measurements_parser.function_directory:
+		raise UnsupportedClothingCategory(
+			'Parser file for file <{}> does not support parsing for category <{}>'.format(
+				module_name, clothing_category_id))
 
-	return None
+	category_parser = measurements_parser.function_directory[clothing_category_id]
+
+	# measurements_obj is an instance of MeasurementsCollection
+	measurements_obj = category_parser(
+		item_html_description, parse_strategy=parse_strategy)
+	# measurements_obj doesn't come back with the clothing cat string name configured
+	measurements_obj.clothing_category_name = ebay_clothing_categories[clothing_category_id]
+
+	return measurements_obj
 
 
 def find_paired_measurement_value(navigable_str):
@@ -78,7 +81,10 @@ def str_measurement_to_int(string_measurement_value):
 
 	"""
 	digit_pattern = re.compile('[\d.]+')
-	decimal_string = re.search(digit_pattern, string_measurement_value).group(0)
+	match = re.search(digit_pattern, string_measurement_value)
+	if match is None:
+		return None
+	decimal_string = match.group(0)
 	return int(Decimal(decimal_string) * 1000)
 
 

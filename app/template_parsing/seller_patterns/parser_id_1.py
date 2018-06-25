@@ -1,6 +1,14 @@
 from bs4 import BeautifulSoup
 # from app.template_parsing.utils import find_paired_measurement_value as paired_val
 from app.template_parsing.utils import str_measurement_to_int as str2int
+from app.template_parsing import MeasurementsCollection
+from app.template_parsing import Measurement as Msmt
+from app.template_parsing.exception import UnrecognizedMeasurement, UnsupportedParsingStrategy, TemplateParsingError, UnrecognizedTemplateHTML
+
+
+##########################
+## Parser for SpooPoker ##
+##########################
 
 
 def get_sportcoat_measurements(html_description, parse_strategy='default'):
@@ -9,74 +17,145 @@ def get_sportcoat_measurements(html_description, parse_strategy='default'):
 
 	Parameters
 	----------
-	html_description : string
+	html_description : str
+	parse_strategy : str
+		Defaults to 'default'
 
 	Returns
 	-------
-	measurements_dict : dict
-		Dictionary in form:
-			{
-				'chest': int,
-				'sleeves': int,
-				'shoulders': int,
-				'waist': int,
-				'boc': int
-			}
-			# All values are the decimal value included in
-			# listing * 1000 and converted to integer
+	m : MeasurementsCollection instance
 	"""
 
 	soup = BeautifulSoup(html_description, 'html.parser')
 
-	data = (
-		soup
-		.find(string='Approximate Measurements')  # string itself
-		.parent  # enclosing <h3>
-		.parent  # enclosing <td>
-		.parent  # enclosing <tr>
-		.parent  # enclosing <tbody>
-		.parent  # enclosing <table>
-	)
+	try:
+		assert soup.find(string='Approximate Measurements') != None
+	except AssertionError:
+		raise UnrecognizedTemplateHTML(
+			'Unable to find "Approximate Measurements" string in HTML description',
+			html_string=str(soup))
+	else:
+		data = (
+			soup
+			.find(string='Approximate Measurements')  # string itself
+			.parent  # enclosing <h3>
+			.parent  # enclosing <td>
+			.parent  # enclosing <tr>
+			.parent  # enclosing <tbody>
+			.parent  # enclosing <table>
+		)
 
-	m_dict = {
-		'chest': None,
-		'sleeve': None,
-		'shoulders': None,
-		'waist': None,
-		'boc': None,
-	}
+	m_list = []
 
 	if parse_strategy == 'default':
-		tds = data.find_all('td')
-		m_dict = {
-			'chest': str2int(tds[2].string),
-			'sleeve': str2int(tds[4].string),
-			'shoulders': str2int(tds[6].string),
-			'waist': str2int(tds[8].string),
-			'boc': str2int(tds[10].string)
-		}
-	elif parse_strategy == 'simple_stripped_stringsv1':
 		strings = list(data.stripped_strings)
-		m_dict = {
-			'chest': str2int(strings[2]),
-			'sleeve': str2int(strings[4]),
-			'shoulders': str2int(strings[6]),
-			'waist': str2int(strings[8]),
-			'boc': str2int(strings[10])
-		}
+		try:
+			m_list.append(Msmt('sportcoat', 'chest', str2int(strings[2])))
+			m_list.append(Msmt('sportcoat', 'sleeve', str2int(strings[4])))
+			m_list.append(Msmt('sportcoat', 'shoulders', str2int(strings[6])))
+			m_list.append(Msmt('sportcoat', 'waist', str2int(strings[8])))
+			m_list.append(Msmt('sportcoat', 'boc', str2int(strings[10])))
+			# TypeError raised by Measurement class if passed non int value
+			# as the measurement value
+		except TypeError as e:
+			raise UnrecognizedMeasurement(
+				'Instantiation of Measurement class ({}) by parsing html raised a KeyError, \
+				indicating the parser identified a region that it expected would be a \
+				measurement value.'.format(e), triggering_html_str=str(data))
 	else:
-		raise ValueError(
+		raise UnsupportedParsingStrategy(
 			'Parsing strategy <{}> is not supported for this category'.format(parse_strategy))
+	m = MeasurementsCollection(
+		parse_strategy=parse_strategy,
+		parse_html=str(data),
+		measurements_list=m_list)
 
-	return m_dict
+	return m
 
-def get_suit_measurements(html_description, parse_strategy='naive'):
+
+def get_suit_measurements(html_description, parse_strategy='default'):
 	"""Parses a sportcoat listing from seller balearic1 and returns the measurements
 	as a dict.
 
 	Parameters
 	----------
-	html_description : string
+	html_description : str
+	parse_strategy : str
+		Defaults to 'default'
+
+	Returns
+	-------
+	m : MeasurementsCollection instance
+	"""
+
+	soup = BeautifulSoup(html_description, 'html.parser')
+
+	try:
+		assert soup.find(string='Approximate Measurements') != None
+	except AssertionError:
+		raise UnrecognizedTemplateHTML(
+			'Unable to find "Approximate Measurements" string in HTML description',
+			html_string=str(soup))
+	else:
+		data = (
+			soup
+			.find(string='Approximate Measurements')  # string itself
+			.parent  # enclosing <h3>
+			.parent  # enclosing <td>
+			.parent  # enclosing <tr>
+			.parent  # enclosing <tbody>
+			.parent  # enclosing <table>
+		)
+
+	m_list = []
+
+	if parse_strategy == 'default':
+		strings = list(data.stripped_strings)
+		try:
+			# Suit listings are a composite type of both sportcoat and pant types
+			m_list.append(Msmt('sportcoat', 'chest', str2int(strings[2])))
+			m_list.append(Msmt('sportcoat', 'sleeve', str2int(strings[4])))
+			m_list.append(Msmt('sportcoat', 'shoulders', str2int(strings[6])))
+			m_list.append(Msmt('sportcoat', 'waist', str2int(strings[8])))
+			m_list.append(Msmt('sportcoat', 'boc', str2int(strings[10])))
+			m_list.append(Msmt('pant', 'waist', str2int(strings[13])))
+			m_list.append(Msmt('pant', 'hips', str2int(strings[15])))
+			m_list.append(Msmt('pant', 'inseam', str2int(strings[17])))
+			m_list.append(Msmt('pant', 'cuff_height', str2int(strings[19])))
+			m_list.append(Msmt('pant', 'leg_opening', str2int(strings[23])))
+			m_list.append(Msmt('pant', 'rise', str2int(strings[25])))
+			# TypeError raised by Measurement class if passed non int value
+			# as the measurement value
+		except TypeError as e:
+			raise UnrecognizedMeasurement(
+				'Instantiation of Measurement class ({}) by parsing html raised a KeyError, \
+				indicating the parser identified a region that it expected would be a \
+				measurement value.'.format(e), html_string=str(data))
+		except IndexError:
+			raise UnrecognizedTemplateHTML(
+				'Default parsing strategy expected a differing number of measurements than \
+				what was provided by the template.',
+				html_string=str(data))
+	else:
+		raise UnsupportedParsingStrategy(
+			'Parsing strategy <{}> is not supported for this category'.format(parse_strategy))
+	m = MeasurementsCollection(
+		parse_strategy=parse_strategy,
+		parse_html=str(data),
+		measurements_list=m_list)
+
+	return m
+
+
+'''def get_suit_measurements2(html_description, parse_strategy='default'):
+	"""Parses a sportcoat listing from seller balearic1 and returns the measurements
+	as a dict.
+
+	Parameters
+	----------
+	html_description : str
+	parse_strategy : str
+		Defaults to 'default'
 
 	Returns
 	-------
@@ -125,7 +204,7 @@ def get_suit_measurements(html_description, parse_strategy='naive'):
 		'pant_rise': None
 	}
 
-	if parse_strategy == 'naive':
+	if parse_strategy == 'default':
 		strings = list(data.stripped_strings)
 		m_dict = {
 			'jacket_chest': str2int(strings[2]),
@@ -217,10 +296,13 @@ def get_suit_measurements(html_description, parse_strategy='naive'):
 			'Parsing strategy <{}> is not supported for this category'.format(parse_strategy))
 
 
-	return m_dict
+	return m_dict'''
 
 
-
+function_directory = {
+	3002: get_sportcoat_measurements,
+	3001: get_suit_measurements
+}
 
 
 
