@@ -82,8 +82,9 @@ class EbaySeller(db.Model):
 	ebay_seller_id = db.Column(db.Text(255), unique=True)
 	store_url = db.Column(db.Text(255), unique=False, nullable=True)
 	all_items_url = db.Column(db.Text(255), unique=False, nullable=True)
-	
-	template_parser_id = db.Column(db.Integer, db.ForeignKey('template_parser.template_parser_id'))
+
+	template_parser_id = db.Column(
+		db.Integer, db.ForeignKey('template_parser.template_parser_id'))
 	template_parser = db.relationship('TemplateParser', back_populates='sellers')
 
 	items = db.relationship('Item', back_populates='seller')
@@ -100,7 +101,8 @@ class TemplateParser(db.Model):
 	sellers = db.relationship('EbaySeller', back_populates='template_parser')
 
 	def __repr__(self):
-		return 'file_name_number: <{}> description: <"{}">'.format(self.file_name_number, self.parser_file_description)
+		return 'file_name_number: <{}> description: <"{}">'.format(
+			self.file_name_number, self.parser_file_description)
 
 
 LinkUserSubscribedSeller = db.Table(
@@ -222,10 +224,12 @@ class User(db.Model):
 
 class ItemMeasurementAssociation(db.Model):
 	__tablename__ = 'link_measurement_values_types'
-	fk_measurement_id = db.Column(db.Integer, db.ForeignKey('measurement_types.id'), primary_key=True)
+	fk_measurement_id = db.Column(
+		db.Integer, db.ForeignKey('measurement_types.id'), primary_key=True)
 
 	# ebay_item_id is a confusing name. This refers to the items table internal id, NOT ebay's item id.
-	fk_ebay_items_id = db.Column(db.BigInteger, db.ForeignKey('ebay_items.id'), primary_key=True)
+	fk_ebay_items_id = db.Column(
+		db.BigInteger, db.ForeignKey('ebay_items.id'), primary_key=True)
 	measurement_value = db.Column(db.Integer)
 
 	measurement_type = db.relationship('MeasurementType')
@@ -261,7 +265,8 @@ class Item(db.Model):
 	ebay_url = db.Column(db.Text())
 	ebay_affiliate_url = db.Column(db.Text())
 
-	internal_seller_id = db.Column(db.Integer, db.ForeignKey('ebay_sellers.id'), nullable=False)
+	internal_seller_id = db.Column(
+		db.Integer, db.ForeignKey('ebay_sellers.id'), nullable=False)
 	seller = db.relationship('EbaySeller', back_populates='items')
 
 	measurements = db.relationship(
