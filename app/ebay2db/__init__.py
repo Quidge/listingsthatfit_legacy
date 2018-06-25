@@ -1,15 +1,37 @@
+from json import loads
+
 from ebaysdk.exception import ConnectionError
 from ebaysdk.finding import Connection as Finding
 
-from app.ebay2db.core import depaginate_search_result, compare_and_return_new_items
+from app.ebay2db.core import depaginate_search_result, compare_and_return_new_items, lookup_single_item
+from app.model_builders import build_ebay_item_model
+from app.template_parsing.exception import TemplateParsingError
+
+ebay_clothing_categories = {
+	'sportcoat': 3002,
+	'dress_shirt': 57991,
+	'casual_shirt': 57990,
+	'tie': 15662,
+	'sweater': 11484,
+	'coats_and_jacket': 57988,
+	'pant': 57989,
+	'jeans': 11483,
+	'suit': 3001,
+	'vest': 15691,
+	'sleepwear_and_robe': 11510,
+	'swimwear': 15690,
+	'dress_shoes': 53120}
 
 
 def lookup_and_add_new_items(
-	connection,
+	finding_connection,
+	shopping_connection,
 	ebay_seller_id=None,
 	payload_additions=None,
 	custom_payload=None,
-	use_affiliate=False):
+	use_affiliate=False,
+	with_measurements=False,
+	with_sizes=False):
 	"""High level abstractin. Executes findingApi to retrieve list of all items for a
 	a seller. From that list, a sub list of items that are not already held in the DB is
 	constructed. Against this sub list, GetSingleItem is executed and models are built
@@ -48,10 +70,14 @@ def lookup_and_add_new_items(
 	# AFFILIATE LINKING NOT SUPPORTED
 	if use_affiliate:
 		raise ValueError('Affiliate linking is not supported at this time.')
-	
+
 	# PAYLOAD ADDITIONS NOT SUPPORTED
 	if payload_additions is not None:
-		raise ValueError('Payload additions not supported at this time')
+		raise ValueError('Payload additions not supported at this time.')
+
+	# SIZE PARSING NOT SUPPORTED
+	if with_sizes:
+		raise ValueError('Size parsing of items is not supported at this time.')
 
 	payload = {'itemFilter': [
 			{'name': 'Seller', 'value': ebay_seller_id},
@@ -63,14 +89,14 @@ def lookup_and_add_new_items(
 	if custom_payload is not None:
 		payload = custom_payload
 
-	c = connection
+	f_conn = finding_connection
 
 	try:
-		c.execute('findItemsAdvanced', payload)
+		f_conn.execute('findItemsAdvanced', payload)
 	except ConnectionError:
 		raise
 	# Build up a depaginated list of item IDs from the result.
-	all_items = depaginate_search_result(c)
+	all_items = depaginate_search_result(f_conn)
 
 	# For some reason, the connection returns duplicates. With the only parameters
 	# being Seller='balearic1' and listingType='Auction', there are usually ~5-10 duplicates.
@@ -93,12 +119,34 @@ def lookup_and_add_new_items(
 		if len(stuff) > 1:
 			[print(i) for i in stuff]
 	"""
-	unique_item_ids = set([i['itemId'] for i in all_items['searchResult']])
-	paginationOutput = c.response.dict()['paginationOutput']['totalEntries']
+	unique_item_ids = set([int(i['itemId']) for i in all_items['searchResult']])
+	paginationOutput = f_conn.response.dict()['paginationOutput']['totalEntries']
 	print('TotalEntries reported: <{}>, uniques: <{}>'.format(
 		paginationOutput, len(unique_item_ids)))
 
-	return all_items
+	new_items = compare_and_return_new_items(unique_item_ids, ebay_seller_id=ebay_seller_id)
+	new_item_models = []
+	for ebay_id in new_items:
+		try:
+			res = lookup_single_item(
+				shopping_connection, ebay_id, with_description=with_measurements)
+		except ConnectionError:
+			raise
+		try:
+			model = build_ebay_item_model(
+				res.dict(),
+				ebay_seller_id=ebay_seller_id,
+				with_measurements=with_measurements,
+				with_sizes=with_sizes)
+		except TemplateParsingError:
+			# Don't add items whose measurements cannot be parsed.
+			pass
+		else:
+			new_item_models.append(model)
+	return new_item_models
+
+
+
 
 
 def update_all_db_items_price(connection):
