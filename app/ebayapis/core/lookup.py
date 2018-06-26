@@ -18,9 +18,9 @@ def lookup_single_item(connection, ebay_item_id, with_description=False):
 	return r
 
 
-def get_items_from_seller(connection, ebay_seller_id):
-	"""Execute a findItemsAdvanced method call to the connection. ebay_seller_id is
-	the only custom value sent to the payload.
+def get_auction_items_from_seller(connection, ebay_seller_id):
+	"""Execute a findItemsAdvanced method call to the connection. Payload is
+	configured to return Auction items for ebay_seller_id.
 
 	Parameters
 	----------
@@ -34,5 +34,10 @@ def get_items_from_seller(connection, ebay_seller_id):
 
 	r = connection.execute(
 		'findItemsAdvanced',
-		{'ItemFilter': {'name': 'Seller', 'value': ebay_seller_id}})
+		{'ItemFilter': [
+			{'name': 'Seller', 'value': ebay_seller_id},
+			{'name': 'listingType', 'value': 'Auction'}
+		]
+		}
+	)
 	return r
