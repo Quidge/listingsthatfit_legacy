@@ -3,7 +3,6 @@ from json import loads
 from ebaysdk.exception import ConnectionError
 from ebaysdk.finding import Connection as Finding
 
-from app.ebay2db.core import depaginate_search_result, compare_and_return_new_items, lookup_single_item
 # from app.model_builders import build_ebay_item_model
 from app.template_parsing.exception import TemplateParsingError
 

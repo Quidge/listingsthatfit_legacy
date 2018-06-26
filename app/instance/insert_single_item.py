@@ -20,13 +20,6 @@ item_id = 362353925503
 #r_json = r.json()
 #print(r_json)
 
-def get_item(ebay_item_id, with_measurements=False):
-	payload = {'ItemID': ebay_item_id}
-	if with_measurements:
-		payload['IncludeSelector'] = 'Description'
-	r = s_api.execute('GetSingleItem', payload)
-	return r.json()
-
 def get_item_and_build_model(ebay_item_id, with_measurements=False, ebay_seller_id='balearic1'):
 	response = get_item(ebay_item_id, with_measurements=with_measurements)
 	model = build_ebay_item_model(
@@ -35,12 +28,12 @@ def get_item_and_build_model(ebay_item_id, with_measurements=False, ebay_seller_
 		with_measurements=with_measurements)
 	return model
 
-def ad_hoc_parse_measurements():
+'''def ad_hoc_parse_measurements():
 	item = loads(get_item(362353898404, with_measurements=True))
 	import app.template_parsing.seller_patterns.parser_id_1 as spoo_parser
 	msmts = spoo_parser.get_suit_measurements(item['Item']['Description'], parse_strategy='smartv1')
 	print(msmts)
-	return msmts
+	return msmts'''
 
 # ad_hoc_parse_measurements()
 

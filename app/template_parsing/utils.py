@@ -3,7 +3,7 @@ from importlib import import_module
 from decimal import Decimal
 
 from app.template_parsing.exception import UnsupportedClothingCategory
-from app.ebay2db import ebay_clothing_categories
+from app.ebayapis import ebay_clothing_categories
 
 
 def parse_html_for_measurements(
@@ -77,7 +77,7 @@ def str_measurement_to_int(string_measurement_value):
 
 	Returns
 	-------
-	decimal : Decimal
+	int
 
 	"""
 	digit_pattern = re.compile('[\d.]+')

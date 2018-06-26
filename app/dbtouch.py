@@ -1,13 +1,35 @@
 import warnings
 
 from app import app, db
-from app.models import User, SizeKeyShirtDressSleeve, SizeKeyShirtDressNeck, SizeKeyShirtCasual
+from app.models import SizeKeyShirtDressSleeve, SizeKeyShirtDressNeck, SizeKeyShirtCasual, Item, EbaySeller
 from app.models import LinkUserSizeShirtDressSleeve, LinkUserSizeShirtCasual, LinkUserSizeShirtDressNeck
 from app.models import model_directory_dict
 # from app.utils import get_size_vals_only
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
+
+def compare_and_return_new_items(set_of_ebay_item_ids, ebay_seller_id=None):
+	"""Compares a set of ebay item ids against a DB query and returns a set of items
+	that are not represented in the db.
+
+	Returns:
+	set_of_ebay_items : set
+	"""
+	if ebay_seller_id is not None:
+		try:
+			seller = db.session.query(
+				EbaySeller).filter(EbaySeller.ebay_seller_id == ebay_seller_id).one()
+		except NoResultFound:
+			raise NoResultFound('No seller found for <{}>'.format(ebay_seller_id))
+		db_item_results = db.session.query(
+			Item.ebay_item_id).filter(Item.seller == seller).all()
+		db_set = set([i[0] for i in db_item_results])
+		return set_of_ebay_item_ids - db_set
+	else:
+		db_item_results = db.session.query(Item.ebay_item_id).all()
+		db_set = set([i[0] for i in db_item_results])
+		return set_of_ebay_item_ids - db_set
 
 
 def append_list_of_sizes_to_relationship(relationship, model, values_list):

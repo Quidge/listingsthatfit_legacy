@@ -1,4 +1,4 @@
-# from app.ebay2db import lookup_and_add_new_items as lookup
+# from app.ebayapis import lookup_and_add_new_items as lookup
 from ebaysdk.finding import Connection as Finding
 from ebaysdk.shopping import Connection as Shopping
 
@@ -28,25 +28,25 @@ payload = {
 # print(type(items))
 
 ### Test
-# from app.ebay2db.core import lookup_single_item as lookup
+# from app.ebayapis.core import lookup_single_item as lookup
 # from app.template_parsing.seller_patterns.parser_id_1 import get_sportcoat_measurements as get_msmts
 
 
 # print(items)
 
-from app.model_builders import gather_measurement_models_from_html_desc as parse
-from app.ebay2db.core import lookup_single_item
-from bs4 import BeautifulSoup as BS
+# from app.model_builders import gather_measurement_models_from_html_desc as parse
+from app.ebayapis.core import lookup_single_item
 
-res = lookup_single_item(sapi, 352386131604, with_description=True)
-# print(res.dict())
+res = lookup_single_item(sapi, 3, with_description=True)
 
-desc = res.dict()['Item']['Description']
+# desc = res.dict()['Item']['Description']
 
-[print(m.measurement_type.clothing_category, m.measurement_type.attribute, m.measurement_value) for m in parse(desc, 3001, 1)]
+'''for m in parse(desc, 3001, 1):
+	print(
+		m.measurement_type.clothing_category,
+		m.measurement_type.attribute,
+		m.measurement_value)'''
 
 
 
 
-
-# parse(res.dict()[, ebay_category_id, parser_file_num)
