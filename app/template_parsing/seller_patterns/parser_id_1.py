@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from app.template_parsing.utils import str_measurement_to_int as str2int
 from app.template_parsing import MeasurementsCollection
 from app.template_parsing import Measurement as Msmt
-from app.template_parsing.exception import UnrecognizedMeasurement, UnsupportedParsingStrategy, TemplateParsingError, UnrecognizedTemplateHTML
+from app.template_parsing.exception import UnrecognizedMeasurement, UnsupportedParsingStrategy, UnrecognizedTemplateHTML
 
 
 ##########################
@@ -61,7 +61,7 @@ def get_sportcoat_measurements(html_description, parse_strategy='default'):
 			raise UnrecognizedMeasurement(
 				'Instantiation of Measurement class ({}) by parsing html raised a KeyError, \
 				indicating the parser identified a region that it expected would be a \
-				measurement value.'.format(e), triggering_html_str=str(data))
+				measurement value.'.format(e), html_string=str(data))
 	else:
 		raise UnsupportedParsingStrategy(
 			'Parsing strategy <{}> is not supported for this category'.format(parse_strategy))
