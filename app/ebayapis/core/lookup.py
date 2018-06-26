@@ -17,3 +17,22 @@ def lookup_single_item(connection, ebay_item_id, with_description=False):
 	r = connection.execute('GetSingleItem', payload)
 	return r
 
+
+def get_items_from_seller(connection, ebay_seller_id):
+	"""Execute a findItemsAdvanced method call to the connection. ebay_seller_id is
+	the only custom value sent to the payload.
+
+	Parameters
+	----------
+	connection : ebaysdk Finding connection
+	ebay_seller_id : str
+
+	Returns
+	-------
+	r : ebaysdk connection RESPONSE object
+	"""
+
+	r = connection.execute(
+		'findItemsAdvanced',
+		{'ItemFilter': {'name': 'Seller', 'value': ebay_seller_id}})
+	return r
