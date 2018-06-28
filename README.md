@@ -36,6 +36,10 @@ Roadmap
   * [ ] pull down and create models for pants
   * [ ] pull down and create models for coats and jackets
   * [ ] pull down and create models for sweaters
+* [ ] Measurement + tolerance association table
+* [ ] Foreign key linkup to above association table
+* [ ] Query to search for matching listings for User's measurements + tolerances
+* [ ] Query for listings matching ad-hoc measurements + tolerances
 * [ ] query to search for all items that match ad-hoc input measurements
 * [ ] plaintext report generation for query results that can be output to an email
 * [ ] script to update items table once items have expired
