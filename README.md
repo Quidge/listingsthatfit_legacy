@@ -28,7 +28,7 @@ Roadmap
 * [X] measurements link table
 * [X] fully flesh out items table
 * [X] script to scour template using BS and create item entry (only sportcoats for now)
-* [-] script to pull down all items and create entries for items
+* [ ] script to pull down all items and create entries for items
   * [X] pull down and create models for Suits
   * [X] pull down and create models for sportcoats
   * [ ] pull down and create models for casual shirts
