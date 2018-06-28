@@ -42,7 +42,8 @@ Roadmap
 * [ ] Query for listings matching ad-hoc measurements + tolerances
 * [ ] plaintext report generation for query results that can be output to an email
 
-# Rest of MVP buildout
+Rest of MVP buildout
+---
 * [ ] script to update items table once items have expired
 * [ ] UI display for all matches (sizes and measurements)
 * [ ] email functionality
