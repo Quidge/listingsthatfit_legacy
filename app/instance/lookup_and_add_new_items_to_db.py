@@ -12,7 +12,8 @@ from app.models import EbaySeller
 
 config = {}
 
-def lookup_and_add_new_items_to_db(
+
+def lookup_and_create_models_for_new_items(
 	finding_connection,
 	shopping_connection,
 	db_connection,
@@ -100,15 +101,21 @@ def lookup_and_add_new_items_to_db(
 
 	unrecognized_in_db = compare_and_return_new_items(unique_all_items, ebay_seller_id)
 
+	print(
+		'Call to findItemsAdvanced returned <{}>. <{}> of those are unique.'.format(
+		len(all_items), len(unique_all_items)))
+	print('Of those unique items, will only attempt to add <{}>. The rest are already known about in the db.'.format(
+		len(unrecognized_in_db)))
+
 	sapi_lookups = []
 
 	for item_id in unrecognized_in_db:
 		try:
 			res_dict = lookup_single_item(sapi, item_id, with_description=with_measurements).dict()
-		except ConnectionError:
+		except ConnectionError as e:
 			print(
-				'GetSingleItem call to Shopping connection failed for item: <{}>'.format(item_id))
-			pass
+				'GetSingleItem call to Shopping connection failed for item: <{}>.'.format(item_id))
+			raise e
 		else:
 			sapi_lookups.append(res_dict)
 
@@ -117,9 +124,10 @@ def lookup_and_add_new_items_to_db(
 	for item_res in sapi_lookups:
 		i_id = item_res['Item']['ItemID']
 		print('--- item <{}> report ---'.format(i_id))
-		print('Attempting to build model for item <{}>'.format(i_id))
+		print('Attempting to build model for item <{}>.'.format(i_id))
 		try:
-			m = build_ebay_item_model(item_res,
+			m = build_ebay_item_model(
+				item_res,
 				ebay_seller_id=ebay_seller_id,
 				with_measurements=False,
 				with_sizes=False)
@@ -127,32 +135,22 @@ def lookup_and_add_new_items_to_db(
 			raise
 		else:
 			print('Built model for item <{}>'.format(i_id))
-		'''except UnrecognizedTemplateHTML as e:
-			print(item_id)
-			print(e.message)
-			print(e.html_string)
-			pass
-		except TemplateParsingError as e:
-			print(item_id)
-			print(e)
-			pass
-		else:
-			ebay_item_models.append(m)'''
+
 		parse_error = False
 		if with_measurements:
-			print('Attempting to measurements for item <{}>'.format(i_id))
+			print('Attempting to measurements for item <{}>.'.format(i_id))
 			try:
 				msmts = parse(
 					item_res['Item']['Description'],
 					int(item_res['Item']['PrimaryCategoryID']),
 					parser_file_number)
 			except TemplateParsingError:
-				print('Failed to build model for item <{}>'.format(i_id))
+				print('Failed to build model for item <{}>.'.format(i_id))
 				parse_error = True
 				# print('Parsing problem with item: <{}>'.format(item_res['Item']['ItemID']))
 				# print(e)
 			else:
-				print('Built measurement models for item <{}>'.format(i_id))
+				print('Built measurement models for item <{}>.'.format(i_id))
 				m.measurements = msmts
 
 		if parse_error:
@@ -162,6 +160,7 @@ def lookup_and_add_new_items_to_db(
 			print('Item <{}> model and measurements created successfully.'.format(i_id))
 			ebay_item_models.append(m)
 
+	print('Model construction finished. <{}> models built.'.format(len(ebay_item_models)))
 	return ebay_item_models
 
 
@@ -176,17 +175,17 @@ if __name__ == '__main__':
 		'categoryId': [3002, 3001]
 	}
 
-	models = lookup_and_add_new_items_to_db(
+	models = lookup_and_create_models_for_new_items(
 		f_api,
 		s_api,
 		db,
 		'balearic1',
 		finding_payload_override=payload,
 		with_measurements=True)
-	for m in models:
-		# print(m)
-		# print(m.measurements)
-		pass
+
+	db.session.add_all(models)
+	db.session.flush()
+	db.session.commit()
 
 	# print(lookup_and_add_new_items_to_db(f_api, s_api, db, 'balearic1'))
 

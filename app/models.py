@@ -233,6 +233,7 @@ class ItemMeasurementAssociation(db.Model):
 	measurement_value = db.Column(db.Integer)
 
 	measurement_type = db.relationship('MeasurementType')
+	item = db.relationship('Item', back_populates='measurements')
 
 	def __repr__(self):
 		return '<%r, %r>' % (self.measurement_type, self.measurement_value)
@@ -252,7 +253,6 @@ class MeasurementType(db.Model):
 		return '<id: %r, clothing_category: %r, attribute: %r>' % (
 			self.id, self.clothing_category, self.attribute)
 
-
 class Item(db.Model):
 	__tablename__ = 'ebay_items'
 	id = db.Column(db.Integer, primary_key=True)
@@ -270,7 +270,7 @@ class Item(db.Model):
 	seller = db.relationship('EbaySeller', back_populates='items')
 
 	measurements = db.relationship(
-		'ItemMeasurementAssociation', cascade="all, delete-orphan")
+		'ItemMeasurementAssociation', cascade="all, delete-orphan", back_populates='item')
 	# sizes = None  # An association of all the sizes (and types) for this listing
 
 	def __repr__(self):

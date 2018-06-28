@@ -9,6 +9,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 
+
 def compare_and_return_new_items(set_of_ebay_item_ids, ebay_seller_id=None):
 	"""Compares a set of ebay item ids against a DB query and returns a set of items
 	that are not represented in the db.
