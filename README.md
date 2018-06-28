@@ -22,7 +22,8 @@ Roadmap
     * Notification schedule 
 4. Have a MVP for the site I've wanted to build since 2014
 
-# Rough MVP todo for the minimum needed to email people matches by hand
+Rough MVP todo for the minimum needed to email people matches by hand
+-----
 * [X] BeautifulSoup patterns to match sportcoat measurement templates
 * [X] measurementType model
 * [X] measurements link table
@@ -44,7 +45,7 @@ Roadmap
 * [ ] plaintext report generation for query results that can be output to an email
 
 Rest of MVP buildout
----
+-----
 * [ ] UI display for all matches (sizes and measurements)
 * [ ] email functionality
 * [ ] buy URL
