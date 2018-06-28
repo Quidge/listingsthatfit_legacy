@@ -36,6 +36,7 @@ Roadmap
   * [ ] parser for pants
   * [ ] parser for coats and jackets
   * [ ] parser for sweaters
+* [ ] Script to remove old listings from db
 * [ ] Measurement + tolerance association table
 * [ ] Foreign key linkup to above association table
 * [ ] Query to search for matching listings for User's measurements + tolerances
@@ -44,7 +45,6 @@ Roadmap
 
 Rest of MVP buildout
 ---
-* [ ] script to update items table once items have expired
 * [ ] UI display for all matches (sizes and measurements)
 * [ ] email functionality
 * [ ] buy URL
