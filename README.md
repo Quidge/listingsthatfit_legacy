@@ -29,24 +29,19 @@ Roadmap
 * [X] fully flesh out items table
 * [X] script to scour template using BS and create item entry (only sportcoats for now)
 * [ ] script to pull down all items and create entries for items
-  * [X] pull down and create models for Suits
-  * [X] pull down and create models for sportcoats
-  * [ ] pull down and create models for casual shirts
-  * [ ] pull down and create models for dress shirts 
-  * [ ] pull down and create models for pants
-  * [ ] pull down and create models for coats and jackets
-  * [ ] pull down and create models for sweaters
+  * [X] parser for suits
+  * [X] parser for sportcoats
+  * [ ] parser for casual shirts
+  * [ ] parser for dress shirts
+  * [ ] parser for pants
+  * [ ] parser for coats and jackets
+  * [ ] parser for sweaters
 * [ ] Measurement + tolerance association table
 * [ ] Foreign key linkup to above association table
 * [ ] Query to search for matching listings for User's measurements + tolerances
 * [ ] Query for listings matching ad-hoc measurements + tolerances
-* [ ] query to search for all items that match ad-hoc input measurements
 * [ ] plaintext report generation for query results that can be output to an email
 * [ ] script to update items table once items have expired
-* [ ] add user measurements (+ tolerances) to user model
-* [ ] UI to add measurements (+ tolerances) to user account
-* [ ] query to search for all items that match user measurements
-* [ ] query to search for all items that match user sizes
 * [ ] UI display for all matches (sizes and measurements)
 * [ ] email functionality
 * [ ] buy URL
