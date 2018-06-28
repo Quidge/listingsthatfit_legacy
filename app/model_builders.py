@@ -30,11 +30,6 @@ def gather_measurement_models_from_html_desc(
 	-------
 	measurement_models : list
 	"""
-	'''try:
-		assert ebay_category_id in MeasurementType.SUPPORTED_CATEGORIES_EBAY_VALUES.keys()
-	except AssertionError:
-		raise AttributeError(
-			'Parsing for ebay_category_id <{}> not supported'.format(ebay_category_id))'''
 
 	try:
 		measurements_obj = parse_html_for_measurements(

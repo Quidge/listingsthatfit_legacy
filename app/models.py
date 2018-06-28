@@ -247,8 +247,6 @@ class MeasurementType(db.Model):
 	# There's also a combined UniqueConstraint set on attribute and clothing_combined.
 	# I don't know how to represent that in the class.
 
-	SUPPORTED_CATEGORIES_EBAY_VALUES = {3002: 'sportcoat', 3001: 'suit'}
-
 	def __repr__(self):
 		return '<id: %r, clothing_category: %r, attribute: %r>' % (
 			self.id, self.clothing_category, self.attribute)
