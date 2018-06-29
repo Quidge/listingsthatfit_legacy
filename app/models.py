@@ -234,7 +234,7 @@ class UserMeasurementItemCategory(db.Model):
 	category_name = db.Column('user_measurement_item_category_name', db.Text, unique=True)
 
 	def __repr__(self):
-		'%r' % (self.category_name,)
+		'<UserMeasurementItemCategory(category_name=%r)>' % (self.category_name,)
 
 
 class UserMeasurementItemType(db.Model):
@@ -245,7 +245,7 @@ class UserMeasurementItemType(db.Model):
 	type_name = db.Column('user_measurement_item_type_name', db.Text, unique=True)
 
 	def __repr__(self):
-		'%r' % (self.type_name,)
+		'<UserMeasurementItemType(type_name=%r)>' % (self.type_name,)
 
 
 class UserMeasurementPreference(db.Model):
@@ -277,8 +277,8 @@ class UserMeasurementPreference(db.Model):
 	def __repr(self):
 		'<UserMeasurementPreference(User.id=%r, category=%r, type=%r: range start=%r, range end=%r)>' % (
 			self.user_account.id,
-			self.measurement_category,
-			self.measurement_type,
+			self.measurement_category.category_name,
+			self.measurement_type.type_name,
 			self.range_start_value,
 			self.range_end_value)
 
