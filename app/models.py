@@ -125,6 +125,10 @@ class User(db.Model):
 		backref=db.backref('ebay_sellers', lazy='dynamic'),
 		collection_class=lambda: UniqueSet()
 	)
+	measurements = db.relationship(
+		'UserMeasurementItemType',
+		back_populates='user_account',
+		cascade='all, delete-orphan')
 
 	# user many-to-many size associations (using link tables)
 	sz_shirt_dress_sleeve = db.relationship(
@@ -220,6 +224,63 @@ class User(db.Model):
 	def __repr__(self):
 		return '<User id: %r, email: %r, password_hash: %r>' % (
 			self.id, self.email, self.password_hash)
+
+
+class UserMeasurementItemCategory(db.Model):
+	"""Represents the category (suit, sportcoat, dress shirt) that a user
+	measurement can belong to."""
+	_tablename_ = 'user_measurement_item_category'
+	id = db.Column('user_measurement_item_category_id', db.Integer, primary_key=True)
+	category_name = db.Column('user_measurement_item_category_name', db.Text, unique=True)
+
+	def __repr__(self):
+		'%r' % (self.category_name,)
+
+
+class UserMeasurementItemType(db.Model):
+	"""Represents the type of measurement (sleeve, chest, collar) that a user
+	measurement can belong to."""
+	__tablename__ = 'user_measurement_item_type'
+	id = db.Column('user_measurement_item_type_id', db.Integer, primary_key=True)
+	type_name = db.Column('user_measurement_item_type_name', db.Text, unique=True)
+
+	def __repr__(self):
+		'%r' % (self.type_name,)
+
+
+class UserMeasurementPreference(db.Model):
+	"""Represents a measurement preference, with measurement category, type, and range
+	of values that a a preference can have. Measurement value units are one thousands
+	of an inch."""
+	__tablename__ = 'user_measurement_preference'
+	id = db.Column('user_measurement_preference_id', db.Integer, primary_key=True)
+	range_start_value = db.Column(
+		'measurement_range_start_inch_factor', db.Integer, nullable=False)
+	range_end_value = db.Column(
+		'measurement_range_end_inch_factor', db.Integer, nullable=False)
+	_category_id = db.Column(
+		'user_measurement_item_category_id', db.Integer,
+		db.ForeignKey('user_measurement_item_category.user_measurement_item_category_id'),
+		nullable=False),
+	_type_id = db.Column(
+		'user_measurement_item_type_id', db.Integer,
+		db.ForeignKey('user_measurement_item_type.user_measurement_item_type_id'),
+		nullable=False)
+	_user_account_id = db.Column(
+		'user_accounts_id', db.Integer,
+		db.ForeignKey('user_accounts.id'),
+		nullable=True)
+	measurement_category = db.relationship('UserMeasurementItemCategory')
+	measurement_type = db.relationship('UserMeasurementItemType')
+	user_account = db.relationship('User', back_populates='measurements')
+
+	def __repr(self):
+		'<UserMeasurementPreference(User.id=%r, category=%r, type=%r: range start=%r, range end=%r)>' % (
+			self.user_account.id,
+			self.measurement_category,
+			self.measurement_type,
+			self.range_start_value,
+			self.range_end_value)
 
 
 class ItemMeasurementAssociation(db.Model):
