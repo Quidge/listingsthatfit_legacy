@@ -226,6 +226,20 @@ class User(db.Model):
 			self.id, self.email, self.password_hash)
 
 
+class EbayItemCategory(db.Model):
+	"""Represents an ebay item category."""
+	__tablename__ = 'ebay_item_category'
+	id = db.Column('ebay_item_category_id', db.Integer, primary_key=True)
+	category_number = db.Column(
+		'ebay_item_category_number',
+		db.Integer, nullable=False, unique=True)
+	category_name = db.Column(
+		'ebay_item_category_name', db.Text)
+
+	def __repr__(self):
+		return '<EbayItemCategory(category_number=%r)>' % (self.category_number,)
+
+
 class UserMeasurementItemCategory(db.Model):
 	"""Represents the category (suit, sportcoat, dress shirt) that a user
 	measurement can belong to."""
@@ -258,10 +272,14 @@ class UserMeasurementPreference(db.Model):
 		'measurement_range_start_inch_factor', db.Integer, nullable=False)
 	range_end_value = db.Column(
 		'measurement_range_end_inch_factor', db.Integer, nullable=False)
+	_ebay_category_id = db.Column(
+		'ebay_item_category_id', db.Integer,
+		db.ForeignKey('ebay_item_category.ebay_item_category_id'),
+		nullable=False)
 	_category_id = db.Column(
 		'user_measurement_item_category_id', db.Integer,
 		db.ForeignKey('user_measurement_item_category.user_measurement_item_category_id'),
-		nullable=False),
+		nullable=False)
 	_type_id = db.Column(
 		'user_measurement_item_type_id', db.Integer,
 		db.ForeignKey('user_measurement_item_type.user_measurement_item_type_id'),
@@ -270,12 +288,14 @@ class UserMeasurementPreference(db.Model):
 		'user_accounts_id', db.Integer,
 		db.ForeignKey('user_accounts.id'),
 		nullable=True)
+	# _ebay_item_category_id = db.Column()
+	ebay_item_category = db.relationship('EbayItemCategory')
 	measurement_category = db.relationship('UserMeasurementItemCategory')
 	measurement_type = db.relationship('UserMeasurementItemType')
 	user_account = db.relationship('User', back_populates='measurements')
 
 	def __repr(self):
-		'<UserMeasurementPreference(User.id=%r, category=%r, type=%r: range start=%r, range end=%r)>' % (
+		return '<UserMeasurementPreference(User.id=%r, category=%r, type=%r: range start=%r, range end=%r)>' % (
 			self.user_account.id,
 			self.measurement_category.category_name,
 			self.measurement_type.type_name,
