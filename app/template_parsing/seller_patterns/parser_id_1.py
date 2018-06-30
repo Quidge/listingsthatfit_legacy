@@ -50,11 +50,11 @@ def get_sportcoat_measurements(html_description, parse_strategy='default'):
 	if parse_strategy == 'default':
 		strings = list(data.stripped_strings)
 		try:
-			m_list.append(Msmt('sportcoat', 'chest', str2int(strings[2])))
-			m_list.append(Msmt('sportcoat', 'sleeve', str2int(strings[4])))
-			m_list.append(Msmt('sportcoat', 'shoulders', str2int(strings[6])))
-			m_list.append(Msmt('sportcoat', 'waist', str2int(strings[8])))
-			m_list.append(Msmt('sportcoat', 'boc', str2int(strings[10])))
+			m_list.append(Msmt('jacket', 'chest_flat', str2int(strings[2])))
+			m_list.append(Msmt('jacket', 'sleeve', str2int(strings[4])))
+			m_list.append(Msmt('jacket', 'shoulders', str2int(strings[6])))
+			m_list.append(Msmt('jacket', 'waist_flat', str2int(strings[8])))
+			m_list.append(Msmt('jacket', 'length', str2int(strings[10])))
 			# TypeError raised by Measurement class if passed non int value
 			# as the measurement value
 		except TypeError as e:
@@ -113,16 +113,16 @@ def get_suit_measurements(html_description, parse_strategy='default'):
 		strings = list(data.stripped_strings)
 		try:
 			# Suit listings are a composite type of both sportcoat and pant types
-			m_list.append(Msmt('sportcoat', 'chest', str2int(strings[2])))
-			m_list.append(Msmt('sportcoat', 'sleeve', str2int(strings[4])))
-			m_list.append(Msmt('sportcoat', 'shoulders', str2int(strings[6])))
-			m_list.append(Msmt('sportcoat', 'waist', str2int(strings[8])))
-			m_list.append(Msmt('sportcoat', 'boc', str2int(strings[10])))
-			m_list.append(Msmt('pant', 'waist', str2int(strings[13])))
-			m_list.append(Msmt('pant', 'hips', str2int(strings[15])))
+			m_list.append(Msmt('jacket', 'chest_flat', str2int(strings[2])))
+			m_list.append(Msmt('jacket', 'sleeve', str2int(strings[4])))
+			m_list.append(Msmt('jacket', 'shoulders', str2int(strings[6])))
+			m_list.append(Msmt('jacket', 'waist_flat', str2int(strings[8])))
+			m_list.append(Msmt('jacket', 'length', str2int(strings[10])))
+			m_list.append(Msmt('pant', 'waist_flat', str2int(strings[13])))
+			m_list.append(Msmt('pant', 'hips_flat', str2int(strings[15])))
 			m_list.append(Msmt('pant', 'inseam', str2int(strings[17])))
 			m_list.append(Msmt('pant', 'cuff_height', str2int(strings[19])))
-			m_list.append(Msmt('pant', 'leg_opening', str2int(strings[23])))
+			m_list.append(Msmt('pant', 'cuff_width', str2int(strings[23])))
 			m_list.append(Msmt('pant', 'rise', str2int(strings[25])))
 			# TypeError raised by Measurement class if passed non int value
 			# as the measurement value
