@@ -1,7 +1,8 @@
 from sqlalchemy.exc import IntegrityError
 
-from app.models import UserMeasurementItemCategory, UserMeasurementItemType
+from app.models import UserMeasurementItemType
 from app import db
+
 
 def populate_user_measurement_item_types():
 	msmt_type = [
@@ -29,6 +30,7 @@ def populate_user_measurement_item_types():
 		else:
 			print('Added and flushed %r' % (m,))
 	db.session.commit()
+
 
 if __name__ == '__main__':
 	populate_user_measurement_item_types()
