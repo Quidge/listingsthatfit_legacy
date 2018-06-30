@@ -2,6 +2,7 @@ from datetime import datetime
 import decimal
 from sqlalchemy.orm.exc import NoResultFound
 from app.models import Item, MeasurementType, ItemMeasurementAssociation, EbaySeller
+from app.models import UserMeasurementPreference, UserMeasurementItemType, UserMeasurementItemCategory
 from app.template_parsing.utils import parse_html_for_measurements
 from app.template_parsing.exception import UnsupportedClothingCategory, UnrecognizedMeasurement, UnsupportedParsingStrategy
 
@@ -195,5 +196,67 @@ def build_ebay_item_model(
 			raise
 
 	return m
+
+
+def build_user_measurement_preferences_for_ebay_item_category(
+	ebay_item_category_object, user_object, db_conn, msmt_dict):
+	"""Constructs UserMeasurementPreference models by combining the parameters and values
+	found in the msmt_dict.
+
+	Parameters
+	----------
+	ebay_item_category_object : EbayItemCategory instance
+	user_object : User instance
+	db_conn : db connection
+	msmt_dict : dict
+		in form {
+			'jacket': {
+				'sleeve': {'measurement': 2400, 'tolerance': 1000},
+				'shoulders': {'measurement': 1850, 'tolerance': 500},
+				...
+				},
+			...
+			'pant': {
+				'inseam': {'measurement': 31500, 'tolerance': '500'},
+				...
+				}
+			}
+
+	Returns
+	-------
+	pref_models : list
+		A list of the UserMeasurementPreference instances that could be constructed
+	"""
+	pref_models = []
+	sess = db_conn.session
+
+	for msmt_category_name, msmt_type_dict in msmt_dict.items():
+		for msmt_type_name, msmt_values_dict in msmt_type_dict.items():
+			try:
+				msmt_category_object = sess.query(UserMeasurementItemCategory).\
+					filter(UserMeasurementItemCategory.category_name == msmt_category_name).one()
+
+				msmt_type_object = sess.query(UserMeasurementItemType).\
+					filter(UserMeasurementItemType.type_name == msmt_type_name).one()
+			except NoResultFound:
+				raise
+			start_range = msmt_values_dict['measurement'] - msmt_values_dict['tolerance']
+			end_range = msmt_values_dict['measurement'] + msmt_values_dict['tolerance']
+			pref = UserMeasurementPreference(
+				ebay_item_category=ebay_item_category_object,
+				measurement_category=msmt_category_object,
+				measurement_type=msmt_type_object,
+				user_account=user_object,
+				range_start_value=start_range,
+				range_end_value=end_range
+			)
+			pref_models.append(pref)
+
+	return pref_models
+
+
+
+
+
 
 

@@ -10,3 +10,4 @@ test_env3.py
 test_env4.py
 populate_size_types.py
 sqlite_data.sql
+app/instance/user_measurement_input_file.py

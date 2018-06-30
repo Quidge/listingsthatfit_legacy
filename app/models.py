@@ -294,7 +294,7 @@ class UserMeasurementPreference(db.Model):
 	measurement_type = db.relationship('UserMeasurementItemType')
 	user_account = db.relationship('User', back_populates='measurements')
 
-	def __repr(self):
+	def __repr__(self):
 		return '<UserMeasurementPreference(User.id=%r, ebay_item_category=%r, category=%r, type=%r: range start=%r, range end=%r)>' % (
 			self.user_account.id,
 			self.ebay_item_category.category_number,
