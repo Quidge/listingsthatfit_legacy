@@ -200,8 +200,8 @@ def build_ebay_item_model(
 
 def build_user_measurement_preferences_for_ebay_item_category(
 	ebay_item_category_object, user_object, db_conn, msmt_dict):
-	"""Constructs UserMeasurementPreference models by combining the parameters and values
-	found in the msmt_dict.
+	"""Returns a list of UserMeasurementPreference models that can be constructed from
+	the parameters and msmt_dict.
 
 	Parameters
 	----------
