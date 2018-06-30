@@ -248,7 +248,7 @@ class UserMeasurementItemCategory(db.Model):
 	category_name = db.Column('user_measurement_item_category_name', db.Text, unique=True)
 
 	def __repr__(self):
-		'<UserMeasurementItemCategory(category_name=%r)>' % (self.category_name,)
+		return '<UserMeasurementItemCategory(category_name=%r)>' % (self.category_name,)
 
 
 class UserMeasurementItemType(db.Model):
@@ -259,7 +259,7 @@ class UserMeasurementItemType(db.Model):
 	type_name = db.Column('user_measurement_item_type_name', db.Text, unique=True)
 
 	def __repr__(self):
-		'<UserMeasurementItemType(type_name=%r)>' % (self.type_name,)
+		return '<UserMeasurementItemType(type_name=%r)>' % (self.type_name,)
 
 
 class UserMeasurementPreference(db.Model):
@@ -295,8 +295,9 @@ class UserMeasurementPreference(db.Model):
 	user_account = db.relationship('User', back_populates='measurements')
 
 	def __repr(self):
-		return '<UserMeasurementPreference(User.id=%r, category=%r, type=%r: range start=%r, range end=%r)>' % (
+		return '<UserMeasurementPreference(User.id=%r, ebay_item_category=%r, category=%r, type=%r: range start=%r, range end=%r)>' % (
 			self.user_account.id,
+			self.ebay_item_category.category_number,
 			self.measurement_category.category_name,
 			self.measurement_type.type_name,
 			self.range_start_value,
