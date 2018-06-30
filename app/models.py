@@ -126,7 +126,7 @@ class User(db.Model):
 		collection_class=lambda: UniqueSet()
 	)
 	measurements = db.relationship(
-		'UserMeasurementItemType',
+		'UserMeasurementPreference',
 		back_populates='user_account',
 		cascade='all, delete-orphan')
 
@@ -288,7 +288,7 @@ class UserMeasurementPreference(db.Model):
 		'user_accounts_id', db.Integer,
 		db.ForeignKey('user_accounts.id'),
 		nullable=True)
-	# _ebay_item_category_id = db.Column()
+
 	ebay_item_category = db.relationship('EbayItemCategory')
 	measurement_category = db.relationship('UserMeasurementItemCategory')
 	measurement_type = db.relationship('UserMeasurementItemType')
