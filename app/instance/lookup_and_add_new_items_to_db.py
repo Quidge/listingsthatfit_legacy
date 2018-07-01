@@ -138,7 +138,7 @@ def lookup_and_create_models_for_new_items(
 
 		parse_error = False
 		if with_measurements:
-			print('Attempting to measurements for item <{}>.'.format(i_id))
+			print('Attempting to build measurement models for item <{}>.'.format(i_id))
 			try:
 				msmts = parse(
 					item_res['Item']['Description'],
@@ -160,7 +160,8 @@ def lookup_and_create_models_for_new_items(
 			print('Item <{}> model and measurements created successfully.'.format(i_id))
 			ebay_item_models.append(m)
 
-	print('Model construction finished. <{}> models built.'.format(len(ebay_item_models)))
+	print('Model construction finished. \
+		<{}> Item models built.'.format(len(ebay_item_models)))
 	return ebay_item_models
 
 

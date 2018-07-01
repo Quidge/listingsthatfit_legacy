@@ -10,21 +10,21 @@ class MeasurementsCollection(object):
 		A record of the HTML string the measuremens were parsed from.
 	measurements_list : list
 		A list of Measurement class objects
-	clothing_category_name : str
+	ebay_item_category_id : int
 	"""
 
 	def __init__(
 		self, parse_strategy=None,
 		parse_html=None, measurements_list=None,
-		clothing_category_name=None):
+		ebay_item_category_id=None):
 
 		self.parse_strategy = parse_strategy
 		self.html_string = parse_html
 		self.measurements_list = measurements_list
-		self.clothing_category_name = clothing_category_name
+		self.ebay_item_category_id = ebay_item_category_id
 
 	def __repr__(self):
-		return 'Category: {}\n{}'.format(self.clothing_category_name, self.measurements)
+		return 'Category: {}\n{}'.format(self.ebay_item_category_id, self.measurements)
 
 
 class Measurement(object):

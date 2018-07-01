@@ -6,7 +6,7 @@ from ebaysdk.finding import Connection as Finding
 # from app.model_builders import build_ebay_item_model
 from app.template_parsing.exception import TemplateParsingError
 
-ebay_clothing_categories = {
+'''ebay_clothing_categories = {
 	3002: 'sportcoat',
 	57991: 'dress_shirt',
 	57990: 'casual_shirt',
@@ -19,7 +19,7 @@ ebay_clothing_categories = {
 	15691: 'vest',
 	11510: 'sleepwear_and_robe',
 	15690: 'swimwear',
-	53120: 'dress_shoes'}
+	53120: 'dress_shoes'}'''
 
 
 '''def lookup_and_add_new_items(

@@ -3,7 +3,6 @@ from importlib import import_module
 from decimal import Decimal
 
 from app.template_parsing.exception import UnsupportedClothingCategory
-from app.ebayapis import ebay_clothing_categories
 
 
 def parse_html_for_measurements(
@@ -50,7 +49,7 @@ def parse_html_for_measurements(
 	measurements_obj = category_parser(
 		item_html_description, parse_strategy=parse_strategy)
 	# measurements_obj doesn't come back with the clothing cat string name configured
-	measurements_obj.clothing_category_name = ebay_clothing_categories[clothing_category_id]
+	measurements_obj.ebay_item_category_id = clothing_category_id
 
 	return measurements_obj
 

@@ -85,10 +85,7 @@ def build_item_measurement(
 		measurement_type = MeasurementItemType.query.filter(
 			MeasurementItemType.type_name == attribute).one()
 		measurement_category = MeasurementItemCategory.query.filter(
-			MeasurementItemCategory.category_name == clothing_cat_string_name)
-		'''measurement_type = MeasurementType.query.filter(
-			MeasurementType.clothing_category == clothing_cat_string_name,
-			MeasurementType.attribute == attribute).one()'''
+			MeasurementItemCategory.category_name == clothing_cat_string_name).one()
 	except NoResultFound as e:
 		raise e
 
@@ -97,9 +94,6 @@ def build_item_measurement(
 			measurement_value=measurement_value,
 			measurement_type=measurement_type,
 			measurement_category=measurement_category)
-		'''association = ItemMeasurementAssociation(
-			measurement_type=measurement_type,
-			measurement_value=measurement_value)'''
 	except BaseException:
 		print('Item Measurement failed to associate')
 		raise
@@ -183,7 +177,7 @@ def build_ebay_item_model(
 		except:
 			raise
 		measurement_models = gather_measurement_models_from_html_desc(
-			html_desc, m.ebay_primary_category, parser_file_num)
+			html_desc, m.primary_item_category.category_number, parser_file_num)
 
 		# damn, list comprehensions are cool
 		try:

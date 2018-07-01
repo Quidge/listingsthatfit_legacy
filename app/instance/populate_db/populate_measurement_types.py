@@ -1,44 +1,43 @@
 from sqlalchemy.exc import IntegrityError
 
-from app.models import MeasurementType
+from app.models import MeasurementItemType
 from app import db
 
 
-def build_sportcoat_types():
-	attrs = ['chest', 'sleeve', 'shoulders', 'waist', 'boc']
-	m_types = [MeasurementType(attribute=attr, clothing_category='sportcoat') for attr in attrs]
-	db.session.add_all(m_types)
-	try:
-		db.session.commit()
-	except IntegrityError as e:
-		db.session.rollback()
-		raise e
-
-	print('Success.')
-	for item in m_types:
-		print('Added: {}'. format(repr(item)))
-
-def build_pant_types():
-	attrs = [
-		'waist',
-		'hips',
+def build_measurement_item_types():
+	m_types = [
+		'chest_flat',
+		'sleeve',
+		'shoulders',
+		'waist_flat',
+		'length',
+		'hips_flat',
 		'inseam',
 		'cuff_height',
-		'leg_opening',
-		'rise'
-	]
-	m_types = [MeasurementType(attribute=attr, clothing_category='pant') for attr in attrs]
-	db.session.add_all(m_types)
-	try:
-		db.session.commit()
-	except IntegrityError as e:
-		db.session.rollback()
-		raise e
+		'cuff_width',
+		'rise']
 
-	print('Success.')
-	for item in m_types:
-		print('Added: {}'. format(repr(item)))
+	for t in m_types:
+		model = MeasurementItemType(type_name=t)
+		db.session.add(model)
+		try:
+			db.session.commit()
+		except IntegrityError:
+			print(
+				'Committing the following MeasurementItemType raised an integrity error. \
+				Skipping and resuming.\n{}'.format(
+					model))
+		else:
+			print('Added: {}'.format(model))
 
-def build_suit_types():
-	build_pant_types()
-	build_sportcoat_types()
+
+if __name__ == '__main__':
+	build_measurement_item_types()
+
+
+
+
+
+
+
+
