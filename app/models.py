@@ -227,7 +227,16 @@ class User(db.Model):
 
 
 class EbayItemCategory(db.Model):
-	"""Represents an ebay item category."""
+	"""Represents an ebay item category.
+
+	Attributes
+	----------
+	id : int
+	category_number : int
+		The integer ebay uses to denote their categories (3002 is blazers and scs, 3001
+		is suits, etc
+	category_name : str
+	"""
 	__tablename__ = 'ebay_item_category'
 	id = db.Column('ebay_item_category_id', db.Integer, primary_key=True)
 	category_number = db.Column(
@@ -242,7 +251,13 @@ class EbayItemCategory(db.Model):
 
 class MeasurementItemCategory(db.Model):
 	"""Represents the category (suit, sportcoat, dress shirt) that a user
-	measurement can belong to."""
+	measurement can belong to.
+
+	Attributes
+	----------
+	id : int
+	category_name : str
+	"""
 	_tablename_ = 'measurement_item_category'
 	id = db.Column('measurement_item_category_id', db.Integer, primary_key=True)
 	category_name = db.Column('measurement_item_category_name', db.Text, unique=True)
@@ -253,7 +268,13 @@ class MeasurementItemCategory(db.Model):
 
 class MeasurementItemType(db.Model):
 	"""Represents the type of measurement (sleeve, chest, collar) that a user
-	measurement can belong to."""
+	measurement can belong to.
+
+	Attributes
+	----------
+	id : int
+	type_name : str
+	"""
 	__tablename__ = 'measurement_item_type'
 	id = db.Column('measurement_item_type_id', db.Integer, primary_key=True)
 	type_name = db.Column('measurement_item_type_name', db.Text, unique=True)
@@ -348,8 +369,14 @@ class ItemMeasurement(db.Model):
 	measurement_category = db.relationship('MeasurementItemCategory')
 	measurement_type = db.relationship('MeasurementItemType')
 
+	def __repr__(self):
+		return '<ItemMeasurement(measurement_category=<MeasurementItemCategory(category_name=%r), measurement_type=<MeasurementItemType(category_type=%r), measurement_value=%r)>' % (
+			self.measurement_category.category_name,
+			self.measurement_type.type_name,
+			self.measurement_value)
 
-class ItemMeasurementAssociation(db.Model):
+
+'''class ItemMeasurementAssociation(db.Model):
 	__tablename__ = 'link_measurement_values_types'
 	fk_measurement_id = db.Column(
 		db.Integer, db.ForeignKey('measurement_types.id'), primary_key=True)
@@ -363,10 +390,10 @@ class ItemMeasurementAssociation(db.Model):
 	item = db.relationship('Item', back_populates='measurements')
 
 	def __repr__(self):
-		return '<%r, %r>' % (self.measurement_type, self.measurement_value)
+		return '<%r, %r>' % (self.measurement_type, self.measurement_value)'''
 
 
-class MeasurementType(db.Model):
+'''class MeasurementType(db.Model):
 	__tablename__ = 'measurement_types'
 	id = db.Column(db.Integer, primary_key=True)
 	attribute = db.Column(db.Text())
@@ -376,7 +403,7 @@ class MeasurementType(db.Model):
 
 	def __repr__(self):
 		return '<id: %r, clothing_category: %r, attribute: %r>' % (
-			self.id, self.clothing_category, self.attribute)
+			self.id, self.clothing_category, self.attribute)'''
 
 class Item(db.Model):
 	__tablename__ = 'ebay_items'
@@ -385,7 +412,11 @@ class Item(db.Model):
 	end_date = db.Column(db.DateTime, nullable=False)
 	last_access_date = db.Column(db.DateTime, nullable=False)
 	ebay_title = db.Column(db.Text(), nullable=False)
-	ebay_primary_category = db.Column(db.Integer)
+	_primary_ebay_category_id = db.Column(
+		'primary_ebay_item_category_id',
+		db.Integer,
+		db.ForeignKey('ebay_item_category.ebay_item_category_id'))
+	primary_item_category = db.relationship('EbayItemCategory')
 	current_price = db.Column(db.Integer)
 	ebay_url = db.Column(db.Text())
 	ebay_affiliate_url = db.Column(db.Text())

@@ -1,8 +1,8 @@
 from datetime import datetime
 import decimal
 from sqlalchemy.orm.exc import NoResultFound
-from app.models import Item, MeasurementType, ItemMeasurementAssociation, EbaySeller
-from app.models import UserMeasurementPreference, UserMeasurementItemType, UserMeasurementItemCategory
+from app.models import Item, EbaySeller, EbayItemCategory
+from app.models import UserMeasurementPreference, MeasurementItemType, MeasurementItemCategory, ItemMeasurement
 from app.template_parsing.utils import parse_html_for_measurements
 from app.template_parsing.exception import UnsupportedClothingCategory, UnrecognizedMeasurement, UnsupportedParsingStrategy
 
@@ -45,36 +45,6 @@ def gather_measurement_models_from_html_desc(
 
 	measurement_models = []
 
-	# suits are special because they have pants waist and jacket waist
-	# attribute names reported from the parser are prepended with either 'jacket_'
-	# or 'pant_'
-	'''if measurements_obj == 3001:
-		for key, msmt_value in measurements_obj.items():
-			cat_name = None
-			attribute = None
-			if key[:6] == 'jacket':
-				cat_name = 'sportcoat'
-				attribute = key[7:]
-			elif key[:4] == 'pant':
-				cat_name = 'pant'
-				attribute = key[5:]
-
-			association = build_item_measurement(
-				clothing_cat_string_name=cat_name,
-				attribute=attribute,
-				measurement_value=msmt_value)
-			measurement_models.append(association)
-			# print(association)
-
-	else:
-		for key, msmt_value in measurements_obj.items():
-			association = build_item_measurement(
-				clothing_cat_string_name=cat_name,
-				attribute=key,
-				measurement_value=msmt_value)
-			measurement_models.append(association)
-			# print(association)'''
-
 	for msmt in measurements_obj.measurements_list:
 		association = build_item_measurement(
 			clothing_cat_string_name=msmt.category,
@@ -89,6 +59,20 @@ def build_item_measurement(
 	clothing_cat_string_name=None,
 	attribute=None,
 	measurement_value=None):
+	"""Constructs and returns an appropriate ItemMeasurement instance.
+
+	Parameters
+	----------
+	measurement_value : int
+	clothing_cat_string_name : str
+		Expected to match some MeasurementItemCategory.category_name record
+	attribute : str
+		Expected to match some MeasurementItemType.type_name record
+
+	Returns
+	-------
+	association : ItemMeasurement instance
+	"""
 
 	try:
 		assert clothing_cat_string_name is not None
@@ -98,16 +82,24 @@ def build_item_measurement(
 		print(clothing_cat_string_name, attribute, measurement_value)
 		raise
 	try:
-		measurement_type = MeasurementType.query.filter(
+		measurement_type = MeasurementItemType.query.filter(
+			MeasurementItemType.type_name == attribute).one()
+		measurement_category = MeasurementItemCategory.query.filter(
+			MeasurementItemCategory.category_name == clothing_cat_string_name)
+		'''measurement_type = MeasurementType.query.filter(
 			MeasurementType.clothing_category == clothing_cat_string_name,
-			MeasurementType.attribute == attribute).one()
+			MeasurementType.attribute == attribute).one()'''
 	except NoResultFound as e:
 		raise e
 
 	try:
-		association = ItemMeasurementAssociation(
+		association = ItemMeasurement(
+			measurement_value=measurement_value,
 			measurement_type=measurement_type,
-			measurement_value=measurement_value)
+			measurement_category=measurement_category)
+		'''association = ItemMeasurementAssociation(
+			measurement_type=measurement_type,
+			measurement_value=measurement_value)'''
 	except BaseException:
 		print('Item Measurement failed to associate')
 		raise
@@ -160,11 +152,15 @@ def build_ebay_item_model(
 
 	r = single_item_response['Item']
 
+	primary_category = EbayItemCategory.query.filter(
+		EbayItemCategory.category_number == int(r['PrimaryCategoryID'])).one()
+
 	m.seller = seller
 	m.ebay_item_id = int(r['ItemID'])
 	m.end_date = datetime.strptime(r['EndTime'], '%Y-%m-%dT%H:%M:%S.%fZ')
 	m.ebay_title = r['Title']
-	m.ebay_primary_category = int(r['PrimaryCategoryID'])
+	m.primary_item_category = primary_category
+	# m.ebay_primary_category = int(r['PrimaryCategoryID'])
 	m.current_price = int(decimal.Decimal(r['ConvertedCurrentPrice']['value']) * 100)
 	m.ebay_url = r['ViewItemURLForNaturalSearch']
 	m.ebay_affiliate_url = affiliate_url
@@ -233,11 +229,11 @@ def build_user_measurement_preferences_for_ebay_item_category(
 	for msmt_category_name, msmt_type_dict in msmt_dict.items():
 		for msmt_type_name, msmt_values_dict in msmt_type_dict.items():
 			try:
-				msmt_category_object = sess.query(UserMeasurementItemCategory).\
-					filter(UserMeasurementItemCategory.category_name == msmt_category_name).one()
+				msmt_category_object = sess.query(MeasurementItemCategory).\
+					filter(MeasurementItemCategory.category_name == msmt_category_name).one()
 
-				msmt_type_object = sess.query(UserMeasurementItemType).\
-					filter(UserMeasurementItemType.type_name == msmt_type_name).one()
+				msmt_type_object = sess.query(MeasurementItemType).\
+					filter(MeasurementItemType.type_name == msmt_type_name).one()
 			except NoResultFound:
 				raise
 			start_range = msmt_values_dict['measurement'] - msmt_values_dict['tolerance']
