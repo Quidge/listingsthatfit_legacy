@@ -370,9 +370,9 @@ class ItemMeasurement(db.Model):
 	measurement_type = db.relationship('MeasurementItemType')
 
 	def __repr__(self):
-		return '<ItemMeasurement(measurement_category=%r), measurement_type=%r, measurement_value=%r)>' % (
-			self.measurement_category,
-			self.measurement_type,
+		return '<ItemMeasurement(measurement_category=%r, measurement_type=%r, measurement_value=%r)>' % (
+			self.measurement_category.category_name,
+			self.measurement_type.type_name,
 			self.measurement_value)
 
 
