@@ -29,7 +29,7 @@ Rough MVP todo for the minimum needed to email people matches by hand
 * [X] measurements link table
 * [X] fully flesh out items table
 * [X] script to scour template using BS and create item entry (only sportcoats for now)
-* [ ] script to pull down all items and create entries for items
+* [X] script to pull down all items and create entries for items
   * [X] parser for suits
   * [X] parser for sportcoats
   * [ ] parser for casual shirts
@@ -38,9 +38,9 @@ Rough MVP todo for the minimum needed to email people matches by hand
   * [ ] parser for coats and jackets
   * [ ] parser for sweaters
 * [ ] Script to remove old listings from db
-* [ ] Measurement + tolerance association table
-* [ ] Foreign key linkup to above association table
-* [ ] Query to search for matching listings for User's measurements + tolerances
+* [X] Measurement + tolerance association table
+* [X] Foreign key linkup to above association table
+* [X] Query to search for matching listings for User's measurements + tolerances
 * [ ] Query for listings matching ad-hoc measurements + tolerances
 * [ ] plaintext report generation for query results that can be output to an email
 
