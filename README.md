@@ -32,10 +32,10 @@ Rough MVP todo for the minimum needed to email people matches by hand
 * [X] script to pull down all items and create entries for items
   * [X] parser for suits
   * [X] parser for sportcoats
-  * [ ] parser for casual shirts
-  * [ ] parser for dress shirts
-  * [ ] parser for pants
-  * [ ] parser for coats and jackets
+  * [X] parser for casual shirts
+  * [X] parser for dress shirts
+  * [X] parser for pants
+  * [X] parser for coats and jackets
   * [ ] parser for sweaters
 * [ ] Script to remove old listings from db
 * [X] Measurement + tolerance association table
