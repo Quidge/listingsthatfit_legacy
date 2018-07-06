@@ -131,8 +131,10 @@ def lookup_and_create_models_for_new_items(
 				ebay_seller_id=ebay_seller_id,
 				with_measurements=False,
 				with_sizes=False)
-		except:
-			raise
+		except NoResultFound as e:
+			print(e)
+			print('Found error. Skipping this item')
+			continue
 		else:
 			print('Built model for item <{}>'.format(i_id))
 
@@ -181,7 +183,7 @@ if __name__ == '__main__':
 		s_api,
 		db,
 		'balearic1',
-		finding_payload_override=payload,
+		finding_payload_override=None,
 		with_measurements=True)
 
 	db.session.add_all(models)

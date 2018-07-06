@@ -1,0 +1,15 @@
+[SPOILER='Results']
+{% if metadata -%}
+Measurement criteria used:
+{%- for name, value_dict in metadata.measurements_provided.items() %}
+<{{name}}> measurement: {{value_dict['measurement']}}; tolerance: {{value_dict['tolerance']}}
+{%- endfor %}
+
+Searched {{metadata.total_search_count}} items in total.
+Found {{metadata.result_count}} matching items.
+{% endif %}
+
+{%- for item in items %}
+[B][COLOR=#0059b3][URL={{item.ebay_url}}]{{item.ebay_title}}[/URL][/COLOR][/B]
+{%- endfor -%}
+[/SPOILER]

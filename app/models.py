@@ -365,7 +365,7 @@ class ItemMeasurement(db.Model):
 		db.ForeignKey('ebay_items.id'),
 		nullable=False)
 
-	ebay_item = db.relationship('Item', back_populates='measurements')
+	# ebay_item = db.relationship('Item', back_populates='measurements')
 	measurement_category = db.relationship('MeasurementItemCategory')
 	measurement_type = db.relationship('MeasurementItemType')
 
@@ -426,7 +426,9 @@ class Item(db.Model):
 	seller = db.relationship('EbaySeller', back_populates='items')
 
 	measurements = db.relationship(
-		'ItemMeasurement', cascade="all, delete-orphan", back_populates='ebay_item')
+		'ItemMeasurement', cascade='all, delete', backref='ebay_item')
+	# measurements = db.relationship(
+		# 'ItemMeasurement', back_populates='ebay_item', cascade='all, delete, delete-orphan')
 	# sizes = None  # An association of all the sizes (and types) for this listing
 
 	def __repr__(self):
