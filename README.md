@@ -41,7 +41,7 @@ Rough MVP todo for the minimum needed to email people matches by hand
 * [X] Measurement + tolerance association table
 * [X] Foreign key linkup to above association table
 * [X] Query to search for matching listings for User's measurements + tolerances
-* [ ] Query for listings matching ad-hoc measurements + tolerances
+* [X] Query for listings matching ad-hoc measurements + tolerances
 * [ ] plaintext report generation for query results that can be output to an email
 
 Rest of MVP buildout
