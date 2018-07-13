@@ -1,4 +1,3 @@
-# from app.instance import finding_connection, shopping_connection
 from ebaysdk.exception import ConnectionError
 from sqlalchemy.orm.exc import NoResultFound
 

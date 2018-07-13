@@ -1,5 +1,6 @@
 from app.instance import shopping_connection as sapi
 from app.ebayapis.core.lookup import lookup_single_item
+from app.model_builders import build_ebay_item_model
 
 
 def build_item_model(ebay_item_id, ebay_seller_id=None, with_measurements=True):

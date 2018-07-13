@@ -1,3 +1,4 @@
+import re
 from bs4 import BeautifulSoup
 # from app.template_parsing.utils import find_paired_measurement_value as paired_val
 from app.template_parsing.utils import str_measurement_to_int as str2int
@@ -433,6 +434,93 @@ def get_coat_and_jacket_measurements(html_description, parse_strategy='default')
 	return m
 
 
+def get_sweater_measurements(html_description, parse_strategy='default'):
+	"""Parses a sweater listing from seller balearic1 and returns a
+	MeasurementsCollection instance.
+
+	parse_strategy='default' attempts to detect raglan shoulders and sleeves
+	measured from underarm and act accordingly.
+	accordingly.
+
+	Parameters
+	----------
+	html_description : str
+	parse_strategy : str
+		Defaults to 'default'
+
+	Returns
+	-------
+	m : MeasurementsCollection instance
+	"""
+
+	soup = BeautifulSoup(html_description, 'html.parser')
+
+	try:
+		assert soup.find(string='Approximate Measurements') != None
+	except AssertionError:
+		raise UnrecognizedTemplateHTML(
+			'Unable to find "Approximate Measurements" string in HTML description',
+			html_string=str(soup))
+	else:
+		data = (
+			soup
+			.find(string='Approximate Measurements')  # string itself
+			.parent  # enclosing <h3>
+			.parent  # enclosing <td>
+			.parent  # enclosing <tr>
+			.parent  # enclosing <tbody>
+			.parent  # enclosing <table>
+		)
+
+	m_list = []
+
+	if parse_strategy == 'default':
+		sweater_uses_raglan = data.find(
+			string=re.compile('raglan', flags=re.IGNORECASE)) is not None
+		sweater_uses_underarm = data.find(
+			string=re.compile('underarm', flags=re.IGNORECASE)) is not None
+
+		if sweater_uses_raglan != sweater_uses_underarm:
+			raise UnrecognizedTemplateHTML(
+				'Expected template text search for "raglan" and "underarm" to BOTH == True\
+				or BOTH == False. Found raglan={} and sweater_uses_underarm={}'.format(
+					sweater_uses_raglan, sweater_uses_underarm), html_string=str(data))
+
+		strings = list(data.stripped_strings)
+		try:
+			m_list.append(Msmt('sweater', 'chest_flat', str2int(strings[2])))
+			m_list.append(Msmt('sweater', 'length', str2int(strings[8])))
+
+			# Handle cases with raglan sleeves or not
+			if sweater_uses_raglan and sweater_uses_underarm:
+				m_list.append(Msmt('sweater', 'sleeve_from_armpit', str2int(strings[4])))
+				m_list.append(Msmt('sweater', 'shoulders_raglan', 0))
+			else:
+				m_list.append(Msmt('sweater', 'sleeve', str2int(strings[4])))
+				m_list.append(Msmt('sweater', 'shoulders', str2int(strings[6])))
+			# TypeError raised by Measurement class if passed non int value
+			# as the measurement value
+		except TypeError as e:
+			raise UnrecognizedMeasurement(
+				'Instantiation of Measurement class ({}) by parsing html raised a KeyError, \
+				indicating the parser identified a region that it expected would be a \
+				measurement value.'.format(e), html_string=str(data))
+		except IndexError:
+			raise UnrecognizedTemplateHTML(
+				'Default parsing strategy expected a differing number of measurements than \
+				what was provided by the template.',
+				html_string=str(data))
+	else:
+		raise UnsupportedParsingStrategy(
+			'Parsing strategy <{}> is not supported for this category'.format(parse_strategy))
+	m = MeasurementsCollection(
+		parse_strategy=parse_strategy,
+		parse_html=str(data),
+		measurements_list=m_list)
+
+	return m
+
+
 '''def get_suit_measurements2(html_description, parse_strategy='default'):
 	"""Parses a sportcoat listing from seller balearic1 and returns the measurements
 	as a dict.
@@ -591,7 +679,8 @@ function_directory = {
 	57991: get_dress_shirt_measurement,
 	57990: get_casual_shirt_measurement,
 	57989: get_pant_measurements,
-	57988: get_coat_and_jacket_measurements
+	57988: get_coat_and_jacket_measurements,
+	11484: get_sweater_measurements
 }
 
 

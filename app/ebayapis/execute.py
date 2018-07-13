@@ -19,12 +19,23 @@ sapi = Shopping(
 payload = {
 	'itemFilter': [
 		{'name': 'Seller', 'value': 'balearic1'},
-		{'name': 'listingType', 'value': 'Auction'}
+		{'name': 'ListingType', 'value': ['Auction']},
+		{'name': 'ExcludeCategory', 'value': [
+			'15662',
+			'11483',
+			'11510',
+			'15690',
+			'53120',
+			'15691',
+			'281',
+			'11511',
+			'93427']},
 	],
-	'categoryId': [3002]
+	# 'categoryId': [3002]
 }
 
-# items = lookup(fapi, sapi, 'balearic1', with_measurements=True, custom_payload=payload)
+res = fapi.execute('findCompletedItems', payload)
+print(res.dict())
 # print(type(items))
 
 ### Test
@@ -35,9 +46,10 @@ payload = {
 # print(items)
 
 # from app.model_builders import gather_measurement_models_from_html_desc as parse
-from app.ebayapis.core import lookup_single_item
+# from app.ebayapis.core.lookup import lookup_single_item
 
-res = lookup_single_item(sapi, 3, with_description=True)
+# res = lookup_single_item(sapi, 352323196560, with_description=False)
+# print(res.dict())
 
 # desc = res.dict()['Item']['Description']
 
