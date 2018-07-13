@@ -147,7 +147,7 @@ def lookup_and_create_models_for_new_items(
 					int(item_res['Item']['PrimaryCategoryID']),
 					parser_file_number)
 			except UnsupportedClothingCategory as e:
-				print(e)
+				print(e.message)
 				parse_error = True
 			except TemplateParsingError:
 				print('Failed to build model for item <{}>.'.format(i_id))

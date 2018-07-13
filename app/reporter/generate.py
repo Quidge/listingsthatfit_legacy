@@ -5,7 +5,7 @@ from app.models import Item
 
 
 def output_forum_post(list_of_items, metadata=None):
-	template = jinja_env.get_template('base_forum_post.txt')
+	template = jinja_env.get_template('styleforum/basic_multi_item.txt')
 	print(template.render(items=list_of_items, metadata=metadata))
 
 
@@ -15,7 +15,7 @@ def single_item_measurements_report(ebay_item_id):
 	except NoResultFound:
 		raise NoResultFound('Could not find an Item instance with ebay ID <{}> in the database.'.format(
 			ebay_item_id))
-	template = jinja_env.get_template('single_item_forum_post.txt')
+	template = jinja_env.get_template('styleforum/single_item_forum_post.txt')
 	return template.render(item=i, measurements=i.measurements)
 
 
@@ -41,7 +41,7 @@ def generate_forum_post_w_msmts(list_of_items, metadata=None):
 
 	"""
 	items_dict = compress(list_of_items)
-	template = jinja_env.get_template('base_forum_post_w_msmts.txt')
+	template = jinja_env.get_template('styleforum/multi_item_w_msmts.txt')
 	return template.render(items=items_dict, metadata=metadata)
 
 
