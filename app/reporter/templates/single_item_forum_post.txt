@@ -1,0 +1,8 @@
+[SPOILER='{{item.ebay_title}}']
+[B][URL={{item.ebay_url}}]{{item.ebay_title}}[/URL][/B]
+[B]{{item.ebay_item_id}}[/B] | End Date: sometime on [B]{{item.end_date|datetimeformat(format_str='%-m/%d')}}[/B] | [B]{{"$%.2f"|format(item.current_price/100)}}[/B] (as of {{item.last_access_date|datetimeformat(format_str='%-m/%d')}})
+Measurements:
+{%- for msmt in measurements %}
+    {{msmt.measurement_category.category_name}}, {{msmt.measurement_type.type_name}}: {{msmt.measurement_value|int2inch_str}}
+{%- endfor -%}
+[/SPOILER]
