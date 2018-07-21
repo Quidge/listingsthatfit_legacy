@@ -485,7 +485,69 @@ if __name__ == '__main__':
 		}
 	}
 
-	query6 = matching_in_categories_alt(my_measurements_mqp, with_measurements=False)
+
+	stitches_mqp = {
+		3002: {  # SC
+			'measurements_list': [
+				MQP('jacket', 'chest_flat', 22000, 500),
+				MQP('jacket', 'shoulders', 19000, 500),
+				MQP('jacket', 'sleeve', 24250, 1500),
+				MQP('jacket', 'waist_flat', 21500, 1500),
+				MQP('jacket', 'length', 31000, 750)],
+			'required_count': 5
+		},
+		3001: {
+			'measurements_list': [
+				MQP('jacket', 'chest_flat', 22000, 500),
+				MQP('jacket', 'shoulders', 19000, 500),
+				MQP('jacket', 'sleeve', 24250, 1500),
+				MQP('jacket', 'waist_flat', 21500, 1500),
+				MQP('jacket', 'length', 31000, 750),
+				MQP('pant', 'waist_flat', 19500, 1500),
+				MQP('pant', 'hips_flat', 12750, 1000),
+				MQP('pant', 'inseam', 32000, 3000),
+				MQP('pant', 'rise', 11000, 500)
+			],
+			'required_count': 9
+		},
+		57989: {  # Pants
+			'measurements_list': [
+				MQP('pant', 'waist_flat', 19500, 1500),
+				MQP('pant', 'hips_flat', 12750, 1000),
+				MQP('pant', 'inseam', 32000, 3000),
+				MQP('pant', 'rise', 11000, 500)
+			],
+			'required_count': 4
+		},
+		57991: {  # Dress shirts
+			'measurements_list': [
+				MQP('shirt', 'chest_flat', 24250, 250),
+				MQP('shirt', 'shoulders', 19750, 500),
+				MQP('shirt', 'sleeve_long', 25500, 500),
+				MQP('shirt', 'sleeve_short', 11000, 5000)
+			],
+			'required_count': 3
+		},
+		57990: {  # Casual shirts
+			'measurements_list': [
+				MQP('shirt', 'chest_flat', 24250, 250),
+				MQP('shirt', 'shoulders', 19750, 500),
+				MQP('shirt', 'sleeve_long', 25500, 500),
+				MQP('shirt', 'sleeve_short', 11000, 5000)
+			],
+			'required_count': 3
+		},
+		57988: {  # Coats and jackets
+			'measurements_list': [
+				MQP('jacket', 'chest_flat', 22500, 1000),
+				MQP('jacket', 'shoulders', 19250, 500),
+				MQP('jacket', 'sleeve', 24250, 1500),
+			],
+			'required_count': 3
+		}
+	}
+
+	query6 = matching_in_categories_alt(stitches_mqp, with_measurements=True)
 	# [print(i.ebay_item_id, i.measurements) for i in query6.all()]
 	[print(i) for i in query6.all()]
 	print(query6.count())

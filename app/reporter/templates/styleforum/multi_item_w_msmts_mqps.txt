@@ -1,0 +1,23 @@
+{% if metadata -%}
+[SPOILER='MEASUREMENT CRITERIA']
+Measurement criteria used:
+{% for ebay_item_cat, msmts_dict in metadata.measurements_provided.items() %}
+	Ebay Item Category {{ebay_item_cat}}:
+	{%- for mqp in msmts_dict['measurements_list'] %}
+	|--- {{mqp.category_name}}, {{mqp.type_name}}: Measurement: {{mqp.measurement|int2inch_str}}, Tolerance: {{mqp.tolerance|int2inch_str}}
+	{%- endfor -%}
+{%- endfor %}
+[/SPOILER]
+
+Searched {{metadata.total_search_count}} items in total.
+Found {{metadata.result_count}} matching items.
+{% endif %}
+
+{%- for _, entry in items.items() %}
+[B][COLOR=#0059b3][URL={{entry['item_details'].ebay_url}}]{{entry['item_details'].ebay_title}}[/URL][/COLOR][/B]
+[SPOILER='MEASUREMENTS']
+	{%- for msmt in entry['measurements'] %}
+		{{msmt.measurement_type.type_name}}: {{msmt.measurement_value|int2inch_str}}
+	{%- endfor -%}
+[/SPOILER]
+{%- endfor -%}

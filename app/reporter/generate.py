@@ -2,6 +2,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from app.reporter import reporter_jinja_env as jinja_env
 from app.models import Item
+from app.reporter.utils import compile_item_with_measurements as compress
 
 
 def output_forum_post(list_of_items, metadata=None):
@@ -19,7 +20,10 @@ def single_item_measurements_report(ebay_item_id):
 	return template.render(item=i, measurements=i.measurements)
 
 
-def generate_forum_post_w_msmts(list_of_items, metadata=None):
+def generate_forum_post_w_msmts(
+	list_of_items,
+	template='/styleforum/multi_item_w_msmts.txt',
+	metadata=None):
 	"""Takes list of rows with (<Item>, <ItemMeasurement>) instances, compresses it to
 	a dict of {item : {various: msmt, various2: msmt}}, and renders as text appropriate
 	for a Styleforum post.
@@ -41,7 +45,7 @@ def generate_forum_post_w_msmts(list_of_items, metadata=None):
 
 	"""
 	items_dict = compress(list_of_items)
-	template = jinja_env.get_template('styleforum/multi_item_w_msmts.txt')
+	template = jinja_env.get_template(template)
 	return template.render(items=items_dict, metadata=metadata)
 
 
@@ -135,6 +139,7 @@ if __name__ == '__main__':
 			'sleeve': {'measurement': 25000, 'tolerance': 2250}
 		}
 	}
+
 
 	import copy
 	my_measurements20180710_looser = copy.deepcopy(my_measurements20180710)

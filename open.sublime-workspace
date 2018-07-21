@@ -1,0 +1,314 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"measurem",
+				"measurement_value"
+			],
+			[
+				"parse",
+				"parse_strategy"
+			],
+			[
+				"measure",
+				"measurement_models"
+			],
+			[
+				"measur",
+				"measurement_value"
+			],
+			[
+				"clothin",
+				"clothing_cat_string_name"
+			],
+			[
+				"measurements",
+				"measurements_dict"
+			],
+			[
+				"pars",
+				"parsing_strategy"
+			],
+			[
+				"item",
+				"item_html_description"
+			],
+			[
+				"templa",
+				"template_parsing"
+			],
+			[
+				"jacket_",
+				"jacket_boc"
+			],
+			[
+				"jack",
+				"jacket_shoulders"
+			],
+			[
+				"jacket",
+				"jacket_sleeve"
+			],
+			[
+				"leg",
+				"leg_opening"
+			],
+			[
+				"possi",
+				"possible_pairs"
+			],
+			[
+				"pant",
+				"pant_leg_opening"
+			],
+			[
+				"poss",
+				"possible_pairs"
+			],
+			[
+				"jacke",
+				"jacket_sleeve"
+			],
+			[
+				"m",
+				"m_dict"
+			],
+			[
+				"str",
+				"str_dec_to_dec_type"
+			],
+			[
+				"argu",
+				"argument1"
+			],
+			[
+				"measurement",
+				"measurements_dict"
+			],
+			[
+				"bu",
+				"build_sportcoat_types"
+			],
+			[
+				"bui",
+				"build_pant_types"
+			],
+			[
+				"attr",
+				"attrs"
+			],
+			[
+				"html",
+				"html_description"
+			],
+			[
+				"ebay",
+				"ebay_seller_id"
+			],
+			[
+				"parser",
+				"parser_file_num"
+			],
+			[
+				"ebay_seller",
+				"ebay_seller_id"
+			],
+			[
+				"template",
+				"template_parser_id"
+			],
+			[
+				"temp",
+				"template_parser"
+			],
+			[
+				"Templ",
+				"TemplateParsingFileID"
+			],
+			[
+				"back",
+				"back_populates"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"Packa",
+				"Package Control: Remove Package"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 136.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = '6f4c264a24d933ce70df5dedcf1dcaee' + 'ebe013ee18cced0ef93d5f746d80ef60'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by) "
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/Users/lirum/Documents/programming/projects/LTF/app/models.py",
+		"/Users/lirum/Documents/programming/projects/LTF/app/template_parsing/utils.py",
+		"/Users/lirum/Documents/programming/projects/LTF/app/template_parsing/seller_patterns/parser_id_1.py",
+		"/Users/lirum/Library/Application Support/Sublime Text 3/Packages/Anaconda/Anaconda.sublime-settings",
+		"/Users/lirum/Documents/programming/projects/LTF/app/ebay2db/core/__init__.py",
+		"/Users/lirum/Documents/programming/projects/LTF/app/ebay2db/__init__.py",
+		"/Users/lirum/Documents/programming/projects/LTF/app/ebay_api_scripts/__init__.py",
+		"/Users/lirum/Documents/programming/projects/LTF/app/instance/populate_measurement_types.py",
+		"/Users/lirum/Documents/programming/projects/LTF/app/template_parsing/seller_patterns/__init__.py",
+		"/Users/lirum/Documents/programming/projects/LTF/alembic/versions/fd1f5e2911b3_.py",
+		"/Users/lirum/Documents/programming/projects/LTF/.git/config",
+		"/Users/lirum/.gitconfig",
+		"/Users/lirum/Documents/programming/projects/LTF/test_env3.py"
+	],
+	"find":
+	{
+		"height": 24.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 24.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "open.sublime-project",
+	"replace":
+	{
+		"height": 44.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"~/Documents/programming/projects/LTF/open.sublime-workspace"
+			]
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": false,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 259.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
