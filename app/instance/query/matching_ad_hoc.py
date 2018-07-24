@@ -121,7 +121,7 @@ def matching_in_categories(cat_msmts_dict, with_measurements=False):
 	return items
 
 
-def matching_in_categories_alt(cat_msmts_dict, with_measurements=False):
+def matching_in_categories_alt(cat_msmts_dict, with_measurements=False, days_out=0):
 	"""Searches the db for items matching an ad hoc dict composed of
 	MeasurementItemType.type_name and ItemMeasurement measurement values.
 	Does not search for categories. A chest_flat measurement will return
@@ -166,7 +166,7 @@ def matching_in_categories_alt(cat_msmts_dict, with_measurements=False):
 			# print(mqp.measurement - mqp.tolerance)
 			# print(mqp)
 			and_component = and_(
-				Item.end_date > datetime.datetime.now(),
+				Item.end_date > datetime.datetime.now() + datetime.timedelta(days=days_out),
 				EbayItemCategory.category_number == ebay_category_id,
 				MeasurementItemCategory.category_name == mqp.category_name,
 				MeasurementItemType.type_name == mqp.type_name,
