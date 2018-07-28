@@ -36,7 +36,7 @@ Rough MVP todo for the minimum needed to email people matches by hand
   * [X] parser for dress shirts
   * [X] parser for pants
   * [X] parser for coats and jackets
-  * [ ] parser for sweaters
+  * [X] parser for sweaters
 * [ ] Script to remove old listings from db
 * [X] Measurement + tolerance association table
 * [X] Foreign key linkup to above association table
@@ -44,10 +44,21 @@ Rough MVP todo for the minimum needed to email people matches by hand
 * [X] Query for listings matching ad-hoc measurements + tolerances
 * [ ] plaintext report generation for query results that can be output to an email
 
-Rest of MVP buildout
+Steps to buildout rest of app and deploy
 -----
-* [ ] UI display for all matches (sizes and measurements)
-* [ ] email functionality
+* [ ] Proper logging
+* [ ] Some test coverage
+* [ ] User account with measurements
+* [ ] Integrate user measurements form with site
+* [ ] UI to display matching items from current week
+* [ ] UI to display matching items for current week PLUS next week
+* [ ] UI for results from ad hoc measurements search
+* [ ] proper login/out
+* [ ] Plaintest report template for emails
+* [ ] Email report script and schedule
+* [ ] Dev server
+* [ ] Prod server
+* [ ] CI pipeine for deployment
 * [ ] buy URL
 * [ ] deploy to server
 * [ ] link URL to server
