@@ -1,4 +1,7 @@
+import logging
 from jinja2 import Environment, PackageLoader
+
+logger = logging.getLogger(__name__)
 
 reporter_jinja_env = Environment(
 	loader=PackageLoader('app.reporter', 'templates')
