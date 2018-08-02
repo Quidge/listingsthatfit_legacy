@@ -1,11 +1,24 @@
+if __name__ != '__main__':
+	raise ValueError('This script is designed to be used as a cli program.')
+
 import sys
 from importlib import import_module
 import datetime
+import logging
 
 from app.instance.query.matching_ad_hoc import matching_in_categories_alt
 from app.reporter.generate import generate_forum_post_w_msmts as gen
 from app.models import Item
 from app.reporter.utils import compile_item_with_measurements as compress
+
+logger = logging.getLogger(__name__)
+sh = logging.StreamHandler(stream=sys.stdout)
+sh.setLevel(logging.INFO)
+sh.setFormatter(logging.Formatter('[%(levelname)s] - [%(name)s] - %(message)s'))
+logger.addHandler(sh)
+logger.setLevel(logging.DEBUG)
+
+logger.info('Starting generate_new_items_sf_format script.')
 
 if len(sys.argv) != 2:
 	raise ValueError('Usage: script_name <user_name>')

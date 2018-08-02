@@ -158,10 +158,10 @@ def matching_in_categories_alt(cat_msmts_dict, with_measurements=False, days_out
 	}'''
 
 	user_msmt_join_conditions = []
-	print(cat_msmts_dict)
+	# print(cat_msmts_dict)
 	for ebay_category_id, m_dict in cat_msmts_dict.items():
 		for mqp in m_dict['measurements_list']:
-			print('category: {}'.format(ebay_category_id), mqp)
+			# print('category: {}'.format(ebay_category_id), mqp)
 			# print(mqp.measurement + mqp.tolerance)
 			# print(mqp.measurement - mqp.tolerance)
 			# print(mqp)
@@ -201,7 +201,7 @@ def matching_in_categories_alt(cat_msmts_dict, with_measurements=False, days_out
 		group_by(ItemMsmt._ebay_item_id, EbayItemCategory.category_number).\
 		order_by(EbayItemCategory.category_number)
 
-	print(counts.all())
+	# print(counts.all())
 
 	ad_hoc_msmts2 = counts.subquery()
 
