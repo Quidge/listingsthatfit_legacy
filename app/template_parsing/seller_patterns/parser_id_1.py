@@ -14,6 +14,23 @@ from app.template_parsing.exception import UnsupportedParsingStrategy, Unrecogni
 ## Parser for SpooPoker ##
 ##########################
 
+# This parser has a job: determine the type of clothing (suit, sc, casual coat) and parse out the
+# measurements. This can be a hard job because ebay/spoo puts suits/scs/casual coats into the same
+# category, but different types of clothing can have different measurements (spoo doesn't list waist
+# for casual coats, only suit listings have pant measurements, etc).
+# Here is the control flow:
+# 	- Parser is passed a html page + some ebay category information + parsing strategy.
+# 	- Parser scans for 'Approximate Measurements' (AP) and creates soup from 'Approximate Measurements'
+# 	table.
+# 		- If AP cannot be found, template is assumed to be unparsable and error is thrown.
+# 	- Using the passed ebay category information (ebay category number for the listing) and various
+# 	searches of AP (does AP contain 'pants', 'waist', etc), an attempt will be made to determine
+# 	the type of clothing.
+# 	- Once the type of clothing is determined, a director function takes this information and sends
+# 	the template to the appropriate parsing function with the parsing strategy.
+# 	- The return from the parsing function is the measurements and the parsers own divination of the
+# 	clothing type. The return format is in JSON.
+
 logger = logging.getLogger(__name__)
 
 
