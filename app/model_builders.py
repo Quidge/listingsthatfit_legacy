@@ -105,6 +105,7 @@ def build_ebay_item_model(
 	single_item_response,
 	ebay_seller_id=None,
 	with_measurements=False,
+	measurement_parse_strategy='default',
 	with_sizes=False,
 	affiliate_url=None):
 	"""Takes an ebay_seller_id, and GetSingleItem ebay API response, and affiliate_url
@@ -177,7 +178,8 @@ def build_ebay_item_model(
 		except:
 			raise
 		measurement_models = gather_measurement_models_from_html_desc(
-			html_desc, m.primary_item_category.category_number, parser_file_num)
+			html_desc, m.primary_item_category.category_number, parser_file_num,
+			parse_strategy=measurement_parse_strategy)
 
 		# damn, list comprehensions are cool
 		try:

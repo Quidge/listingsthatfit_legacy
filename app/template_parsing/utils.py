@@ -55,14 +55,25 @@ def parse_html_for_measurements(
 
 
 def find_paired_measurement_value(navigable_str):
-	"""Returns first(!) string measurement value '22.5"' that is found in the
-	same row as navigable string."""
-	row = navigable_str.parent.parent  # str > td > tr
+	"""For a navigable string, returns the next sibling of the parent 'td' element.
+
+	This structure is expected:
+		<td>navigable_str</td>
+		<td>22.5"</td>
+	
+	Returns
+	-------
+	str
+	"""
+	"""row = navigable_str.parent.parent  # str > td > tr
 	row_strs = row.stripped_strings
 	for s in row_strs:
 		str_decimal = re.search(re.compile('\d*\.?\d\"'), s)  # .75" or 33" or 33.75"
 		if str_decimal != None:
-			return str_decimal.group(0)  # should return first measurement value string found
+			return str_decimal.group(0)  # should return first measurement value string found"""
+	
+	return navigable_str.find_parent('td').find_next_sibling('td').string
+
 
 
 def str_measurement_to_int(string_measurement_value):

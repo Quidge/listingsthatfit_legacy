@@ -2,6 +2,27 @@
 # https://docs.python.org/2/tutorial/modules.html#packages
 
 
+class ParseParameter(object):
+	"""An object holding information for the parser to look for.
+
+	self.pattern : regex pattern
+	self.alt_patterns : list of alternative regexes to use
+	self._attribute : str
+	self._category : str
+	self.required : boolean
+	"""
+
+	def __init__(
+		self, pattern, alt_patterns=[], attribute=None,
+		category=None, required=True):
+
+		self.attribute = attribute
+		self.category = category
+		self.pattern = pattern
+		self.alt_patterns = alt_patterns
+		self.required = required
+
+
 class MeasurementsCollection(object):
 	"""Base Measurements Collection class
 

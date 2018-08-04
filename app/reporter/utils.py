@@ -12,7 +12,7 @@ def compile_item_with_measurements(results_list):
 	-------
 	item_dict : dict
 	"""
-	logger.debug('Starting results list compressor')
+	logger.info('Starting results list compressor')
 	logger.debug('Found <%r> rows to compress' % results_list.count())
 	# print(len(results_list))
 	try:
@@ -38,5 +38,5 @@ def compile_item_with_measurements(results_list):
 	for item, msmt in results_list:
 		items_dict[item.ebay_item_id]['measurements'].append(msmt)
 
-	logger.debug('Finished results list compressor. Returning dict with <%r> entries' % len(items_dict))
+	logger.info('Finished results list compressor. Returning dict with <%r> entries' % len(items_dict))
 	return items_dict
