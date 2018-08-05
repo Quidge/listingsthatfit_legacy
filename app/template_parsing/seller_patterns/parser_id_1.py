@@ -7,6 +7,8 @@ from app.template_parsing.utils import find_paired_measurement_value as get_pair
 from app.template_parsing import MeasurementsCollection
 from app.template_parsing import Measurement as Msmt
 from app.template_parsing import ParseParameter as PP
+from app.template_parsing import ParseInformation
+from app.template_parsing import IdentifyResult
 from app.template_parsing.exception import UnsupportedParsingStrategy, UnrecognizedMeasurement, UnrecognizedTemplateHTML
 
 
@@ -34,13 +36,13 @@ from app.template_parsing.exception import UnsupportedParsingStrategy, Unrecogni
 logger = logging.getLogger(__name__)
 
 
-def get_measurements_table(html_description, fmt='soup'):
+def get_measurements_table(html_description, output_fmt='soup'):
 	"""Tries to find measurements table.
 
 	Parameters
 	----------
 	html_description : str
-	fmt='soup' : determines the return format
+	output_fmt='soup' : determines the return format
 
 	Returns
 	-------
@@ -68,9 +70,9 @@ def get_measurements_table(html_description, fmt='soup'):
 			.parent  # enclosing <table>
 		)
 
-	if fmt == 'soup':
+	if output_fmt == 'soup':
 		return BeautifulSoup(ap, 'html.parser')
-	elif fmt == 'str':
+	elif output_fmt == 'str':
 		return ap
 	else:
 		raise ValueError('Unexpected parameter: fmt="{}"'.format(fmt))
@@ -78,15 +80,15 @@ def get_measurements_table(html_description, fmt='soup'):
 
 def identify_clothing_type(
 	measurements_table_soup,
-	ebay_primary_category=None,
-	ebay_secondary_category=None):
+	ebay_primary_category_id=None,
+	ebay_secondary_category_id=None):
 	"""Attempts to identify the type of clothing.
 
 	Parameters
 	----------
 	measurements_table_soup : BeautifulSoup object
-	ebay_primary_category : int
-	ebay_secondary_category : int
+	ebay_primary_category_id : int
+	ebay_secondary_category_id : int
 
 	Returns
 	-------
@@ -94,7 +96,10 @@ def identify_clothing_type(
 		'dress_shirt', 'suit', 'pant', etc
 	"""
 
+	identify_result = IdentifyResult()
+
 	soup = measurements_table_soup
+	identify_result.html_used_to_make_propositions = str(soup)
 
 	# identifying propositions
 	has_pants_section_declaration = bool(soup.find(string=re.compile('pants', re.IGNORECASE)))
@@ -103,101 +108,129 @@ def identify_clothing_type(
 	mentions_sleeve = bool(soup.find(string=re.compile('sleeve', re.IGNORECASE)))
 	mentions_length = bool(soup.find(string=re.compile('length', re.IGNORECASE)))
 
+	identify_result.observations = [
+		{'type': 'proposition', 'msg': 'Listing has pants section declaration',
+			'result': has_pants_section_declaration},
+		{'type': 'proposition', 'msg': 'Listing mentions cuff',
+			'result': mentions_cuff},
+		{'type': 'information', 'msg': 'Number of waist mentions',
+			'result': num_waist_mentions},
+		{'type': 'proposition', 'msg': 'Listing mentions sleeve',
+			'result': mentions_sleeve},
+		{'type': 'proposition', 'msg': 'Listing mentions length',
+			'result': mentions_length},
+	]
+
 	if has_pants_section_declaration:
 		# Should be a suit. Spoo's listings ONLY have 'pants' in suit listings
 		logger.debug('Identify thinks this template belongs to a suit listing.')
 		if num_waist_mentions is not 2:
-			logger.warn(
-				'Identify expected suit template to match CA "waist" twice, got: num_waist_mentions=%r' %
-				num_waist_mentions)
+			msg = (
+				'Identify expected suit template to match CA "waist" twice, got: '
+				'num_waist_mentions={}').format(num_waist_mentions)
+			identify_result.concerns.append(msg)
+			logger.warn(msg)
 		if not mentions_cuff:
-			logger.warn('Identify expected suit template to match CA "cuff". It didnt')
-		if ebay_primary_category and ebay_primary_category != 3001:
-			logger.warn(
-				'Identify expected primary category to be 3001. Instead ebay_primary_category=%r' %
-				ebay_primary_category)
-		return 'suit'
+			msg = 'Identify expected suit template to match CA "cuff". It didnt'
+			identify_result.concerns.append(msg)
+			logger.warn(msg)
+		if ebay_primary_category_id and ebay_primary_category_id != 3001:
+			msg = (
+				'Identify expected primary category to be 3001. '
+				'Instead ebay_primary_category_id={}').format(ebay_primary_category_id)
+			identify_result.concerns.append(msg)
+			logger.warn(msg)
 
-	if mentions_cuff and not mentions_sleeve:
+		identify_result.identified_clothing_type = 'suit'
+
+	elif mentions_cuff and not mentions_sleeve:
 		# Should be a pant listing.
 		logger.debug('Identify thinks this template belongs to a pant listing.')
 		if num_waist_mentions is not 1:
-			logger.warn(
-				'Identify expected pant template to match CA "waist" twice, got: num_waist_mentions=%r' %
-				num_waist_mentions)
-		if ebay_primary_category and ebay_primary_category != 57989:
-			logger.warn(
-				'Identify expected primary category to be 57989. Instead ebay_primary_category=%r' %
-				ebay_primary_category)
-		return 'pant'
+			msg = (
+				'Identify expected pant template to match CA "waist" twice, '
+				'got: num_waist_mentions={}').format(num_waist_mentions)
+			identify_result.concerns.append(msg)
+			logger.warn(msg)
+		if ebay_primary_category_id and ebay_primary_category_id != 57989:
+			msg = (
+				'Identify expected primary category to be 57989. Instead '
+				'ebay_primary_category_id={}').format(ebay_primary_category_id)
+			identify_result.concerns.append(msg)
+			logger.warn(msg)
 
-	if mentions_sleeve and not mentions_length:
+		identify_result.identified_clothing_type = 'pant'
+
+	elif mentions_sleeve and not mentions_length:
 		# Should be either dress shirt or casual shirt. These have the same measurement descriptions so
 		# diffrentiating requires the item category.
-		if ebay_primary_category == 57991:
+		if ebay_primary_category_id == 57991:
 			logger.debug('Identify thinks this template belongs to a dress shirt listing.')
 			return 'dress_shirt'
-		elif ebay_primary_category == 57990:
+		elif ebay_primary_category_id == 57990:
 			logger.debug('Identify thinks this template belongs to a casual shirt listing.')
 			return 'casual_shirt'
-		elif ebay_primary_category is None:
-			logger.warn('Identify received ebay_primary_category=None for a listing it thinks is a dress \
+		elif ebay_primary_category_id is None:
+			logger.warn('Identify received ebay_primary_category_id=None for a listing it thinks is a dress \
 			or casual shirt. Without this there is no way to discern. Defaulting to casual_shirt.')
 			return 'casual_shirt'
 		else:
-			logger.warn('Identify received ebay_primary_category=%r for a listing it thinks is a dress \
+			logger.warn('Identify received ebay_primary_category_id=%r for a listing it thinks is a dress \
 			or casual shirt (57991 or 57990). Without this there is no way to discern. Defaulting to \
-			casual_shirt.' % ebay_primary_category)
+			casual_shirt.' % ebay_primary_category_id)
 			return 'casual_shirt'
 
-	if mentions_sleeve and mentions_length and num_waist_mentions == 0:
+	elif mentions_sleeve and mentions_length and num_waist_mentions == 0:
 		# Either sweater or casual jacket. Sportcoats will have waist mentions.
-		if ebay_primary_category == 11484:
+		if ebay_primary_category_id == 11484:
 			logger.debug('Identify thinks this template belongs to a sweater listing.')
 			return 'sweater'
-		elif ebay_primary_category == 57988:
+		elif ebay_primary_category_id == 57988:
 			logger.debug('Identify thinks this template belongs to a coat_or_jacket listing.')
 			return 'coat_or_jacket'
-		elif ebay_primary_category == 3001:
+		elif ebay_primary_category_id == 3001:
 			logger.warn('Identify thinks this template belongs to a coat_or_jacket listing, but expected \
-				ebay_primary_category=57988. Instead received ebay_primary_category=3001')
+				ebay_primary_category_id=57988. Instead received ebay_primary_category_id=3001')
 			return 'coat_or_jacket'
-		elif not ebay_primary_category:
-			logger.warn('Identify received ebay_primary_category=None for a listing it thinks is a sweater \
+		elif not ebay_primary_category_id:
+			logger.warn('Identify received ebay_primary_category_id=None for a listing it thinks is a sweater \
 			or casual jacket. Without this there is no way to discern. This is significant enough that \
 			Identify will return None and the parser will probably fail for this listing.')
 			return None
 		else:
 			logger.warn(
-				'Identify received ebay_primary_category=%r for a listing it thinks is a sweater \
+				'Identify received ebay_primary_category_id=%r for a listing it thinks is a sweater \
 				or coat_or_jacket. This is significant enough that Identify will return None and the \
-				parser will probably fail for this listing.' % ebay_primary_category)
+				parser will probably fail for this listing.' % ebay_primary_category_id)
 			return None
 
-	if num_waist_mentions == 1 and not mentions_cuff:
+	elif num_waist_mentions == 1 and not mentions_cuff:
 		# Should be a sportcoat
 		logger.debug('Identify thinks this template belongs to a sportcoat listing.')
-		if ebay_primary_category != 57988 or ebay_primary_category != 57988:
-			logger.warn('Idenfity received ebay_primary_category=%r and expected \
-				ebay_primary_category=3001 or ebay_primary_category=57988 (deprecated). This is \
+		if ebay_primary_category_id != 57988 or ebay_primary_category_id != 57988:
+			logger.warn('Idenfity received ebay_primary_category_id=%r and expected \
+				ebay_primary_category_id=3001 or ebay_primary_category_id=57988 (deprecated). This is \
 				significant enough that Identify will return None and the parser will probably fail for \
-				this listing.' % ebay_primary_category)
+				this listing.' % ebay_primary_category_id)
 				return None
-		elif ebay_primary_category == 57988:
+		elif ebay_primary_category_id == 57988:
 			logger.warn('Identify thinks this template belongs to a sportcoat listing, but expected \
-				ebay_primary_category=3001. Instead received ebay_primary_category=57988. Spoo has said \
+				ebay_primary_category_id=3001. Instead received ebay_primary_category_id=57988. Spoo has said \
 				that this should be deprecated and sportcoats should be only listed in 3001.')
 			return 'sportcoat'
 
-	logger.warn('Identify failed to indentify the listing.')
+	else:
+		logger.warn('Identify failed to indentify the listing.')
+		
+
 	return None
 
 
 def director(
 	measurements_table_soup,
 	clothing_type_override=None,
-	ebay_primary_category=None,
-	ebay_secondary_category=None):
+	ebay_primary_category_id=None,
+	ebay_secondary_category_id=None):
 	"""Attempts to determine which parser function to use.
 
 	Parameters
@@ -205,8 +238,8 @@ def director(
 	measurements_table : BeautifulSoup object
 	clothing_type_override=None : a string corresponding to one of the clothing types in the function
 		directory
-	ebay_primary_category=None : int
-	ebay_secondary_category=None : int
+	ebay_primary_category_id=None : int
+	ebay_secondary_category_id=None : int
 
 	Returns
 	-------
@@ -231,7 +264,7 @@ def director(
 	else:
 		# Attempt to identify clothing type by measurements and provided categories (if any)
 		clothing_type = identify_clothing_type(
-			measurements_table_soup, ebay_primary_category, ebay_secondary_category)
+			measurements_table_soup, ebay_primary_category_id, ebay_secondary_category_id)
 
 		appropriate_parse_fn = function_directory_str[clothing_type]
 		logger.info(
@@ -1032,6 +1065,53 @@ function_directory_str = {
 	"coat_or_jacket": get_coat_and_jacket_measurements,
 	"sweater": get_sweater_measurements
 }
+
+
+def parse_listing(
+	html_description,
+	ebay_primary_category_id=None,
+	ebay_secondary_category_id=None,
+	parse_strategy='default',
+	clothing_type_override=None,
+	output_format='json'):
+	"""General parse listing method.
+
+	Parameters
+	----------
+	html_description : str
+	ebay_primary_category_id : int
+	ebay_secondary_category_id : int
+	parse_strategy : str
+	clothing_type_override : str
+
+	Returns
+	-------
+	parse_info : json formatted ParseInformation instance
+	"""
+
+	logger.info('Beginning parse')
+
+	parse_info = ParseInformation(listing_html=html_description)
+	parse_info.clothing_type_override = clothing_type_override
+
+	measurements_table_soup = get_measurements_table(html_description)
+	clothing_type = clothing_type_override
+	if clothing_type is None:
+		clothing_type = identify_clothing_type(
+			measurements_table_soup,
+			ebay_primary_category_id=ebay_primary_category_id,
+			ebay_secondary_category_id=ebay_secondary_category_id)
+
+	if clothing_type_override:
+		appropriate_parse_fn = director(
+			measurements_table_soup, clothing_type_override=clothing_type_override,
+			ebay_primary_category_id=ebay_primary_category_id,
+			ebay_secondary_category_id=ebay_secondary_category_id)
+	else:
+
+		
+	msmts_collection = appropriate_parse_fn()
+	
 
 
 

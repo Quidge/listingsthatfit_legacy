@@ -1,5 +1,41 @@
+import json
+
 # I THINK I should be organizing template_parsing as a package. Organization idea found here:
 # https://docs.python.org/2/tutorial/modules.html#packages
+
+
+class ParseInformation(object):
+	"""An object to record the results of a parse."""
+
+	def __init__(self, listing_html=None):
+		self.clothing_type_override = None
+		self.identify_result = None
+		self.parse_function_result = None
+		self.listing_html = listing_html
+		self.measurement_html = None
+
+	def dict(self):
+		pass
+
+	def json(self):
+		return json.dumps(self.dict())
+
+
+class IdentifyResult(object):
+	"""An object to record the results of a parse."""
+	def __init__(self):
+		self.html_used_to_make_observations = None
+		self.ebay_primary_category_id = None
+		self.ebay_secondary_category_id = None
+		self.observations = []
+		self.concerns = []
+		self.identified_clothing_type = None
+
+	def dict(self):
+		pass
+
+	def json(self):
+		return json.dumps(self.dict())
 
 
 class ParseParameter(object):
