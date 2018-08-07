@@ -18,5 +18,6 @@ requests = "*"
 "iso8601" = "*"
 celery = "*"
 "jinja2" = "*"
+pytest = "*"
 
 [dev-packages]

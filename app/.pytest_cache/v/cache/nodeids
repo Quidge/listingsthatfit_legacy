@@ -1,0 +1,6 @@
+[
+  "template_parsing/seller_patterns/parser_id_1/tests/core_test.py::test_get_measurements_table_can_return_str",
+  "template_parsing/seller_patterns/parser_id_1/tests/core_test.py::test_get_measurements_table_finds_table",
+  "template_parsing/seller_patterns/parser_id_1/tests/core_test.py::test_identify_clothing_type_fails_w_str_argument",
+  "template_parsing/seller_patterns/parser_id_1/tests/core_test.py::test_identify_clothing_type_returns_correct_object_type"
+]

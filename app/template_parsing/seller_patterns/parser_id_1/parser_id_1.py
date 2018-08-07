@@ -72,7 +72,7 @@ def get_measurements_table(html_description, output_fmt='soup'):
 
 	if output_fmt == 'soup':
 		return BeautifulSoup(ap, 'html.parser')
-	elif output_fmt == 'str':
+	elif output_fmt == 'string':
 		return ap
 	else:
 		raise ValueError('Unexpected parameter: fmt="{}"'.format(fmt))
@@ -104,25 +104,25 @@ def identify_clothing_type(
 	soup = measurements_table_soup
 	identify_result.html_used_to_make_observations = str(soup)
 
-	# identifying propositions
+	# identifying observations
 	has_pants_section_declaration = bool(soup.find(string=re.compile('pants', re.IGNORECASE)))
 	mentions_cuff = bool(soup.find(string=re.compile('cuff', re.IGNORECASE)))
 	num_waist_mentions = len(soup.find_all(string=re.compile('waist', re.IGNORECASE)))
 	mentions_sleeve = bool(soup.find(string=re.compile('sleeve', re.IGNORECASE)))
 	mentions_length = bool(soup.find(string=re.compile('length', re.IGNORECASE)))
 
-	identify_result.observations = [
-		{'type': 'proposition', 'msg': 'Listing has pants section declaration',
-			'result': has_pants_section_declaration},
-		{'type': 'proposition', 'msg': 'Listing mentions cuff',
-			'result': mentions_cuff},
-		{'type': 'information', 'msg': 'Number of waist mentions',
-			'result': num_waist_mentions},
-		{'type': 'proposition', 'msg': 'Listing mentions sleeve',
-			'result': mentions_sleeve},
-		{'type': 'proposition', 'msg': 'Listing mentions length',
+	identify_result.observations = {
+		{"type": "proposition", "msg": "Listing has pants section declaration",
+			"result": has_pants_section_declaration},
+		{"type": "proposition", "msg": "Listing mentions cuff",
+			"result": mentions_cuff},
+		{"type": "information", "msg": "Number of waist mentions",
+			"result": num_waist_mentions},
+		{"type": "proposition", "msg": "Listing mentions sleeve",
+			"result": mentions_sleeve},
+		{"type": "proposition", "msg": "Listing mentions length",
 			'result': mentions_length},
-	]
+	}
 
 	if has_pants_section_declaration:
 		# Should be a suit. Spoo's listings ONLY have 'pants' in suit listings
@@ -261,9 +261,8 @@ def identify_clothing_type(
 		logger.warn(msg)
 		identify_result.concerns.append(msg)
 		identify_result.identified_clothing_type = None
-		
 
-	return None
+	return identify_result
 
 
 def director(
@@ -1134,7 +1133,7 @@ def parse_listing(
 	parse_info = ParseInformation(listing_html=html_description)
 	parse_info.clothing_type_override = clothing_type_override
 
-	measurements_table_soup = get_measurements_table(html_description)
+	"""measurements_table_soup = get_measurements_table(html_description)
 	clothing_type = clothing_type_override
 	if clothing_type is None:
 		clothing_type = identify_clothing_type(
@@ -1150,7 +1149,7 @@ def parse_listing(
 	else:
 
 		
-	msmts_collection = appropriate_parse_fn()
+	msmts_collection = appropriate_parse_fn()"""
 	
 
 

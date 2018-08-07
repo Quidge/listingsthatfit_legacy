@@ -15,24 +15,24 @@ class ParseInformation(object):
 		self.measurement_html = None
 
 	def dict(self):
-		pass
+		return self.__dict__
 
 	def json(self):
 		return json.dumps(self.dict())
 
 
 class IdentifyResult(object):
-	"""An object to record the results of a parse."""
+	"""An object to record the results of an identification."""
 	def __init__(self):
 		self.html_used_to_make_observations = None
 		self.ebay_primary_category_id = None
 		self.ebay_secondary_category_id = None
-		self.observations = []
+		self.observations = {}
 		self.concerns = []
 		self.identified_clothing_type = None
 
 	def dict(self):
-		pass
+		return self.__dict__
 
 	def json(self):
 		return json.dumps(self.dict())
@@ -100,3 +100,25 @@ class Measurement(object):
 	def __repr__(self):
 		return '{}, {}: {}'.format(self.category, self.attribute, self.value)
 
+"""
+parser_id_1
+|-- core
+|	|-- __init__.py
+|	|-- get_table.py
+|	|-- id_type.py
+|	\-- director.py
+|--	tests
+|	|--	core_test.py
+|	|-- sample1.json
+|	|-- sample1_test.py
+|	|-- sample2.json
+|	|-- sample2_test.py
+|	|-- sample3.json
+|	|-- sample3_test.py
+|	|-- ...
+|	|-- ...
+|	|-- sample$N.json
+|	\-- sample$N_test.py
+|-- parse.py
+|-- __init__.py
+"""
