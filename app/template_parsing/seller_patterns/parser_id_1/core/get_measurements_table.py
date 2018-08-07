@@ -21,7 +21,7 @@ def get_measurements_table(html_description, output_fmt='soup'):
 	"""
 
 	soup = BeautifulSoup(html_description, 'html.parser')
-	logger.debug('Searching for "Approximate Measurements table')
+	logger.debug('Searching for "Approximate Measurements" table')
 	try:
 		assert soup.find(string='Approximate Measurements') is not None
 	except AssertionError:
@@ -40,6 +40,7 @@ def get_measurements_table(html_description, output_fmt='soup'):
 			.parent  # enclosing <table>
 		)
 
+	logger.debug('Found "Approximate Measurements" table')
 	if output_fmt == 'soup':
 		return BeautifulSoup(ap, 'html.parser')
 	elif output_fmt == 'string':

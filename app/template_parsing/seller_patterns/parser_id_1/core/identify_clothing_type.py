@@ -61,8 +61,7 @@ def identify_clothing_type(
 			"msg": "Listing mentions sleeve",
 			"result": mentions_sleeve},
 		"mentions_length": {
-			"type": "proposition",
-			"msg": "Listing mentions length",
+			"type": "proposition", "msg": "Listing mentions length",
 			'result': mentions_length},
 	}
 
@@ -173,20 +172,29 @@ def identify_clothing_type(
 			logger.warn(msg)
 			identify_result.concerns.append(msg)
 			identify_result.identified_clothing_type = None
+			logger.info(
+				'Identify identifies this clothing item as <{}> with '
+				'ebay_primary_category_id={}'.format(
+					identify_result.identified_clothing_type, ebay_primary_category_id))
 
 	elif num_waist_mentions == 1 and not mentions_cuff:
 		# Should be a sportcoat
 		logger.debug('Identify thinks this template belongs to a sportcoat listing.')
-		if ebay_primary_category_id != 57988 or ebay_primary_category_id != 57988:
+		if ebay_primary_category_id not in (57988, 3001, 3002):
 			msg = (
 				'Idenfity received ebay_primary_category_id={} and expected'
 				'ebay_primary_category_id=3001 or ebay_primary_category_id=57988 '
-				'(deprecated). This is significant enough that Identify will return '
-				'None and the parser will probably fail for this listing.').format(
+				'(deprecated) or ebay_primary_category=3002 (deprecated). This is '
+				'significant enough that Identify will return None and the parser '
+				'will probably fail for this listing.').format(
 					ebay_primary_category_id)
 			logger.warn(msg)
 			identify_result.concerns.append(msg)
 			identify_result.identified_clothing_type = None
+			logger.info(
+				'Identify identifies this clothing item as <{}> with '
+				'ebay_primary_category_id={}'.format(
+					identify_result.identified_clothing_type, ebay_primary_category_id))
 
 		elif ebay_primary_category_id == 57988:
 			msg = (
@@ -197,6 +205,31 @@ def identify_clothing_type(
 			logger.warn(msg)
 			identify_result.concerns.append(msg)
 			identify_result.identified_clothing_type = 'sportcoat'
+			logger.info(
+				'Identify identifies this clothing item as <{}> with '
+				'ebay_primary_category_id={}'.format(
+					identify_result.identified_clothing_type, ebay_primary_category_id))
+
+		elif ebay_primary_category_id == 3002:
+			msg = (
+				'Identify thinks this template belongs to a sportcoat listing, but '
+				'expected ebay_primary_category_id=3001. Instead received '
+				'ebay_primary_category_id=3002. Spoo has said that this should be '
+				'deprecated and sportcoats should be only listed in 3001.')
+			logger.warn(msg)
+			identify_result.concerns.append(msg)
+			identify_result.identified_clothing_type = 'sportcoat'
+			logger.info(
+				'Identify identifies this clothing item as <{}> with '
+				'ebay_primary_category_id={}'.format(
+					identify_result.identified_clothing_type, ebay_primary_category_id))
+
+		else:
+			identify_result.identified_clothing_type = 'sportcoat'
+			logger.info(
+				'Identify identifies this clothing item as <{}> with '
+				'ebay_primary_category_id={}'.format(
+					identify_result.identified_clothing_type, ebay_primary_category_id))
 
 	else:
 		msg = 'Identify failed to indentify the listing.'
