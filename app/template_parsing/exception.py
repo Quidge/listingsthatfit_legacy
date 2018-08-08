@@ -9,10 +9,14 @@ class UnsupportedParsingStrategy(TemplateParsingError):
 
 
 class UnsupportedClothingCategory(TemplateParsingError):
-	"""Exception raised when the clothing category is not recognized."""
-	def __init__(self, message, clothing_category_id=None):
+	"""Exception raised when the clothing category or type is not supported
+	by the parser."""
+	def __init__(
+		self, message, clothing_category_id=None,
+		clothing_type_name=None):
 		self.message = message
 		self.clothing_category_id = clothing_category_id
+		self.clothing_type_name = clothing_type_name
 
 
 class UnrecognizedTemplateHTML(TemplateParsingError):

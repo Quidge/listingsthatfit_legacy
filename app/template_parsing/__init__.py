@@ -4,15 +4,14 @@ import json
 # https://docs.python.org/2/tutorial/modules.html#packages
 
 
-class ParseInformation(object):
+class ParseResult(object):
 	"""An object to record the results of a parse."""
 
-	def __init__(self, listing_html=None):
-		self.clothing_type_override = None
-		self.identify_result = None
-		self.parse_function_result = None
-		self.listing_html = listing_html
-		self.measurement_html = None
+	def __init__(self, clothing_type=None, measurements=[]):
+		self.clothing_type = clothing_type
+		self.measurements = measurements
+		self.warnings = []
+		self.errors = []
 
 	def dict(self):
 		return self.__dict__
@@ -99,26 +98,3 @@ class Measurement(object):
 
 	def __repr__(self):
 		return '{}, {}: {}'.format(self.category, self.attribute, self.value)
-
-"""
-parser_id_1
-|-- core
-|	|-- __init__.py
-|	|-- get_table.py
-|	|-- id_type.py
-|	\-- director.py
-|--	tests
-|	|--	core_test.py
-|	|-- sample1.json
-|	|-- sample1_test.py
-|	|-- sample2.json
-|	|-- sample2_test.py
-|	|-- sample3.json
-|	|-- sample3_test.py
-|	|-- ...
-|	|-- ...
-|	|-- sample$N.json
-|	\-- sample$N_test.py
-|-- parse.py
-|-- __init__.py
-"""
