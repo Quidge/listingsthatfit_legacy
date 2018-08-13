@@ -181,7 +181,7 @@ def identify_clothing_type(
 		logger.debug('Identify thinks this template belongs to a sportcoat listing.')
 		if ebay_primary_category_id not in (57988, 3001, 3002):
 			msg = (
-				'Idenfity received ebay_primary_category_id={} and expected'
+				'Identify received ebay_primary_category_id={} and expected'
 				'ebay_primary_category_id=3001 or ebay_primary_category_id=57988 '
 				'(deprecated) or ebay_primary_category=3002 (deprecated). This is '
 				'significant enough that Identify will return None and the parser '
