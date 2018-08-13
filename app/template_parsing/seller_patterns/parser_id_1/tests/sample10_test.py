@@ -3,7 +3,7 @@ import pytest
 import os
 
 from app.template_parsing import IdentifyResult
-from ..core.identify_clothing_type import identify_clothing_type as identify
+from ..core.identify_clothing_type import identify_clothing_type
 from ..core.get_measurements_table import get_measurements_table
 
 
@@ -30,7 +30,7 @@ def measurements_table(comparison_result):
 
 @pytest.fixture(scope='module')
 def identify_result(measurements_table, ebay_primary_category_id):
-  return identify(measurements_table, ebay_primary_category_id=ebay_primary_category_id)
+  return identify_clothing_type(measurements_table, ebay_primary_category_id=ebay_primary_category_id)
 
 
 def test_identify_returns_IdentifyResult_class(identify_result, comparison_result):
@@ -52,3 +52,8 @@ def test_identify_returns_correct_observations(identify_result, comparison_resul
   assert identify_result.observations['waist_mentions'] == comparison_result['description_observations']['waist_mentions']
   assert identify_result.observations['mentions_sleeve'] == comparison_result['description_observations']['mentions_sleeve']
   assert identify_result.observations['mentions_length'] == comparison_result['description_observations']['mentions_length']
+
+
+
+
+

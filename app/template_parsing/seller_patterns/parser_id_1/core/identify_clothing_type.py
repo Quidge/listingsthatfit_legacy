@@ -20,8 +20,7 @@ def identify_clothing_type(
 
 	Returns
 	-------
-	clothing type : str
-		'dress_shirt', 'suit', 'pant', etc
+	identify_clothing_result type : IdentifyResult instance
 	"""
 
 	if type(measurements_table_soup) is not BeautifulSoup:
