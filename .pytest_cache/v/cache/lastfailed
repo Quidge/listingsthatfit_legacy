@@ -1,4 +1,5 @@
 {
+  "app/template_parsing/seller_patterns/parser_id_1/tests/director_test.py": true,
   "test_env.py": true,
   "test_env3.py": true
 }

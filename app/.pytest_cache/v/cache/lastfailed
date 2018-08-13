@@ -1,3 +1,5 @@
 {
-  "template_parsing/seller_patterns/parser_id_1/tests/core_test.py::test_identify_clothing_type_returns_correct_object_type": true
+  "template_parsing/seller_patterns/parser_id_1/tests/core_test.py::test_identify_clothing_type_returns_correct_object_type": true,
+  "template_parsing/seller_patterns/parser_id_1/tests/director_pant_parse_fn_test.py::test_sportcoat_parse_raises_unrecognized_template_html": true,
+  "template_parsing/seller_patterns/parser_id_1/tests/director_test.py::test_raises_unrecognized_template_html": true
 }

@@ -1,13 +1,13 @@
 import logging
 from bs4 import BeautifulSoup
-from template_parsing.exception import (
+from app.template_parsing.exception import (
 	UnrecognizedMeasurement,
 	UnsupportedParsingStrategy,
 	UnsupportedClothingCategory,
 	UnrecognizedTemplateHTML)
-from template_parsing import Measurement as Msmt
-from template_parsing import MeasurementsCollection
-from template_parsing.utils import str_measurement_to_int as str2int
+from app.template_parsing import Measurement as Msmt
+from app.template_parsing import MeasurementsCollection
+from app.template_parsing.utils import str_measurement_to_int as str2int
 
 log = logging.getLogger(__name__)
 
@@ -337,112 +337,6 @@ def get_coat_and_jacket_measurements(measurements_table_soup, parse_strategy='de
 				'parse_strategy={} expected a differing number of measurements than \
 				what was provided by the template.'.format(parse_strategy),
 				html_string=str(measurements_table_soup))
-	"""elif parse_strategy == 'new_v1':
-
-		search_for = [
-			PP(attribute='sleeve', pattern=re.compile('sleeve', re.IGNORECASE)),
-			PP(attribute='chest_flat', pattern=re.compile('pit to pit', re.IGNORECASE)),
-			PP(attribute='shoulders', pattern=re.compile('shoulder seams', re.IGNORECASE)),
-			PP(attribute='length', pattern=re.compile('length', re.IGNORECASE)),
-			PP(attribute='waist_flat', pattern=re.compile('waist', re.IGNORECASE), required=False)]
-
-		for pp in search_for:
-			pp.category = 'jacket'
-
-		for parse_param in search_for:
-			logger.debug(
-				'Searching template for %s, using pattern <%r>' % (
-					parse_param.attribute, parse_param.pattern))
-
-			# Find search phrase in soup
-			navigable_str = data.find(string=parse_param.pattern)
-			if navigable_str is None:
-				if parse_param.required:
-					logger.warn(
-						'get_coat_and_jacket_measurements method did not find a match for pattern: <%r> in the template HTML.' % parse_param.pattern)
-					raise UnrecognizedTemplateHTML(
-						'Parser did not find an expected regex pattern: <{}> in template HTML'
-						.format(repr(parse_param.pattern)),
-						html_string=str(data))
-				else:
-					logger.debug('Did not find match')
-			else:
-				# Find measurement value paired to search phrase
-				msmt = navigable_str.find_parent('td').find_next_sibling('td').string
-
-				if msmt is None:
-					debug.warn('get_coat_and_jacket_measurements method could not find a sibling measurement for <%r>' % navigable_str)
-					raise UnrecognizedTemplateHTML(
-						'Parser could not find accompanying measurement value for <%r>'.format(navigable_str),
-						html_string=str(data))
-				else:
-					# Convert it from text decimal to integer and add to the list
-					m = Msmt(parse_param.category, parse_param.attribute, str2int(msmt))
-					logger.debug('Parsed out and built Measurement: <%r>' % m)
-					m_list.append(m)"""
-
-
-		"""should_have = [
-			('sleeve', 'sleeve'),
-			('pit to pit', 'chest_flat'),
-			('shoulder', 'shoulders'),
-			('length', 'length')]
-
-		could_have = [
-			('waist', 'waist_flat')]
-
-		for search_phrase, msmt_type in should_have:
-			logger.debug('Searching template for <%r>' % search_phrase)
-
-			# Find search phrase in soup
-			navigable_str = data.find(string=re.compile(search_phrase, re.IGNORECASE))
-
-			if navigable_str is None:
-				logger.warn(
-					'get_coat_and_jacket_measurements method did not find an expected string: <%r> in the template HTML.' % navigable_str)
-				raise UnrecognizedTemplateHTML(
-					'Parser did not find an expected string: <{}> in template HTML'
-					.format(navigable_str),
-					html_string=str(data))
-			else:
-				# Find measurement value paired to search phrase
-				msmt = navigable_str.find_parent('td').find_next_sibling('td').string
-				if msmt is None:
-					logger.warn(
-						'get_coat_and_jacket_measurements method did not find paired meaasurement for: <%r> in the template HTML.' % navigable_str)
-					raise UnrecognizedMeasurement(
-						'Search for a measurement value paired to the string <{}> failed.'.format(search_phrase))
-
-				# Convert it from text decimal to integer and add to the list
-				m = Msmt('jacket', msmt_type, str2int(msmt))
-				logger.debug('Parsed out and built Measurement: %r' % m)
-				m_list.append(m)
-
-		# Build 'could haves' (Spoo doesn't list waist measurements for casual coats and jackets)
-
-		for search_phrase, msmt_type in could_have:
-			logger.debug('Searching template for <%r>' % search_phrase)
-
-			# Find search phrase in soup
-			navigable_str = data.find(string=re.compile(search_phrase, re.IGNORECASE))
-
-			if navigable_str is None:
-				logger.debug(
-					'get_coat_and_jacket_measurements method did not find string: <%r> in the template HTML.' % navigable_str)
-			else:
-				# Find measurement value paired to search phrase
-				msmt = navigable_str.find_parent('td').find_next_sibling('td').string
-				if msmt is None:
-					logger.warn(
-						'get_coat_and_jacket_measurements method did not find paired meaasurement for: <%r> in the template HTML.' % navigable_str)
-					raise UnrecognizedMeasurement(
-						'Search for a measurement value paired to the string <{}> failed.'.format(search_phrase))
-
-				# Convert it from text decimal to integer and add to the list
-				m = Msmt('jacket', msmt_type, str2int(msmt))
-				logger.debug('Parsed out and built Measurement: %r' % m)
-				m_list.append(m)"""
-
 	else:
 		raise UnsupportedParsingStrategy(
 			'Parsing strategy <{}> is not supported for this category'.format(parse_strategy))
@@ -690,9 +584,7 @@ function_directory_str = {
 }
 
 
-def director(
-	measurements_table_soup,
-	clothing_type):
+def director(clothing_type):
 	"""Attempts to determine which parser function to use.
 
 	Parameters
