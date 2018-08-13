@@ -32,7 +32,7 @@ def test_raises_unsupported_category_correctly():
 		director('fail')
 
 
-def test_fails_when_passed_unsupported_parsing_strategy():
+def test_all_parse_fns_fail_when_passed_unsupported_parsing_strategy():
 	clothing_types = [
 		'sportcoat', 'suit', 'sweater', 'pant',
 		'casual_shirt', 'dress_shirt', 'coat_or_jacket']
@@ -41,41 +41,3 @@ def test_fails_when_passed_unsupported_parsing_strategy():
 		parse_fn = director(clothing_type)
 		with pytest.raises(UnsupportedParsingStrategy):
 			parse_fn(BeautifulSoup(tokenHtml, 'html.parser'), parse_strategy='fail')
-
-
-@pytest.fixture(scope='module')
-def pant_measurements_table_soup():
-	return BeautifulSoup("""
-		<table cellpadding="0" cellspacing="0" style="font-size: inherit; ">
-		<tbody><tr><td class="head" colspan="2"><h3>Approximate Measurements</h3></td></tr>
-		<tr>
-		<td>Across Waist</td>
-		<td>15”</td></tr><tr><td>Across Hips</td>
-		<td>18"</td>
-		</tr>
-		<tr>
-		<td>Inseam</td>
-		<td>28.5” </td>
-		</tr>
-		<tr>
-		<td>Cuff Height</td>
-		<td>0"</td>
-		</tr><tr>
-		<td>Material underneath hem</td>
-		<td>2.25"</td>
-		</tr><tr>
-		<td>Width of hem opening</td>
-		<td>9"</td>
-		</tr><tr>
-		<td>Rise</td>
-		<td>9.75"</td></tr>
-		</tbody></table>""", 'html.parser')
-
-
-
-
-
-
-
-
-

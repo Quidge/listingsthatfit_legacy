@@ -1,3 +1,4 @@
+import copy
 import pytest
 from bs4 import BeautifulSoup
 
@@ -46,6 +47,7 @@ def measurements_table_soup():
 def test_parse_fn_raises_unrecognized_template_html(
 	parse_fn, measurements_table_soup):
 	# remove one of the measurements from the passed soup
-	measurements_table_soup.find_all('td')[2].decompose()
+	copied = copy.copy(measurements_table_soup)
+	copied.find_all('td')[2].decompose()
 	with pytest.raises(UnrecognizedTemplateHTML):
-		parse_fn(measurements_table_soup, 'default')
+		parse_fn(copied, 'default')

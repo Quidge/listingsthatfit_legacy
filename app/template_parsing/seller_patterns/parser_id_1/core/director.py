@@ -1,4 +1,5 @@
 import logging
+import re
 from bs4 import BeautifulSoup
 from app.template_parsing.exception import (
 	UnrecognizedMeasurement,
