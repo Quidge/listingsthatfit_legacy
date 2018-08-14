@@ -29,6 +29,11 @@ def identify_clothing_type(
 
 	identify_result = IdentifyResult()
 
+	if ebay_primary_category_id is not None:
+		ebay_primary_category_id = int(ebay_primary_category_id)
+	if ebay_secondary_category_id is not None:
+		ebay_secondary_category_id = int(ebay_secondary_category_id)
+
 	identify_result.ebay_primary_category_id = ebay_primary_category_id
 	identify_result.ebay_secondary_category_id = ebay_secondary_category_id
 

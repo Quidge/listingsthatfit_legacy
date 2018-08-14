@@ -11,7 +11,7 @@
   "template_parsing/seller_patterns/parser_id_1/tests/director_sweater_parse_fn_test.py::test_parse_fn_raises_unrecognized_template_html",
   "template_parsing/seller_patterns/parser_id_1/tests/director_test.py::test_returns_appropriate_parse_function",
   "template_parsing/seller_patterns/parser_id_1/tests/director_test.py::test_raises_unsupported_category_correctly",
-  "template_parsing/seller_patterns/parser_id_1/tests/director_test.py::test_fails_when_passed_unsupported_parsing_strategy",
+  "template_parsing/seller_patterns/parser_id_1/tests/director_test.py::test_all_parse_fns_fail_when_passed_unsupported_parsing_strategy",
   "template_parsing/seller_patterns/parser_id_1/tests/get_measurements_table_test.py::test_can_return_str",
   "template_parsing/seller_patterns/parser_id_1/tests/get_measurements_table_test.py::test_fails_without_approximate_string",
   "template_parsing/seller_patterns/parser_id_1/tests/get_measurements_table_test.py::test_can_return_soup",

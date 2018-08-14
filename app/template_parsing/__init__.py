@@ -10,8 +10,7 @@ class ParseResult(object):
 	def __init__(self, clothing_type=None, measurements=[]):
 		self.clothing_type = clothing_type
 		self.measurements = measurements
-		self.warnings = []
-		self.errors = []
+		self.meta = {'parse_strategy': None, 'concerns': [], 'parsed_html': None}
 
 	def dict(self):
 		return self.__dict__
