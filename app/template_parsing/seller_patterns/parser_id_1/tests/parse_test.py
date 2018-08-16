@@ -2,7 +2,7 @@ import pytest
 import json
 import os
 
-from ..parse import parse
+from ..parse import parse, simple_preparse_response_check as preparse_check
 from app.template_parsing import ParseResult
 
 
@@ -41,4 +41,23 @@ def test_parse_returns_correct_dict(parse_result):
 		}
 	}
 
-# def test_parse_returns_correct_json
+
+def test_preparse_check_works_as_expected(sample_api_res_dict):
+	preparse_check(sample_api_res_dict)
+
+
+def test_preparse_check_fails_with_ack_failure():
+	with pytest.raises(ValueError):
+		preparse_check({'Ack': 'Failure'})
+
+
+def test_preparse_check_fails_without_ack():
+	with pytest.raises(KeyError):
+		preparse_check({'no': 'ack'})
+
+def test_preparse_check_fails_without_Item():
+	with pytest.raises(KeyError):
+		preparse_check({'Ack': 'Success', 'no': 'Item'})
+
+
+

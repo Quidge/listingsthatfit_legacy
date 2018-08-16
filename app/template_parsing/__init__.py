@@ -18,6 +18,20 @@ class ParseResult(object):
 	def json(self):
 		return json.dumps(self.dict())
 
+	def rehydrate(self, _json):
+		"""Deserializes a json ParseResult and returns a new ParseResult instance."""
+		_dict = json.loads(_json)
+		new_instance = ParseResult()
+		new_instance.clothing_type = _dict['clothing_type']
+		new_instance.meta = _dict['meta']
+		for msmt in _dict['measurements']:
+			new_instance.measurements.append(
+				Measurement(
+					category=msmt['category'],
+					attribute=msmt['attribute'],
+					measurement_value=msmt['value']))
+		return new_instance
+
 
 class IdentifyResult(object):
 	"""An object to record the results of an identification."""

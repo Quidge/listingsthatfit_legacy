@@ -8,6 +8,36 @@ from app.template_parsing import ParseResult
 logger = logging.getLogger(__name__)
 
 
+def simple_preparse_response_check(r_dict):
+	"""Quick check to be sure that the response Ack=Success and atleast has 'Item',
+	Item['Description'] and Item['PrimaryCategoryID'] keys."""
+
+	logger.debug('Running preparse check on response')
+	try:
+		assert r_dict['Ack'] == 'Success'
+	except AssertionError:
+		raise ValueError('Invalid response. Ack indicates failure')
+	except KeyError:
+		raise KeyError('Invalid response. Ack attribute not present')
+
+	try:
+		assert 'Item' in r_dict
+	except AssertionError:
+		raise KeyError('Invalid response. No Item attribute')
+
+	try:
+		assert 'Description' in r_dict['Item']
+	except AssertionError:
+		raise KeyError('Invalid response. Description attribute not present')
+
+	try:
+		assert 'PrimaryCategoryID' in r_dict['Item']
+	except AssertionError:
+		raise KeyError('Invalid response. PrimaryCategoryID attribute not present')
+
+	logger.debug('Response dict passed simple preparse check')
+
+
 def parse(json_str):
 	"""Parser for spoo
 
@@ -21,9 +51,12 @@ def parse(json_str):
 	parse_result : ParseResult instance
 	"""
 
+	r = json.loads(json_str)
+
+	simple_preparse_response_check(r)
+
 	logger.info('Beginning parse')
 
-	r = json.loads(json_str)
 	measurements_table_soup = get_measurements_table(
 		r['Item']['Description'], output_fmt='soup')
 	ebay_primary_cat_id = int(r['Item']['PrimaryCategoryID'])
