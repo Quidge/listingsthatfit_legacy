@@ -1,4 +1,5 @@
 {
+  "app/template_parsing/seller_patterns/parser_id_1/tests/parse_test.py::test_parse_returns_correct_dict": true,
   "app/template_parsing/tests/ParseResult_test.py::test_ParseResult": true,
   "app/template_parsing/tests/ParseResult_test.py::test_rehydrate_returns_expected": true,
   "test_env.py": true,

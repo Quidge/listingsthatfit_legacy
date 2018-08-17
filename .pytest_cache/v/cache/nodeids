@@ -19,7 +19,7 @@
   "app/template_parsing/seller_patterns/parser_id_1/tests/identify_clothing_type_test.py::test_identify_clothing_type_fails_w_str_argument",
   "app/template_parsing/seller_patterns/parser_id_1/tests/identify_clothing_type_test.py::test_identify_clothing_type_returns_correct_object_type",
   "app/template_parsing/seller_patterns/parser_id_1/tests/parse_test.py::test_parse_returns_parse_result_type",
-  "app/template_parsing/seller_patterns/parser_id_1/tests/parse_test.py::test_parse_returns_correct_dict",
+  "app/template_parsing/seller_patterns/parser_id_1/tests/parse_test.py::test_parse_returns_correct_json",
   "app/template_parsing/seller_patterns/parser_id_1/tests/parse_test.py::test_preparse_check_works_as_expected",
   "app/template_parsing/seller_patterns/parser_id_1/tests/parse_test.py::test_preparse_check_fails_with_ack_failure",
   "app/template_parsing/seller_patterns/parser_id_1/tests/parse_test.py::test_preparse_check_fails_without_ack",
@@ -64,7 +64,10 @@
   "app/template_parsing/seller_patterns/parser_id_1/tests/sample9_test.py::test_identify_returns_correct_clothing_type",
   "app/template_parsing/seller_patterns/parser_id_1/tests/sample9_test.py::test_identify_returns_correct_ebay_primary_category",
   "app/template_parsing/seller_patterns/parser_id_1/tests/sample9_test.py::test_identify_returns_correct_observations",
+  "app/template_parsing/tests/ParseResult_test.py::test_rehydrate_fails_when_passed_non_ParseResult_json",
   "app/template_parsing/tests/ParseResult_test.py::test_rehydrate_runs",
-  "app/template_parsing/tests/ParseResult_test.py::test_rehydrate_returns_expected",
+  "app/template_parsing/tests/ParseResult_test.py::test_rehydrate_returns_parse_result_type",
+  "app/template_parsing/tests/ParseResult_test.py::test_rehydrate_is_lossless",
+  "app/template_parsing/tests/master_parse_test.py::test_get_appropriate_seller_parse_fn_fails_when_passed_weird_shit",
   "app/template_parsing/tests/master_parse_test.py::test_parse_returns_expected_json"
 ]

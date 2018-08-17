@@ -376,34 +376,15 @@ class ItemMeasurement(db.Model):
 			self.measurement_value)
 
 
-'''class ItemMeasurementAssociation(db.Model):
-	__tablename__ = 'link_measurement_values_types'
-	fk_measurement_id = db.Column(
-		db.Integer, db.ForeignKey('measurement_types.id'), primary_key=True)
-
-	# ebay_item_id is a confusing name. This refers to the items table internal id, NOT ebay's item id.
-	fk_ebay_items_id = db.Column(
-		db.BigInteger, db.ForeignKey('ebay_items.id'), primary_key=True)
-	measurement_value = db.Column(db.Integer)
-
-	measurement_type = db.relationship('MeasurementType')
-	item = db.relationship('Item', back_populates='measurements')
+class ClothingCategory(db.Model):
+	__tablename__ = 'clothing_category'
+	clothing_category_id = db.Column(db.Integer, primary_key=True)
+	clothing_category_name = db.Column(db.Text(), nullable=False, unique=True)
 
 	def __repr__(self):
-		return '<%r, %r>' % (self.measurement_type, self.measurement_value)'''
+		return '<ClothingCategory(clothing_category_id={}, clothing_category_name={})>'.format(
+			self.clothing_category_id, self.clothing_category_name)
 
-
-'''class MeasurementType(db.Model):
-	__tablename__ = 'measurement_types'
-	id = db.Column(db.Integer, primary_key=True)
-	attribute = db.Column(db.Text())
-	clothing_category = db.Column(db.Text())
-	# There's also a combined UniqueConstraint set on attribute and clothing_combined.
-	# I don't know how to represent that in the class.
-
-	def __repr__(self):
-		return '<id: %r, clothing_category: %r, attribute: %r>' % (
-			self.id, self.clothing_category, self.attribute)'''
 
 class Item(db.Model):
 	__tablename__ = 'ebay_items'
@@ -416,17 +397,26 @@ class Item(db.Model):
 		'primary_ebay_item_category_id',
 		db.Integer,
 		db.ForeignKey('ebay_item_category.ebay_item_category_id'))
+	_clothing_category_id = db.Column(
+		'clothing_category_id',
+		db.Integer,
+		db.ForeignKey('clothing_category.clothing_category_id'),
+		nullable=True,
+		unique=False)
 	primary_item_category = db.relationship('EbayItemCategory')
+	internal_seller_id = db.Column(
+		db.Integer, db.ForeignKey('ebay_sellers.id'), nullable=False)
 	current_price = db.Column(db.Integer)
 	ebay_url = db.Column(db.Text())
 	ebay_affiliate_url = db.Column(db.Text())
 
-	internal_seller_id = db.Column(
-		db.Integer, db.ForeignKey('ebay_sellers.id'), nullable=False)
+	# Relationships
 	seller = db.relationship('EbaySeller', back_populates='items')
-
+	assigned_clothing_category = db.relationship('ClothingCategory')
 	measurements = db.relationship(
 		'ItemMeasurement', cascade='all, delete', backref='ebay_item')
+
+
 	# measurements = db.relationship(
 		# 'ItemMeasurement', back_populates='ebay_item', cascade='all, delete, delete-orphan')
 	# sizes = None  # An association of all the sizes (and types) for this listing
