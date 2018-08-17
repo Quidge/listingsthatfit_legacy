@@ -1,10 +1,11 @@
 import json
+# import app.template_parsing.serialization as serialization
 
 # I THINK I should be organizing template_parsing as a package. Organization idea found here:
 # https://docs.python.org/2/tutorial/modules.html#packages
 
 
-class ParseResult(object):
+class ParseResult():
 	"""An object to record the results of a parse."""
 
 	def __init__(self, clothing_type=None, measurements=[]):
@@ -16,21 +17,57 @@ class ParseResult(object):
 		return self.__dict__
 
 	def json(self):
-		return json.dumps(self.dict())
+		return json.dumps(self, cls=ParseResultEncoder)
 
-	def rehydrate(self, _json):
+	def rehydrate(_json):
 		"""Deserializes a json ParseResult and returns a new ParseResult instance."""
-		_dict = json.loads(_json)
-		new_instance = ParseResult()
-		new_instance.clothing_type = _dict['clothing_type']
-		new_instance.meta = _dict['meta']
-		for msmt in _dict['measurements']:
-			new_instance.measurements.append(
-				Measurement(
-					category=msmt['category'],
-					attribute=msmt['attribute'],
-					measurement_value=msmt['value']))
-		return new_instance
+		return json.loads(_json, object_hook=parse_result_decoder)
+
+
+class ParseResultEncoder(json.JSONEncoder):
+	"""Subclasses JSONEncoder to properly encode ParseResult as dicts."""
+	def default(self, obj):
+		if isinstance(obj, ParseResult):
+			_dict = {
+				"__type__": "__ParseResult__",
+				"clothing_type": obj.clothing_type,
+				"meta": obj.meta,
+				"measurements": []
+			}
+			for m in obj.measurements:
+				if isinstance(m, Measurement):
+					_dict["measurements"].append(m.__dict__)
+			return _dict
+		else:
+			raise TypeError('{} is not a ParseResult instance'.format(obj))
+
+
+def parse_result_decoder(obj):
+	"""If obj has obj['__type__'] == '__ParseResult__', this function will return a
+	reconstructed ParseResult instance.
+
+	Parameters
+	----------
+	obj : dict
+		obj['__type__'] must == '__ParseResult__'
+
+	Returns
+	-------
+	ParseResult instance or obj dict:"""
+	if '__type__' in obj:
+		if obj['__type__'] == '__ParseResult__':
+			pr = ParseResult()
+			pr.clothing_type = obj['clothing_type']
+			pr.meta = obj['meta']
+			pr.measurements = []
+			for msmt in obj['measurements']:
+				pr.measurements.append(
+					Measurement(
+						category=msmt['category'],
+						attribute=msmt['attribute'],
+						measurement_value=msmt['value']))
+			return pr
+	return obj
 
 
 class IdentifyResult(object):
@@ -110,4 +147,4 @@ class Measurement(object):
 		self.value = measurement_value
 
 	def __repr__(self):
-		return '{}, {}: {}'.format(self.category, self.attribute, self.value)
+		return 'Measurement<category={}, attribute={}, value={}>'.format(self.category, self.attribute, self.value)

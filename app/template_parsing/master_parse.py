@@ -49,8 +49,25 @@ def get_appropriate_seller_parse_fn(parser_id_num):
 		return appropriate_parse_fn
 
 
-def parse(json_input):
-	start = json.loads(json_input)
+def parse(json_str):
+	"""Highest level parsing function. Takes json data in and returns json.
+
+	Parameters
+	----------
+	json_str : json str
+		expected to be in form '{
+			"parse_strategy": "default",
+			"parser_id_num": some_number,
+			"response": { GetSingleItem shopping API call, WITH description HTML }
+			}
+		}'
+
+		Returns
+		-------
+		parsed_data : json encoded ParseResult instance
+		"""
+
+	start = json.loads(json_str)
 	simple_preparse_response_check(start['response'])
 	parser_fn = get_appropriate_seller_parse_fn(int(start['parser_id_num']))
 	parsed_data = parser_fn(json.dumps(start['response']))

@@ -74,6 +74,6 @@ def parse(json_str):
 		'concerns': identify_result.concerns,
 		'parsed_html': identify_result.html_used_to_make_observations}
 	parse_result.clothing_type = identify_result.identified_clothing_type
-	parse_result.measurements = [m.__dict__ for m in msmts_collection.measurements_list]
+	parse_result.measurements = msmts_collection.measurements_list
 
 	return parse_result
