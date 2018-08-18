@@ -90,7 +90,8 @@ class EbaySeller(db.Model):
 	items = db.relationship('Item', back_populates='seller')
 
 	def __repr__(self):
-		return '<eBay seller id: %r>' % (self.ebay_seller_id)
+		return '<EbaySeller(ebay_seller_id={}, template_parser_id={}>'.format(
+			self.ebay_seller_id, self.template_parser_id)
 
 
 class TemplateParser(db.Model):
@@ -377,6 +378,8 @@ class ItemMeasurement(db.Model):
 
 
 class ClothingCategory(db.Model):
+	"""A model to represent different types of clothing. This is independent of ebay's
+	own clothing categories."""
 	__tablename__ = 'clothing_category'
 	clothing_category_id = db.Column(db.Integer, primary_key=True)
 	clothing_category_name = db.Column(db.Text(), nullable=False, unique=True)
@@ -403,7 +406,6 @@ class Item(db.Model):
 		db.ForeignKey('clothing_category.clothing_category_id'),
 		nullable=True,
 		unique=False)
-	primary_item_category = db.relationship('EbayItemCategory')
 	internal_seller_id = db.Column(
 		db.Integer, db.ForeignKey('ebay_sellers.id'), nullable=False)
 	current_price = db.Column(db.Integer)
@@ -412,6 +414,7 @@ class Item(db.Model):
 
 	# Relationships
 	seller = db.relationship('EbaySeller', back_populates='items')
+	primary_item_category = db.relationship('EbayItemCategory')
 	assigned_clothing_category = db.relationship('ClothingCategory')
 	measurements = db.relationship(
 		'ItemMeasurement', cascade='all, delete', backref='ebay_item')

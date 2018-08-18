@@ -1,10 +1,18 @@
+import logging
 from datetime import datetime
 import decimal
+import json
 from sqlalchemy.orm.exc import NoResultFound
-from app.models import Item, EbaySeller, EbayItemCategory
+from app.models import Item, EbaySeller, EbayItemCategory, ClothingCategory
 from app.models import UserMeasurementPreference, MeasurementItemType, MeasurementItemCategory, ItemMeasurement
 from app.template_parsing.utils import parse_html_for_measurements
-from app.template_parsing.exception import UnsupportedClothingCategory, UnrecognizedMeasurement, UnsupportedParsingStrategy
+from app.template_parsing.exception import (
+	UnsupportedClothingCategory, UnrecognizedMeasurement,
+	UnsupportedParsingStrategy, TemplateParsingError)
+
+from app.template_parsing import master_parse, ParseResult, Measurement
+
+logger = logging.getLogger(__name__)
 
 
 def gather_measurement_models_from_html_desc(
@@ -190,6 +198,136 @@ def build_ebay_item_model(
 	return m
 
 
+def build_ebay_item_model2(
+	single_item_response,
+	ebay_seller_id=None,
+	attempt_parse=False,
+	measurement_parse_strategy='default',
+	affiliate_url=None):
+	"""Takes an ebay_seller_id, and GetSingleItem ebay API response, and affiliate_url
+	(if provided) and returns a appropriately configured Item model.
+
+	Parameters
+	----------
+	single_item_response : dict
+	ebay_seller_id : str
+	attempt_parse : bool
+		if true:
+			- response will be searched for a description
+			- will attempt to locate parser
+			- parser will attempt to parse measurements and identify clothing type
+	affiliate_url = str or None
+
+	Returns
+	-------
+	configured sqlalchemy app.models.Item model object
+	"""
+
+	logger.debug('Attempting to create model')
+
+	try:
+		assert ebay_seller_id is not None
+	except AssertionError:
+		raise ValueError('ebay_seller_id not provided')
+	try:
+		seller = EbaySeller.query.filter(EbaySeller.ebay_seller_id == ebay_seller_id).one()
+	except NoResultFound:
+		# Couldn't find seller in database. Should fail.
+		raise NoResultFound(
+			'No matching seller found for <{}> in the database'.format(ebay_seller_id))
+
+	logger.debug('Seller found. Using seller={}'.format(seller))
+
+	# All times from these responses are UTC
+	# http://developer.ebay.com/devzone/Shopping/docs/CallRef/types/simpleTypes.html#dateTime
+
+	m = Item()
+	m.last_access_date = datetime.strptime(
+		single_item_response['Timestamp'], '%Y-%m-%dT%H:%M:%S.%fZ')
+
+	r = single_item_response['Item']
+
+	try:
+		primary_category = EbayItemCategory.query.filter(
+			EbayItemCategory.category_number == int(r['PrimaryCategoryID'])).one()
+	except NoResultFound:
+		raise NoResultFound(
+			'Could not find a matching db record for PrimaryCategoryID={}'.format(
+				r['PrimaryCategoryID']))
+
+	logger.debug('Ebay category found. Using ebay category={}'.format(primary_category))
+
+	m.seller = seller
+	m.ebay_item_id = int(r['ItemID'])
+	m.end_date = datetime.strptime(r['EndTime'], '%Y-%m-%dT%H:%M:%S.%fZ')
+	m.ebay_title = r['Title']
+	m.primary_item_category = primary_category
+	m.current_price = int(decimal.Decimal(r['ConvertedCurrentPrice']['value']) * 100)
+	m.ebay_url = r['ViewItemURLForNaturalSearch']
+	m.ebay_affiliate_url = affiliate_url
+
+	if attempt_parse:
+
+		logger.debug('Will attempt to parse')
+
+		try:
+			assert seller.template_parser is not None
+		except AssertionError:
+			raise ValueError(
+				'No template parser associated with <{}>'.format(seller))
+
+		try:
+			# what error does this raise if it fails?
+			parser_file_num = seller.template_parser.file_name_number
+		except:
+			raise
+
+		logger.debug('A parser for this seller has been found')
+
+		logger.debug('Passing off to master_parse')
+
+		parse_input_json_str = json.dumps({
+			'parser_id_num': parser_file_num,
+			'parse_strategy': measurement_parse_strategy,
+			'response': single_item_response
+		})
+
+		parser_response = master_parse.parse(parse_input_json_str)
+		parse_result = ParseResult.rehydrate(parser_response)
+
+		if parse_result.clothing_type is None:
+			raise TemplateParsingError()
+
+		try:
+			clothing_category = ClothingCategory.query.filter(
+				ClothingCategory.clothing_category_name == parse_result.clothing_type).one()
+		except NoResultFound:
+			raise NoResultFound(
+				'The parser returned a clothing category that could not be found '
+				'by the database. Parser returned '
+				'clothing_type={}'.format(parse_result.clothing_type))
+
+		logger.debug('Parser identified clothing category. Its db association is='.format(
+			clothing_category))
+
+		for concern in parse_result.meta['concerns']:
+			logger.warn('Parser returned this concern about what it was sent: {}'.format(concern))
+
+		"""try:
+			[m.measurements.append(model) for model in measurement_models]
+		except UnsupportedClothingCategory:
+			raise"""
+
+		for msmt in parse_result.measurements:
+			msmt_model = build_item_measurement(
+				clothing_cat_string_name=msmt.category,
+				attribute=msmt.attribute,
+				measurement_value=msmt.value)
+			m.measurements.append(msmt_model)
+
+	return m
+
+
 def build_user_measurement_preferences_for_ebay_item_category(
 	ebay_item_category_object, user_object, db_conn, msmt_dict):
 	"""Returns a list of UserMeasurementPreference models that can be constructed from
@@ -245,9 +383,6 @@ def build_user_measurement_preferences_for_ebay_item_category(
 			pref_models.append(pref)
 
 	return pref_models
-
-
-
 
 
 
