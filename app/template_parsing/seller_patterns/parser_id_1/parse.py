@@ -4,6 +4,7 @@ from .core.director import director
 from .core.get_measurements_table import get_measurements_table
 from .core.identify_clothing_type import identify_clothing_type
 from app.template_parsing import ParseResult
+from app.template_parsing.exception import TemplateParsingError, UnsupportedClothingCategory
 
 logger = logging.getLogger(__name__)
 
@@ -57,23 +58,53 @@ def parse(json_str):
 
 	logger.info('Beginning parse')
 
+	parse_result = ParseResult()
+
 	measurements_table_soup = get_measurements_table(
 		r['Item']['Description'], output_fmt='soup')
 	ebay_primary_cat_id = int(r['Item']['PrimaryCategoryID'])
 	identify_result = identify_clothing_type(
 		measurements_table_soup,
 		ebay_primary_category_id=ebay_primary_cat_id)
-	parse_fn = director(identify_result.identified_clothing_type)
-	msmts_collection = parse_fn(
-		measurements_table_soup, parse_strategy='default')
-
-	parse_result = ParseResult()
 
 	parse_result.meta = {
 		'parse_strategy': 'default',
 		'concerns': identify_result.concerns,
 		'parsed_html': identify_result.html_used_to_make_observations}
 	parse_result.clothing_type = identify_result.identified_clothing_type
+	parse_result.measurements = []
+
+	# shortcircuit if result is None. parsing is useless at this point.
+	if parse_result.clothing_type is None:
+		return parse_result
+
+	# shortcircuit if appropriate parse function cannot be found. This case should only be
+	# programmer error. Identify should only return non None string names for clothing that the
+	# director is able to recognize.
+	try:
+		parse_fn = director(identify_result.identified_clothing_type)
+	except UnsupportedClothingCategory:
+		logger.exception(
+			'Identify returned a clothing type that the director did not now about')
+		return parse_result
+
+	try:
+		msmts_collection = parse_fn(
+			measurements_table_soup, parse_strategy='default')
+	except TemplateParsingError:
+		log.exception('Parsing function encountered an error with what it was given to parse')
+		return parse_result
+
 	parse_result.measurements = msmts_collection.measurements_list
+	return parse_result
+
+	# parse_result = ParseResult()
+
+	"""parse_result.meta = {
+		'parse_strategy': 'default',
+		'concerns': identify_result.concerns,
+		'parsed_html': identify_result.html_used_to_make_observations}
+	parse_result.clothing_type = identify_result.identified_clothing_type
+	parse_result.measurements = msmts_collection.measurements_list"""
 
 	return parse_result
