@@ -1,4 +1,5 @@
 import warnings
+import logging
 
 from app import app, db
 from app.models import SizeKeyShirtDressSleeve, SizeKeyShirtDressNeck, SizeKeyShirtCasual, Item, EbaySeller
@@ -9,6 +10,8 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 
+logger = logging.getLogger(__name__)
+
 
 def compare_and_return_new_items(set_of_ebay_item_ids, ebay_seller_id=None):
 	"""Compares a set of ebay item ids against a DB query and returns a set of items
@@ -17,7 +20,9 @@ def compare_and_return_new_items(set_of_ebay_item_ids, ebay_seller_id=None):
 	Returns:
 	set_of_ebay_items : set
 	"""
+	logger.info('Comparing a set of ebay item ids against those that are known about in the db')
 	if ebay_seller_id is not None:
+		logger.debug('ebay_seller_id={}'.format(ebay_seller_id))
 		try:
 			seller = db.session.query(
 				EbaySeller).filter(EbaySeller.ebay_seller_id == ebay_seller_id).one()
@@ -28,6 +33,7 @@ def compare_and_return_new_items(set_of_ebay_item_ids, ebay_seller_id=None):
 		db_set = set([i[0] for i in db_item_results])
 		return set_of_ebay_item_ids - db_set
 	else:
+		logger.debug('ebay_seller_id=None. This may be slow.')
 		db_item_results = db.session.query(Item.ebay_item_id).all()
 		db_set = set([i[0] for i in db_item_results])
 		return set_of_ebay_item_ids - db_set

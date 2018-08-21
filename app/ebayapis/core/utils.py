@@ -1,4 +1,7 @@
+import logging
 from ebaysdk.exception import PaginationLimit
+
+logger = logging.getLogger(__name__)
 
 
 def depaginate_search_result(connection):
@@ -9,6 +12,8 @@ def depaginate_search_result(connection):
 	result : dict
 		{'searchResult' : [list of items]}
 	"""
+	logger.info('Depaginating connection response')
+
 	try:
 		connection.response.dict()['searchResult']['item']
 	except KeyError:
@@ -21,8 +26,10 @@ def depaginate_search_result(connection):
 	while proceed:
 		for item in connection.response.dict()['searchResult']['item']:
 			result['searchResult'].append(item)
+		logger.debug('Moving to next page')
 		try:
 			connection.next_page()
 		except PaginationLimit:
+			logger.debug('Reached PaginationLimit. Returning result.')
 			proceed = False
 	return result
