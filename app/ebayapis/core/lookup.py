@@ -1,3 +1,8 @@
+import logging
+
+logger = logging.getLogger(__name__)
+
+
 def lookup_single_item(connection, ebay_item_id, with_description=False):
 	"""Executes GetSingleItem method call to connection.
 
@@ -11,6 +16,9 @@ def lookup_single_item(connection, ebay_item_id, with_description=False):
 	-------
 	r : ebaysdk connection RESPONSE object
 	"""
+	logger.info('Looking up ebay_item_id={}. with_description={}'.format(
+		ebay_item_id, with_description))
+
 	payload = {'ItemID': ebay_item_id}
 	if with_description:
 		payload['IncludeSelector'] = 'Description'

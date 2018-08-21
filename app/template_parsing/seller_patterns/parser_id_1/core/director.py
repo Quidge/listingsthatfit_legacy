@@ -9,6 +9,7 @@ from app.template_parsing.exception import (
 from app.template_parsing import Measurement as Msmt
 from app.template_parsing import MeasurementsCollection
 from app.template_parsing.utils import str_measurement_to_int as str2int
+from ..clothing_type_directory import supported_category_names as nm
 
 logger = logging.getLogger(__name__)
 
@@ -437,13 +438,13 @@ def get_sweater_measurements(measurements_table_soup, parse_strategy='default'):
 
 
 function_directory_str = {
-	"sportcoat": get_sportcoat_measurements,
-	"suit": get_suit_measurements,
-	"dress_shirt": get_dress_shirt_measurements,
-	"casual_shirt": get_casual_shirt_measurements,
-	"pant": get_pant_measurements,
-	"coat_or_jacket": get_coat_and_jacket_measurements,
-	"sweater": get_sweater_measurements
+	nm['SPORTCOAT']: get_sportcoat_measurements,
+	nm['SUIT']: get_suit_measurements,
+	nm['DRESS_SHIRT']: get_dress_shirt_measurements,
+	nm['CASUAL_SHIRT']: get_casual_shirt_measurements,
+	nm['PANT']: get_pant_measurements,
+	nm['COAT_OR_JACKET']: get_coat_and_jacket_measurements,
+	nm['SWEATER']: get_sweater_measurements
 }
 
 

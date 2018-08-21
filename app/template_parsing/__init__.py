@@ -1,8 +1,11 @@
+import logging
 import json
 # import app.template_parsing.serialization as serialization
 
 # I THINK I should be organizing template_parsing as a package. Organization idea found here:
 # https://docs.python.org/2/tutorial/modules.html#packages
+
+logger = logging.getLogger(__name__)
 
 
 class ParseResult():

@@ -1,4 +1,5 @@
 [
+  "app/template_parsing/seller_patterns/parser_id_1/tests/clothing_type_names_test.py::test_supported_category_names_only_contains_the_following",
   "app/template_parsing/seller_patterns/parser_id_1/tests/director_casual_shirt_parse_fn_test.py::test_parse_fn_raises_unrecognized_template_html",
   "app/template_parsing/seller_patterns/parser_id_1/tests/director_casual_shirt_parse_fn_test.py::test_parse_fn_returns_measurement_collection",
   "app/template_parsing/seller_patterns/parser_id_1/tests/director_coat_or_jacket_parse_fn_test.py::test_parse_fn_raises_unrecognized_template_html",
@@ -68,6 +69,9 @@
   "app/template_parsing/tests/ParseResult_test.py::test_rehydrate_runs",
   "app/template_parsing/tests/ParseResult_test.py::test_rehydrate_returns_parse_result_type",
   "app/template_parsing/tests/ParseResult_test.py::test_rehydrate_is_lossless",
-  "app/template_parsing/tests/master_parse_test.py::test_get_appropriate_seller_parse_fn_fails_when_passed_weird_shit",
-  "app/template_parsing/tests/master_parse_test.py::test_parse_returns_expected_json"
+  "app/template_parsing/tests/clothing_type_names_test.py::test_name_mapping_contains_only_the_following",
+  "app/template_parsing/tests/clothing_type_names_test.py::test_name_maps_to_expected",
+  "app/template_parsing/tests/master_parse_test.py::test_get_appropriate_seller_parse_module_fails_when_passed_weird_shit",
+  "app/template_parsing/tests/master_parse_test.py::test_parse_returns_expected_json",
+  "app/tests/model_builders_test.py::test_build_ebay_item_model_returns_as_expected"
 ]

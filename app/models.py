@@ -396,6 +396,10 @@ class Item(db.Model):
 	end_date = db.Column(db.DateTime, nullable=False)
 	last_access_date = db.Column(db.DateTime, nullable=False)
 	ebay_title = db.Column(db.Text(), nullable=False)
+	primary_category_number = (db.Column(
+		'primary_category_number', db.Integer, nullable=False))
+	# _primary_ebay_category_id links out to an old table that i don't maintain anymore.
+	# i haven't stripped it out because UserMeasurementPreference depends on it at the moment.
 	_primary_ebay_category_id = db.Column(
 		'primary_ebay_item_category_id',
 		db.Integer,

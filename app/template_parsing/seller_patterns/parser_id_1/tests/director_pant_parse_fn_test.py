@@ -9,8 +9,9 @@ from app.template_parsing.exception import (
 	UnsupportedParsingStrategy,
 	UnsupportedClothingCategory,
 	UnrecognizedTemplateHTML)
+from ..clothing_type_directory import supported_category_names as nm
 
-TESTING_CLOTHING_TYPE = 'pant'
+TESTING_CLOTHING_TYPE = nm['PANT']
 
 
 @pytest.fixture(scope='module')

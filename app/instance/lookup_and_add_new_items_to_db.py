@@ -10,8 +10,6 @@ from app.template_parsing.exception import TemplateParsingError, UnrecognizedTem
 
 from app.models import EbaySeller
 
-config = {}
-
 
 def lookup_and_create_models_for_new_items(
 	finding_connection,

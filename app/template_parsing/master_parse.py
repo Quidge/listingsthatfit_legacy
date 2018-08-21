@@ -37,7 +37,18 @@ def simple_preparse_response_check(r_dict):
 	logger.debug('Response dict passed simple preparse check')
 
 
-def get_appropriate_seller_parse_fn(parser_id_num):
+def get_appropriate_seller_parse_module(parser_id_num):
+	module_name = 'parser_id_{}'.format(parser_id_num)
+	try:
+		appropriate_parser_module = import_module(
+			'app.template_parsing.seller_patterns.{}.parse'.format(module_name))
+	except ImportError:
+		raise ImportError('Could not locate parser module')
+	else:
+		return appropriate_parser_module
+
+
+"""def get_appropriate_seller_module_parse_fn(parser_id_num):
 	module_name = 'parser_id_{}'.format(parser_id_num)
 	try:
 		appropriate_parser_module = import_module(
@@ -46,7 +57,7 @@ def get_appropriate_seller_parse_fn(parser_id_num):
 		raise ImportError('Could not locate parser module')
 	else:
 		appropriate_parse_fn = appropriate_parser_module.parse
-		return appropriate_parse_fn
+		return appropriate_parse_fn"""
 
 
 def parse(json_str):
@@ -69,8 +80,10 @@ def parse(json_str):
 
 	start = json.loads(json_str)
 	simple_preparse_response_check(start['response'])
-	parser_fn = get_appropriate_seller_parse_fn(int(start['parser_id_num']))
-	parsed_data = parser_fn(json.dumps(start['response']))
+	# parser_fn = get_appropriate_seller_parse_fn(int(start['parser_id_num']))
+	parser_module = get_appropriate_seller_parse_module(int(start['parser_id_num']))
+	# parsed_data = parser_fn(json.dumps(start['response']))
+	parsed_data = parser_module.parse(json.dumps(start['response']))
 	return parsed_data.json()
 
 

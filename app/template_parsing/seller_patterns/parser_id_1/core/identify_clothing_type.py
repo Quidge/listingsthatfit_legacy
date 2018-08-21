@@ -2,6 +2,7 @@ import re
 import logging
 from bs4 import BeautifulSoup
 from app.template_parsing import IdentifyResult
+from ..clothing_type_directory import supported_category_names as nm
 
 logger = logging.getLogger(__name__)
 
@@ -89,7 +90,7 @@ def identify_clothing_type(
 			identify_result.concerns.append(msg)
 			logger.warn(msg)
 
-		identify_result.identified_clothing_type = 'suit'
+		identify_result.identified_clothing_type = nm['SUIT']
 
 	elif mentions_cuff and not mentions_sleeve:
 		# Should be a pant listing.
@@ -107,17 +108,17 @@ def identify_clothing_type(
 			identify_result.concerns.append(msg)
 			logger.warn(msg)
 
-		identify_result.identified_clothing_type = 'pant'
+		identify_result.identified_clothing_type = nm['PANT']
 
 	elif mentions_sleeve and not mentions_length:
 		# Should be either dress shirt or casual shirt. These have the same measurement descriptions so
 		# diffrentiating requires the item category.
 		if ebay_primary_category_id == 57991:
-			identify_result.identified_clothing_type = 'dress_shirt'
+			identify_result.identified_clothing_type = nm['DRESS_SHIRT']
 			logger.debug('Identify thinks this template belongs to a dress shirt listing.')
 
 		elif ebay_primary_category_id == 57990:
-			identify_result.identified_clothing_type = 'casual_shirt'
+			identify_result.identified_clothing_type = nm['CASUAL_SHIRT']
 			logger.debug('Identify thinks this template belongs to a casual shirt listing.')
 
 		elif ebay_primary_category_id is None:
@@ -125,7 +126,7 @@ def identify_clothing_type(
 				'Identify received ebay_primary_category_id=None for a listing '
 				'it thinks is a dress or casual shirt. Without this there is no way '
 				'to discern. Defaulting to casual_shirt.')
-			identify_result.identified_clothing_type = 'casual_shirt'
+			identify_result.identified_clothing_type = nm['CASUAL_SHIRT']
 			identify_result.concerns.append(msg)
 			logger.warn(msg)
 		else:
@@ -134,7 +135,7 @@ def identify_clothing_type(
 				'thinks is a dress or casual shirt (57991 or 57990). Without this '
 				'there is no way to discern. Defaulting to casual_shirt.').format(
 					ebay_primary_category_id)
-			identify_result.identified_clothing_type = 'casual_shirt'
+			identify_result.identified_clothing_type = nm['CASUAL_SHIRT']
 			identify_result.concerns.append(msg)
 			logger.warn(msg)
 
@@ -142,11 +143,11 @@ def identify_clothing_type(
 		# Either sweater or casual jacket. Sportcoats will have waist mentions.
 		if ebay_primary_category_id == 11484:
 			logger.debug('Identify thinks this template belongs to a sweater listing.')
-			identify_result.identified_clothing_type = 'sweater'
+			identify_result.identified_clothing_type = nm['SWEATER']
 
 		elif ebay_primary_category_id == 57988:
 			logger.debug('Identify thinks this template belongs to a coat_or_jacket listing.')
-			identify_result.identified_clothing_type = 'coat_or_jacket'
+			identify_result.identified_clothing_type = nm['COAT_OR_JACKET']
 
 		elif ebay_primary_category_id == 3001:
 			msg = (
@@ -154,7 +155,7 @@ def identify_clothing_type(
 				'but expected ebay_primary_category_id=57988. Instead received '
 				'ebay_primary_category_id=3001')
 			logger.warn(msg)
-			identify_result.identified_clothing_type = 'coat_or_jacket'
+			identify_result.identified_clothing_type = nm['COAT_OR_JACKET']
 			identify_result.concerns.append(msg)
 
 		elif not ebay_primary_category_id:
@@ -208,7 +209,7 @@ def identify_clothing_type(
 				'deprecated and sportcoats should be only listed in 3001.')
 			logger.warn(msg)
 			identify_result.concerns.append(msg)
-			identify_result.identified_clothing_type = 'sportcoat'
+			identify_result.identified_clothing_type = nm['SPORTCOAT']
 			logger.info(
 				'Identify identifies this clothing item as <{}> with '
 				'ebay_primary_category_id={}'.format(
@@ -222,14 +223,14 @@ def identify_clothing_type(
 				'deprecated and sportcoats should be only listed in 3001.')
 			logger.warn(msg)
 			identify_result.concerns.append(msg)
-			identify_result.identified_clothing_type = 'sportcoat'
+			identify_result.identified_clothing_type = nm['SPORTCOAT']
 			logger.info(
 				'Identify identifies this clothing item as <{}> with '
 				'ebay_primary_category_id={}'.format(
 					identify_result.identified_clothing_type, ebay_primary_category_id))
 
 		else:
-			identify_result.identified_clothing_type = 'sportcoat'
+			identify_result.identified_clothing_type = nm['SPORTCOAT']
 			logger.info(
 				'Identify identifies this clothing item as <{}> with '
 				'ebay_primary_category_id={}'.format(

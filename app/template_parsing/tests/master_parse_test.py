@@ -12,9 +12,9 @@ def sample_inbound_json():
 		yield json_file.read()
 
 
-def test_get_appropriate_seller_parse_fn_fails_when_passed_weird_shit():
+def test_get_appropriate_seller_parse_module_fails_when_passed_weird_shit():
 	with pytest.raises(ImportError):
-		master_parse.get_appropriate_seller_parse_fn('fail')
+		master_parse.get_appropriate_seller_parse_module('fail')
 
 
 def test_parse_returns_expected_json(sample_inbound_json):

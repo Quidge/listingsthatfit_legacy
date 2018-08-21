@@ -103,102 +103,13 @@ def build_item_measurement(
 			measurement_type=measurement_type,
 			measurement_category=measurement_category)
 	except BaseException:
-		print('Item Measurement failed to associate')
+		logger.exception('Constructing ItemMeasurement failed')
 		raise
 
 	return association
 
 
 def build_ebay_item_model(
-	single_item_response,
-	ebay_seller_id=None,
-	with_measurements=False,
-	measurement_parse_strategy='default',
-	with_sizes=False,
-	affiliate_url=None):
-	"""Takes an ebay_seller_id, and GetSingleItem ebay API response, and affiliate_url
-	(if provided) and returns a appropriately configured Item model.
-
-	Parameters
-	----------
-	single_item_response : dict
-	ebay_seller_id : str
-	with_measurements : bool
-		If true, response will be searched for a description and measurement parsing
-		for that description will be attempted.
-	with_sizes : bool
-		If true, response will be searched for a description and size parsing
-		for that description will be attempted.
-	affiliate_url = str or None
-
-	Returns
-	-------
-	configured sqlalchemy app.models.Item model object
-	"""
-
-	try:
-		assert ebay_seller_id is not None
-		seller = EbaySeller.query.filter(EbaySeller.ebay_seller_id == ebay_seller_id).one()
-	except AssertionError:
-		raise ValueError('ebay_seller_id not provided')
-	except NoResultFound:
-		# Couldn't find seller in database. Should fail.
-		raise NoResultFound(
-			'No matching seller found for <{}> in the database'.format(ebay_seller_id))
-
-	# All times from these responses are UTC
-	# http://developer.ebay.com/devzone/Shopping/docs/CallRef/types/simpleTypes.html#dateTime
-
-	m = Item()
-	m.last_access_date = datetime.strptime(
-		single_item_response['Timestamp'], '%Y-%m-%dT%H:%M:%S.%fZ')
-
-	r = single_item_response['Item']
-
-	primary_category = EbayItemCategory.query.filter(
-		EbayItemCategory.category_number == int(r['PrimaryCategoryID'])).one()
-
-	m.seller = seller
-	m.ebay_item_id = int(r['ItemID'])
-	m.end_date = datetime.strptime(r['EndTime'], '%Y-%m-%dT%H:%M:%S.%fZ')
-	m.ebay_title = r['Title']
-	m.primary_item_category = primary_category
-	# m.ebay_primary_category = int(r['PrimaryCategoryID'])
-	m.current_price = int(decimal.Decimal(r['ConvertedCurrentPrice']['value']) * 100)
-	m.ebay_url = r['ViewItemURLForNaturalSearch']
-	m.ebay_affiliate_url = affiliate_url
-
-	if with_measurements:
-		try:
-			html_desc = r['Description']
-		except KeyError:
-			raise KeyError('No HTML description found in response')
-
-		# This and the next try/except could possibly be combined?
-		try:
-			assert seller.template_parser != None
-		except AssertionError:
-			raise ValueError(
-				'No template parser associated with <{}>'.format(seller.ebay_seller_id))
-
-		try:
-			parser_file_num = seller.template_parser.file_name_number
-		except:
-			raise
-		measurement_models = gather_measurement_models_from_html_desc(
-			html_desc, m.primary_item_category.category_number, parser_file_num,
-			parse_strategy=measurement_parse_strategy)
-
-		# damn, list comprehensions are cool
-		try:
-			[m.measurements.append(model) for model in measurement_models]
-		except UnsupportedClothingCategory:
-			raise
-
-	return m
-
-
-def build_ebay_item_model2(
 	single_item_response,
 	ebay_seller_id=None,
 	attempt_parse=False,
@@ -221,6 +132,7 @@ def build_ebay_item_model2(
 	Returns
 	-------
 	configured sqlalchemy app.models.Item model object
+		if attempt_parse=True and any part of the parsing process fails, will return None
 	"""
 
 	logger.debug('Attempting to create model')
@@ -247,21 +159,11 @@ def build_ebay_item_model2(
 
 	r = single_item_response['Item']
 
-	try:
-		primary_category = EbayItemCategory.query.filter(
-			EbayItemCategory.category_number == int(r['PrimaryCategoryID'])).one()
-	except NoResultFound:
-		raise NoResultFound(
-			'Could not find a matching db record for PrimaryCategoryID={}'.format(
-				r['PrimaryCategoryID']))
-
-	logger.debug('Ebay category found. Using ebay category={}'.format(primary_category))
-
 	m.seller = seller
 	m.ebay_item_id = int(r['ItemID'])
 	m.end_date = datetime.strptime(r['EndTime'], '%Y-%m-%dT%H:%M:%S.%fZ')
 	m.ebay_title = r['Title']
-	m.primary_item_category = primary_category
+	m.primary_category_number = int(r['PrimaryCategoryID'])
 	m.current_price = int(decimal.Decimal(r['ConvertedCurrentPrice']['value']) * 100)
 	m.ebay_url = r['ViewItemURLForNaturalSearch']
 	m.ebay_affiliate_url = affiliate_url
@@ -273,8 +175,10 @@ def build_ebay_item_model2(
 		try:
 			assert seller.template_parser is not None
 		except AssertionError:
-			raise ValueError(
-				'No template parser associated with <{}>'.format(seller))
+			logger.warn('No template parser associated with <{}>. Returning None.'.format(seller))
+			return None
+			# raise ValueError(
+				# 'No template parser associated with <{}>'.format(seller))
 
 		try:
 			# what error does this raise if it fails?
@@ -292,31 +196,37 @@ def build_ebay_item_model2(
 			'response': single_item_response
 		})
 
-		parser_response = master_parse.parse(parse_input_json_str)
+		try:
+			parser_response = master_parse.parse(parse_input_json_str)
+		except Exception:
+			logger.error('Something failed with the parser', exc_info=True)
+			return None
+
+		logger.debug('Attempting to rehydrate parse result')
 		parse_result = ParseResult.rehydrate(parser_response)
 
 		if parse_result.clothing_type is None:
-			raise TemplateParsingError()
+			logger.warn('Parser could not identify clothing type. Returning None')
+			return None
+			# raise TemplateParsingError()
 
 		try:
 			clothing_category = ClothingCategory.query.filter(
 				ClothingCategory.clothing_category_name == parse_result.clothing_type).one()
 		except NoResultFound:
-			raise NoResultFound(
+			logger.warn(
 				'The parser returned a clothing category that could not be found '
 				'by the database. Parser returned '
-				'clothing_type={}'.format(parse_result.clothing_type))
+				'clothing_type={}. Returning None.'.format(parse_result.clothing_type))
+			return None
 
-		logger.debug('Parser identified clothing category. Its db association is='.format(
-			clothing_category))
+		m.assigned_clothing_category = clothing_category
+
+		logger.debug('Parser identified clothing category. Its db association is={}'.format(
+			m.assigned_clothing_category))
 
 		for concern in parse_result.meta['concerns']:
 			logger.warn('Parser returned this concern about what it was sent: {}'.format(concern))
-
-		"""try:
-			[m.measurements.append(model) for model in measurement_models]
-		except UnsupportedClothingCategory:
-			raise"""
 
 		for msmt in parse_result.measurements:
 			msmt_model = build_item_measurement(
@@ -324,6 +234,11 @@ def build_ebay_item_model2(
 				attribute=msmt.attribute,
 				measurement_value=msmt.value)
 			m.measurements.append(msmt_model)
+
+	if m is not None:
+		logger.info('Model created successfully. Model={}'.format(m))
+	else:
+		logger.warn('Failed to create model. Returning None.')
 
 	return m
 
