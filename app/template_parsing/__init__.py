@@ -142,9 +142,9 @@ class Measurement(object):
 		try:
 			assert type(measurement_value) == int
 		except AssertionError:
-			raise TypeError(
-				'Measurement must be instantiated with with an int as the measurement \
-				value, value given is given: <{}>'.format(measurement_value))
+			raise TypeError((
+				'Measurement must be instantiated with with an int as the measurement '
+				'value, value given is given: <{}>').format(measurement_value))
 		self.category = category
 		self.attribute = attribute
 		self.value = measurement_value

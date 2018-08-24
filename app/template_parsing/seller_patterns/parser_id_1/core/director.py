@@ -47,14 +47,14 @@ def get_sportcoat_measurements(measurements_table_soup, parse_strategy='default'
 			# TypeError raised by Measurement class if passed non int value
 			# as the measurement value
 		except TypeError as e:
-			raise UnrecognizedMeasurement(
-				'Instantiation of Measurement class ({}) by parsing html raised a KeyError, \
-				indicating the parser identified a region that it expected would be a \
-				measurement value.'.format(e), html_string=str(measurements_table_soup))
+			raise UnrecognizedMeasurement((
+				'Instantiation of Measurement class ({}) by parsing html raised a KeyError, '
+				'indicating the parser identified a region that it expected would be a '
+				'measurement value.').format(e), html_string=str(measurements_table_soup))
 		except IndexError:
-			raise UnrecognizedTemplateHTML(
-				'parse_strategy={} expected a differing number of measurements than \
-				what was provided by the template.'.format(parse_strategy),
+			raise UnrecognizedTemplateHTML((
+				'parse_strategy={} expected a differing number of measurements than '
+				'what was provided by the template.').format(parse_strategy),
 				html_string=str(data))
 	else:
 		raise UnsupportedParsingStrategy(
@@ -108,14 +108,14 @@ def get_suit_measurements(measurements_table_soup, parse_strategy='default'):
 			# TypeError raised by Measurement class if passed non int value
 			# as the measurement value
 		except TypeError as e:
-			raise UnrecognizedMeasurement(
-				'Instantiation of Measurement class ({}) by parsing html raised a KeyError, \
-				indicating the parser identified a region that it expected would be a \
-				measurement value.'.format(e), html_string=str(measurements_table_soup))
+			raise UnrecognizedMeasurement((
+				'Instantiation of Measurement class ({}) by parsing html raised a KeyError, '
+				'indicating the parser identified a region that it expected would be a '
+				'measurement value.').format(e), html_string=str(measurements_table_soup))
 		except IndexError:
-			raise UnrecognizedTemplateHTML(
-				'parse_strategy={} expected a differing number of measurements than \
-				what was provided by the template.'.format(parse_strategy),
+			raise UnrecognizedTemplateHTML((
+				'parse_strategy={} expected a differing number of measurements than '
+				'what was provided by the template.').format(parse_strategy),
 				html_string=str(measurements_table_soup))
 	else:
 		raise UnsupportedParsingStrategy(
@@ -163,14 +163,14 @@ def get_pant_measurements(measurements_table_soup, parse_strategy='default'):
 			# TypeError raised by Measurement class if passed non int value
 			# as the measurement value
 		except TypeError as e:
-			raise UnrecognizedMeasurement(
-				'Instantiation of Measurement class ({}) by parsing html raised a KeyError, \
-				indicating the parser identified a region that it expected would be a \
-				measurement value.'.format(e), html_string=str(measurements_table_soup))
+			raise UnrecognizedMeasurement((
+				'Instantiation of Measurement class ({}) by parsing html raised a KeyError, '
+				'indicating the parser identified a region that it expected would be a '
+				'measurement value.').format(e), html_string=str(measurements_table_soup))
 		except IndexError:
-			raise UnrecognizedTemplateHTML(
-				'parse_strategy={} expected a differing number of measurements than \
-				what was provided by the template.'.format(parse_strategy),
+			raise UnrecognizedTemplateHTML((
+				'parse_strategy={} expected a differing number of measurements than '
+				'what was provided by the template.').format(parse_strategy),
 				html_string=str(measurements_table_soup))
 	else:
 		raise UnsupportedParsingStrategy(
@@ -227,14 +227,14 @@ def get_casual_shirt_measurements(measurements_table_soup, parse_strategy='defau
 			# TypeError raised by Measurement class if passed non int value
 			# as the measurement value
 		except TypeError as e:
-			raise UnrecognizedMeasurement(
-				'Instantiation of Measurement class ({}) by parsing html raised a KeyError, \
-				indicating the parser identified a region that it expected would be a \
-				measurement value.'.format(e), html_string=str(measurements_table_soup))
+			raise UnrecognizedMeasurement((
+				'Instantiation of Measurement class ({}) by parsing html raised a KeyError, '
+				'indicating the parser identified a region that it expected would be a '
+				'measurement value.').format(e), html_string=str(measurements_table_soup))
 		except IndexError:
-			raise UnrecognizedTemplateHTML(
-				'parse_strategy={} expected a differing number of measurements than \
-				what was provided by the template.'.format(parse_strategy),
+			raise UnrecognizedTemplateHTML((
+				'parse_strategy={} expected a differing number of measurements than '
+				'what was provided by the template.').format(parse_strategy),
 				html_string=str(measurements_table_soup))
 	else:
 		raise UnsupportedParsingStrategy(
@@ -290,14 +290,14 @@ def get_dress_shirt_measurements(measurements_table_soup, parse_strategy='defaul
 			# TypeError raised by Measurement class if passed non int value
 			# as the measurement value
 		except TypeError as e:
-			raise UnrecognizedMeasurement(
-				'Instantiation of Measurement class ({}) by parsing html raised a KeyError, \
-				indicating the parser identified a region that it expected would be a \
-				measurement value.'.format(e), html_string=str(measurements_table_soup))
+			raise UnrecognizedMeasurement((
+				'Instantiation of Measurement class ({}) by parsing html raised a KeyError, '
+				'indicating the parser identified a region that it expected would be a '
+				'measurement value.').format(e), html_string=str(measurements_table_soup))
 		except IndexError:
-			raise UnrecognizedTemplateHTML(
-				'parse_strategy={} expected a differing number of measurements than \
-				what was provided by the template.'.format(parse_strategy),
+			raise UnrecognizedTemplateHTML((
+				'parse_strategy={} expected a differing number of measurements than '
+				'what was provided by the template.').format(parse_strategy),
 				html_string=str(measurements_table_soup))
 	else:
 		raise UnsupportedParsingStrategy(
@@ -342,14 +342,14 @@ def get_coat_and_jacket_measurements(measurements_table_soup, parse_strategy='de
 			# TypeError raised by Measurement class if passed non int value
 			# as the measurement value
 		except TypeError as e:
-			raise UnrecognizedMeasurement(
-				'Instantiation of Measurement class ({}) by parsing html raised a KeyError, \
-				indicating the parser identified a region that it expected would be a \
-				measurement value.'.format(e), html_string=str(measurements_table_soup))
+			raise UnrecognizedMeasurement((
+				'Instantiation of Measurement class ({}) by parsing html raised a KeyError, '
+				'indicating the parser identified a region that it expected would be a '
+				'measurement value.').format(e), html_string=str(measurements_table_soup))
 		except IndexError:
-			raise UnrecognizedTemplateHTML(
-				'parse_strategy={} expected a differing number of measurements than \
-				what was provided by the template.'.format(parse_strategy),
+			raise UnrecognizedTemplateHTML((
+				'parse_strategy={} expected a differing number of measurements than '
+				'what was provided by the template.').format(parse_strategy),
 				html_string=str(measurements_table_soup))
 	else:
 		raise UnsupportedParsingStrategy(
@@ -417,14 +417,14 @@ def get_sweater_measurements(measurements_table_soup, parse_strategy='default'):
 			# TypeError raised by Measurement class if passed non int value
 			# as the measurement value
 		except TypeError as e:
-			raise UnrecognizedMeasurement(
-				'Instantiation of Measurement class ({}) by parsing html raised a KeyError, \
-				indicating the parser identified a region that it expected would be a \
-				measurement value.'.format(e), html_string=str(measurements_table_soup))
+			raise UnrecognizedMeasurement((
+				'Instantiation of Measurement class ({}) by parsing html raised a KeyError, '
+				'indicating the parser identified a region that it expected would be a '
+				'measurement value.').format(e), html_string=str(measurements_table_soup))
 		except IndexError:
-			raise UnrecognizedTemplateHTML(
-				'parse_strategy={} expected a differing number of measurements than \
-				what was provided by the template.'.format(parse_strategy),
+			raise UnrecognizedTemplateHTML((
+				'parse_strategy={} expected a differing number of measurements than '
+				'what was provided by the template.').format(parse_strategy),
 				html_string=str(measurements_table_soup))
 	else:
 		raise UnsupportedParsingStrategy(

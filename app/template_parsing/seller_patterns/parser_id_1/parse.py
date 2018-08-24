@@ -4,7 +4,9 @@ from .core.director import director
 from .core.get_measurements_table import get_measurements_table
 from .core.identify_clothing_type import identify_clothing_type
 from app.template_parsing import ParseResult
-from app.template_parsing.exception import TemplateParsingError, UnsupportedClothingCategory
+from app.template_parsing.exception import (
+	TemplateParsingError, UnsupportedClothingCategory, UnrecognizedMeasurement,
+	UnrecognizedTemplateHTML)
 
 logger = logging.getLogger(__name__)
 
@@ -89,22 +91,21 @@ def parse(json_str):
 		return parse_result
 
 	try:
+		logger.debug('Attempting to parse using {}'.format(parse_fn.__name__))
 		msmts_collection = parse_fn(
 			measurements_table_soup, parse_strategy='default')
-	except TemplateParsingError:
-		log.exception('Parsing function encountered an error with what it was given to parse')
-		return parse_result
+	except UnrecognizedMeasurement:
+		logger.exception('The parse function <{}> had difficulty with one of the measurements')
+		return parse_result  # return with empty measurements
+	except UnrecognizedTemplateHTML:
+		logger.exception('The parse function <{}> had difficulty recogizing the template HTML')
+		return parse_result  # return with empty measurements
 
 	parse_result.measurements = msmts_collection.measurements_list
+	logger.info('Successfully completing parsing parsing')
+
 	return parse_result
 
 	# parse_result = ParseResult()
-
-	"""parse_result.meta = {
-		'parse_strategy': 'default',
-		'concerns': identify_result.concerns,
-		'parsed_html': identify_result.html_used_to_make_observations}
-	parse_result.clothing_type = identify_result.identified_clothing_type
-	parse_result.measurements = msmts_collection.measurements_list"""
 
 	return parse_result

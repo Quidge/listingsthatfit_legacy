@@ -123,8 +123,7 @@ def lookup_and_create_models_for_new_items(
 
 	for item_res in sapi_lookups:
 		i_id = item_res['Item']['ItemID']
-		logger.info('--- item <{}> report ---'.format(i_id))
-		logger.debug('Attempting to build model for item <{}>.'.format(i_id))
+		logger.info('Attempting to build model for item <{}>.'.format(i_id))
 
 		# This could be sped up by resusing the same seller result each time.
 		# Each time build_ebay_item_model searches the db for ebay_seller_id.
@@ -155,14 +154,18 @@ if __name__ == '__main__':
 	from app import db
 
 	logger = logging.getLogger('app.instance.lookup_and_add_new_items_to_db2')
+	logger.info('Running lookup_and_add_new_items_to_db2 as script')
 
 	payload = {
 		'itemFilter': [
 			{'name': 'Seller', 'value': 'balearic1'},
-			{'name': 'listingType', 'value': 'Auction'}
+			{'name': 'listingType', 'value': 'Auction'},
+			{'name': 'ExcludeCategory', 'value': [4250]}
 		],
-		'categoryId': [3001]
+		# 'categoryId': [3001]
 	}
+	# 4250 = Mens-Accessories
+	# 
 
 	models = lookup_and_create_models_for_new_items(
 		f_api,
