@@ -6,17 +6,17 @@ from importlib import import_module
 import datetime
 import logging
 
-from app.instance.query.matching_ad_hoc import matching_in_categories_alt
+from app.instance.query.matching_ad_hoc import matching_in_categories_alt2
 from app.reporter.generate import generate_forum_post_w_msmts as gen
 from app.models import Item
 from app.reporter.utils import compile_item_with_measurements as compress
 
-logger = logging.getLogger(__name__)
-sh = logging.StreamHandler(stream=sys.stdout)
-sh.setLevel(logging.INFO)
-sh.setFormatter(logging.Formatter('[%(levelname)s] - [%(name)s] - %(message)s'))
-logger.addHandler(sh)
-logger.setLevel(logging.DEBUG)
+logger = logging.getLogger('app.reporter.bin.generate_new_items_sf_format')
+# sh = logging.StreamHandler(stream=sys.stdout)
+# sh.setLevel(logging.INFO)
+# sh.setFormatter(logging.Formatter('[%(levelname)s] - [%(name)s] - %(message)s'))
+# logger.addHandler(sh)
+# logger.setLevel(logging.DEBUG)
 
 logger.info('Starting generate_new_items_sf_format script.')
 
@@ -30,7 +30,7 @@ except ImportError:
 
 profile = measurements_module.mqp
 
-item_list = matching_in_categories_alt(profile, with_measurements=True, days_out=7)
+item_list = matching_in_categories_alt2(profile, with_measurements=True, days_out=7)
 
 meta = {
 	'total_search_count': Item.query.\

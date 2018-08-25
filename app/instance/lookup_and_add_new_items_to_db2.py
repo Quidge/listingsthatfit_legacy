@@ -177,7 +177,7 @@ if __name__ == '__main__':
 
 	db.session.add_all(models)
 	db.session.flush()
-	# db.session.commit()
+	db.session.commit()
 
 	# print(lookup_and_add_new_items_to_db(f_api, s_api, db, 'balearic1'))
 
