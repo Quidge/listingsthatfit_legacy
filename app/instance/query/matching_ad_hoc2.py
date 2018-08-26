@@ -39,6 +39,41 @@ class MeasurementQueryParameter(object):
 			self.category_name, self.type_name, self.measurement, self.tolerance)
 
 
+class MeasurementQueryParameterAdvanced(object):
+	"""This is stupid.
+
+	Attributes
+	----------
+	category_name : str
+	type_name : str
+	measurement: int
+	tolerance : int
+	"""
+
+	def __init__(self, *query_tuples):
+		try:
+			assert type(*query_tuple) == tuple
+		except AssertionError:
+			raise TypeError(
+				'Measurement must be instantiated with with an int as the measurement \
+				value, value given is: <{}>'.format(measurement_value))
+		try:
+			assert type(tolerance) == int
+		except AssertionError:
+			raise TypeError(
+				'Measurement must be instantiated with with an int as the tolerance \
+				value, value given is: <{}>'.format(tolerance))
+
+		self.category_name = category_name
+		self.type_name = type_name
+		self.measurement = measurement
+		self.tolerance = tolerance
+
+	def __repr__(self):
+		return '{}, {}: measurement: {}, tolerance: {}'.format(
+			self.category_name, self.type_name, self.measurement, self.tolerance)
+
+
 def matching_in_categories(cat_msmts_dict, with_measurements=False):
 	"""Searches the db for items matching an ad hoc dict composed of
 	MeasurementItemType.type_name and ItemMeasurement measurement values.
@@ -460,109 +495,6 @@ if __name__ == '__main__':
 
 	MQP = MeasurementQueryParameter
 
-	alt_msmts = {
-		11484: {
-			'measurements_list': [
-				MQP('sweater', 'chest_flat', 21750, tolerance=5000),
-				MQP('sweater', 'sleeve_from_armpit', 22500, tolerance=5000),
-				MQP('sweater', 'sleeve', 26500, tolerance=5000),
-				MQP('sweater', 'shoulders_raglan', 0),
-				MQP('sweater', 'shoulders', 18500, tolerance=5000)],
-			'required_count': 3
-		}
-	}
-
-	my_shirt_mqp = {
-		57991: {
-			'measurements_list': [
-				MQP('shirt', 'chest_flat', 21000, tolerance=5000),
-				MQP('shirt', 'shoulders', 18500, tolerance=5000),
-				MQP('shirt', 'sleeve_long', 25000, tolerance=5000)],
-			'required_count': 3
-		}
-	}
-
-	my_shirt_old = {
-		57991: {
-			'chest_flat': {'measurement': 21000, 'tolerance': 750},
-			'shoulders': {'measurement': 18500, 'tolerance': 750},
-			'sleeve_long': {'measurement': 25000, 'tolerance': 750}
-		}
-	}
-
-	general_msmts2 = {
-		3002: {
-			'chest_flat': {'measurement': 23000, 'tolerance': 500},
-			'shoulders': {'measurement': 18500, 'tolerance': 500},
-			'sleeve': {'measurement': 25500, 'tolerance': 1500},
-			'waist_flat': {'measurement': 18000, 'tolerance': 2000},
-			'length': {'measurement': 30000, 'tolerance': 500}
-		},
-		3001: {
-			'chest_flat': {'measurement': 24000, 'tolerance': 500},
-			'shoulders': {'measurement': 18500, 'tolerance': 500},
-			'sleeve': {'measurement': 26000, 'tolerance': 2000},
-			'waist_flat': {'measurement': 18000, 'tolerance': 2000},
-			'length': {'measurement': 30000, 'tolerance': 500}
-		},
-		57991: {
-			'chest_flat': {'measurement': 23000, 'tolerance': 500},
-			'shoulders': {'measurement': 18000, 'tolerance': 500},
-			'sleeve_long': {'measurement': 26250, 'tolerance': 500}
-		},
-		57990: {
-			'chest_flat': {'measurement': 23000, 'tolerance': 750},
-			'shoulders': {'measurement': 18000, 'tolerance': 750},
-			'sleeve_long': {'measurement': 26250, 'tolerance': 1000}
-		},
-		57988: {
-			'chest_flat': {'measurement': 24000, 'tolerance': 1000},
-			'shoulders': {'measurement': 18500, 'tolerance': 1000},
-			'sleeve': {'measurement': 26000, 'tolerance': 2000}
-		}
-	}
-
-	my_measurements1 = {
-		3002: {  # SC
-			'chest_flat': {'measurement': 23000, 'tolerance': 500},
-			'shoulders': {'measurement': 18500, 'tolerance': 500},
-			'sleeve': {'measurement': 25000, 'tolerance': 1500},
-			'waist_flat': {'measurement': 20500, 'tolerance': 2000},
-			'length': {'measurement': 30500, 'tolerance': 750}
-		},
-		3001: {  # suit
-			'chest_flat': {'measurement': 23000, 'tolerance': 500},
-			'shoulders': {'measurement': 18500, 'tolerance': 500},
-			'sleeve': {'measurement': 25000, 'tolerance': 1500},
-			'waist_flat': {'measurement': 20500, 'tolerance': 2000},
-			'waist_flat': {'measurement': 15500, 'tolerance': 1500},
-			'hips_flat': {'measurement': 16000, 'tolerance': 2000},
-			'inseam': {'measurement': 31000, 'tolerance': 3000},
-			'rise': {'measurement': 10500, 'tolerance': 1000},
-		},
-		57989: {  # Pants
-			'waist_flat': {'measurement': 15500, 'tolerance': 1500},
-			'hips_flat': {'measurement': 16000, 'tolerance': 2000},
-			'inseam': {'measurement': 31000, 'tolerance': 3000},
-			'rise': {'measurement': 10500, 'tolerance': 1000},
-		},
-		57991: {  # Dress shirt
-			'chest_flat': {'measurement': 21500, 'tolerance': 750},
-			'shoulders': {'measurement': 18250, 'tolerance': 500},
-			'sleeve_long': {'measurement': 25000, 'tolerance': 500}
-		},
-		57990: {  # Casual shirt
-			'chest_flat': {'measurement': 21500, 'tolerance': 1000},
-			'shoulders': {'measurement': 18250, 'tolerance': 625},
-			'sleeve_long': {'measurement': 25000, 'tolerance': 625}
-		},
-		57988: {  # Coats and jackets
-			'chest_flat': {'measurement': 23500, 'tolerance': 500},
-			'shoulders': {'measurement': 18500, 'tolerance': 750},
-			'sleeve': {'measurement': 25000, 'tolerance': 2250}
-		}
-	}
-
 	my_measurements_mqp = {
 		3002: {  # SC
 			'measurements_list': [
@@ -619,68 +551,6 @@ if __name__ == '__main__':
 				MQP('jacket', 'chest_flat', 23500, 500),
 				MQP('jacket', 'shoulders', 18500, 750),
 				MQP('jacket', 'sleeve', 25000, 3000)
-			],
-			'required_count': 3
-		}
-	}
-
-
-	stitches_mqp = {
-		3002: {  # SC
-			'measurements_list': [
-				MQP('jacket', 'chest_flat', 22000, 500),
-				MQP('jacket', 'shoulders', 19000, 500),
-				MQP('jacket', 'sleeve', 24250, 1500),
-				MQP('jacket', 'waist_flat', 21500, 1500),
-				MQP('jacket', 'length', 31000, 750)],
-			'required_count': 5
-		},
-		3001: {
-			'measurements_list': [
-				MQP('jacket', 'chest_flat', 22000, 500),
-				MQP('jacket', 'shoulders', 19000, 500),
-				MQP('jacket', 'sleeve', 24250, 1500),
-				MQP('jacket', 'waist_flat', 21500, 1500),
-				MQP('jacket', 'length', 31000, 750),
-				MQP('pant', 'waist_flat', 19500, 1500),
-				MQP('pant', 'hips_flat', 12750, 1000),
-				MQP('pant', 'inseam', 32000, 3000),
-				MQP('pant', 'rise', 11000, 500)
-			],
-			'required_count': 9
-		},
-		57989: {  # Pants
-			'measurements_list': [
-				MQP('pant', 'waist_flat', 19500, 1500),
-				MQP('pant', 'hips_flat', 12750, 1000),
-				MQP('pant', 'inseam', 32000, 3000),
-				MQP('pant', 'rise', 11000, 500)
-			],
-			'required_count': 4
-		},
-		57991: {  # Dress shirts
-			'measurements_list': [
-				MQP('shirt', 'chest_flat', 24250, 250),
-				MQP('shirt', 'shoulders', 19750, 500),
-				MQP('shirt', 'sleeve_long', 25500, 500),
-				MQP('shirt', 'sleeve_short', 11000, 5000)
-			],
-			'required_count': 3
-		},
-		57990: {  # Casual shirts
-			'measurements_list': [
-				MQP('shirt', 'chest_flat', 24250, 250),
-				MQP('shirt', 'shoulders', 19750, 500),
-				MQP('shirt', 'sleeve_long', 25500, 500),
-				MQP('shirt', 'sleeve_short', 11000, 5000)
-			],
-			'required_count': 3
-		},
-		57988: {  # Coats and jackets
-			'measurements_list': [
-				MQP('jacket', 'chest_flat', 22500, 1000),
-				MQP('jacket', 'shoulders', 19250, 500),
-				MQP('jacket', 'sleeve', 24250, 1500),
 			],
 			'required_count': 3
 		}
@@ -759,6 +629,84 @@ if __name__ == '__main__':
 		'required_count': 3
 	}
 }
+
+stitches_mq3 = {
+	'sportcoat': {  # SC
+		'measurements_list': [
+			MQP('jacket', 'chest_flat', 22250, 250),
+			MQP('jacket', 'shoulders', 19250, 250),
+			MQP('jacket', 'sleeve', 24250, 1500),
+			MQP('jacket', 'waist_flat', 21500, 1500),
+			MQP('jacket', 'length', 31000, 750)
+		],
+		'required_count': 5
+	},
+	'suit': {  # Suits
+		'measurements_list': [
+			MQP('jacket', 'chest_flat', 22250, 250),
+			MQP('jacket', 'shoulders', 19250, 250),
+			MQP('jacket', 'sleeve', 24250, 1500),
+			MQP('jacket', 'waist_flat', 21500, 1500),
+			MQP('jacket', 'length', 31000, 750),
+			MQP('pant', 'waist_flat', 19500, 1500),
+			# MQP('pant', 'hips_flat', 12750, 1000),
+			MQP('pant', 'inseam', 32000, 3000),
+			MQP('pant', 'rise', 11000, 500),
+			MQP('pant', 'cuff_width', 8250, 750)
+		],
+		'required_count': 9
+	},
+	'pant': {  # Pants
+		'measurements_list': [
+			MQP('pant', 'waist_flat', 19500, 1000),
+			MQP('pant', 'hips_flat', 12750, 1000),
+			MQP('pant', 'inseam', 32000, 3000),
+			MQP('pant', 'rise', 11000, 500),
+			MQP('pant', 'cuff_width', 8250, 750)
+		],
+		'required_count': 5
+	},
+	'dress_shirt': {  # Dress shirts
+		'measurements_list': [
+			MQP('shirt', 'chest_flat', 24250, 250),
+			MQP('shirt', 'shoulders', 19625, 375),
+			MQP('shirt', 'sleeve_long', 25500, 500),
+			MQP('shirt', 'sleeve_short', 11000, 5000)
+		],
+		'required_count': 3
+	},
+	'casual_shirt': {  # Casual shirts
+		'measurements_list': [
+			MQP('shirt', 'chest_flat', 24250, 250),
+			MQP('shirt', 'shoulders', 19625, 375),
+			MQP('shirt', 'sleeve_long', 25500, 500),
+			MQP('shirt', 'sleeve_short', 11000, 5000)
+		],
+		'required_count': 3
+	},
+	'coat_or_jacket': {  # Coats and jackets
+		'measurements_list': [
+			MQP('jacket', 'chest_flat', 22250, 1000),
+			MQP('jacket', 'shoulders', 19250, 500),
+			MQP('jacket', 'sleeve', 24250, 1500),
+		],
+		'required_count': 3
+	},
+	'sweater': {  # Sweaters
+		'measurements_list': [
+			MQP('sweater', 'chest_flat', 24250, 250),
+			MQP('sweater', 'shoulders', 19625, 500),
+			MQP('sweater', 'shoulders_raglan', 0, 0),
+			MQP('sweater', 'sleeve', 26000, 1500),
+			MQP('sweater', 'sleeve_from_armpit', 19250, 2000)
+		],
+		'required_count': 3
+	}
+}
+
+# sweater = [a, [[b, c], [d, e]]]
+
+# special_data = [[a, b], c, [d, [e, f]]]
 
 	query6 = matching_in_categories_alt2(stitches_mqp2, with_measurements=False)
 	# [print(i.ebay_item_id, i.measurements) for i in query6.all()]

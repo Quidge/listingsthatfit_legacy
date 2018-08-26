@@ -1,3 +1,4 @@
+import os
 from ebaysdk.finding import Connection as Finding
 from jinja2 import Environment, PackageLoader
 
@@ -5,12 +6,13 @@ jinja_env = Environment(
 	loader=PackageLoader('craywatch', 'templates')
 )
 
+env_app_id = os.environ['EBAY_PRODUCTION_APP_ID']
+
 finding_connection = Finding(
 	domain="svcs.ebay.com",
-	appid="***REMOVED***",
+	appid=env_app_id,
 	config_file=None,
-	debug=None
-)
+	debug=False)
 
 ebay_category_ids = {
 	'sportcoat': 3002,

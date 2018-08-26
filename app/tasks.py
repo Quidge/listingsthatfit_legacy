@@ -20,22 +20,20 @@ celery = Celery(
 
 logger = get_task_logger(__name__)
 
-prodEndpoint = "open.api.ebay.com"
-prodAppId = "***REMOVED***"
+env_app_id = os.environ['EBAY_PRODUCTION_APP_ID']
 
 s_api = Shopping(
-	domain=prodEndpoint,
-	appid=prodAppId,
+	domain="open.api.ebay.com",
+	appid=env_app_id,
 	config_file=None,
 	debug=False
 )
 
 f_api = Finding(
 	domain="svcs.ebay.com",
-	appid="***REMOVED***",
+	appid=env_app_id,
 	config_file=None,
-	debug=None
-)
+	debug=False)
 
 
 @celery.task(bind=True)

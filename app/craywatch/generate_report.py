@@ -1,6 +1,4 @@
-from ebaysdk.finding import Connection as Finding
-
-from craywatch import jinja_env
+from craywatch import jinja_env, finding_connection as f_api
 from craywatch.core.pull_items import return_executed_call_for_category, depaginate_item_search_results
 
 category_ids_and_price_cutoff = {
@@ -17,13 +15,6 @@ category_ids_and_price_cutoff = {
 	'sleepwear_and_robe': {'categoryId': 11510, 'price_cutoff': 143},
 	'dress_shoes': {'categoryId': 53120, 'price_cutoff': 520}
 }
-
-f_api = Finding(
-	domain="svcs.ebay.com",
-	appid="***REMOVED***",
-	config_file=None,
-	debug=False
-)
 
 items_master_list = []
 

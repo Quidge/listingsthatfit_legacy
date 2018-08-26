@@ -1,17 +1,19 @@
+import os
 # from app.ebayapis import lookup_and_add_new_items as lookup
 from ebaysdk.finding import Connection as Finding
 from ebaysdk.shopping import Connection as Shopping
 
+env_app_id = os.environ['EBAY_PRODUCTION_APP_ID']
+
 fapi = Finding(
 	domain="svcs.ebay.com",
-	appid="***REMOVED***",
+	appid=env_app_id,
 	config_file=None,
-	debug=False
-)
+	debug=False)
 
 sapi = Shopping(
 	domain="open.api.ebay.com",
-	appid="***REMOVED***",
+	appid=env_app_id,
 	config_file=None,
 	debug=False
 )
