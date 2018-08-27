@@ -35,25 +35,25 @@
 			]
 		],
 ```
-In this case, the or is inferred from the sub-list.
+In this case, the `or` is inferred from the sub-list.
 - Configure the logic at the parser level (psuedo code):
 ```python
 def measurement_block_query_builder(block_list_of_measurements, maybe_a_clothing_category_name?):
-	"""Takes in a list of MQP parameters, and, based on ...something is able to construct a block sqlalchemy clause with _and()s and _or()s configured properly."""
+	"""Takes in a list of MQP parameters, and, based on ...something, is able to construct a block sqlalchemy clause with _and()s and _or()s configured properly."""
 
 	# <do_code>
 
 	return sqlalchemy_clause
 ```
-- Configure the logic at the list/input level, but don't interfere with the list. Have an accompanying construction schema that the parser will use to interpret the list:
+- Configure the logic at the input level, but don't interfere with the list itself. Have an accompanying construction schema that the parser will use to interpret the list:
 ```
-'construction_schema': {
-	and [('sweater, chest_flat')],
-	or [
-		and [('sweater', 'shoulders'), ('sweater', 'sleeve')],
-		and [('sweater', 'shoulders_raglan'), ('sweater', 'sleeve_from_armpit')]
-		]
-}
+'construction_schema': ('and', [
+	('sweater, chest_flat'),
+	('or', [
+			('and', [('sweater', 'shoulders'), ('sweater', 'sleeve')]),
+			('and', [('sweater', 'shoulders_raglan'), ('sweater', 'sleeve_from_armpit')])
+			])
+])
 'measurements_list': [
 			MQP('sweater', 'chest_flat', 24250, 250),
 			MQP('sweater', 'shoulders', 19625, 500),
@@ -62,7 +62,7 @@ def measurement_block_query_builder(block_list_of_measurements, maybe_a_clothing
 			MQP('sweater', 'sleeve_from_armpit', 19250, 2000)
 		],
 ```
-If construction_schema is missing, default to applying every individual measurement criteria as an `and`.
+If `construction_schema` is missing, default to applying every individual measurement criteria as an `and`.
 
 
 
