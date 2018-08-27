@@ -48,7 +48,7 @@ def measurement_block_query_builder(block_list_of_measurements, maybe_a_clothing
 - Configure the logic at the input level, but don't interfere with the list itself. Have an accompanying construction schema that the parser will use to interpret the list:
 ```
 'construction_schema': ('and', [
-	('sweater, chest_flat'),
+	('sweater', 'chest_flat'),
 	('or', [
 			('and', [('sweater', 'shoulders'), ('sweater', 'sleeve')]),
 			('and', [('sweater', 'shoulders_raglan'), ('sweater', 'sleeve_from_armpit')])
