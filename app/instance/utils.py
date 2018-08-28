@@ -8,53 +8,87 @@ from app.instance.query.matching_ad_hoc import MeasurementQueryParameter as MQP
 logger = logging.getLogger(__name__)
 
 
-def recurse_construction_schema(tier, m_dict, clothing_category_name):
-	"""'construction_tier': ('and', [
-				('and', ('sweater', 'chest_flat')),
-				('or', [
-					('and', [('and', ('sweater', 'shoulders')), ('and', ('sweater', 'sleeve'))]),
-					('and', [('and', ('sweater', 'shoulders_raglan')), ('and', ('sweater', 'sleeve_from_armpit'))])
+def recurse_construction_schema(
+	tier, m_dict, clothing_category_name,
+	debug_level=0, debug=False):
+	"""Recursively constructs a sqlalchemy clause corresponding to a construction schema
+	series of nested tuples.
+
+	Parameters
+	----------
+	tier : tuple
+		ex: ('and', [
+					('and', ('sweater', 'chest_flat')),
+					('or', [
+						('and', [('and', ('sweater', 'shoulders')), ('and', ('sweater', 'sleeve'))]),
+						('and', [('and', ('sweater', 'shoulders_raglan')), ('and', ('sweater', 'sleeve_from_armpit'))])
+					])
 				])
-			])"""
+	m_dict : dict
+		reference dict with tuple keys corresponding to tuples that are found in
+		the construction schema
+		ex: 
+			{('sweater', 'sleeve_from_armpit'): MQP('sweater', 'sleeve_from_armpit', 19250, 2000)}
+	clothing_category_name : str
+		ex 'suit', 'sportcoat', 'pant'
+	debug_level=0 : int
+		This is used to record the depth of recursion. It can be reported at each stage
+		if parameter debug=True
+	debug=False : bool
+
+	Returns
+	-------
+	a configured sqlalchemy ClauseElement
+
+	"""
+
+	if debug:
+		logger.debug('Debug level is <{}>'.format(debug_level))
+	new_debug_level = debug_level + 1
 
 	content = tier[1]
 
 	if tier[0] == 'and':
 		operator = and_
+		logger.debug('Operator is and_')
 	elif tier[0] == 'or':
 		operator = or_
+		logger.debug('Operator is or_')
 	else:
 		raise ValueError('Improper format. First item must be either "and" or "or".')
 
-
-	# if instruction != 'and' and instruction != 'or':
-		# raise ValueError('Improper format. First item must be either "and" or "or".')
-	# elif instruction == 'and':
-	# 	clause = and_()
-
 	if type(content) is list:
-		# This won't work yet. None of the other returns return lists.
-		return operator(*recurse_construction_schema(content, m_dict, clothing_category_name))
+		logger.debug('Found content to be a list type. Going to recurse.')
+		components = []
+		for raw_component in content:
+			components.append(recurse_construction_schema(
+				raw_component, m_dict, clothing_category_name,
+				debug_level=new_debug_level, debug=debug))
+		# logger.debug('Collected a list of components from recursion: {}'.format(components))
+		so_far = operator(*components)
+		logger.debug('This is what has been collected so far: {}'.format(so_far.compile()))
+		return so_far
 	else:
 		try:
 			mqp = m_dict[content]
 		except KeyError:
 			raise('Measurements dict does not contain <{}>'.format(content))
 
-		# if instruction == 'and':
-			logger.debug((
-				'Reached an instruction and simple tuple content. '
-				'Attempting to construct clause.'))
-			clause = operator(
-				ClothingCategory.clothing_category_name == clothing_category_name,
-				MeasurementItemCategory.category_name == mqp.category_name,
-				MeasurementItemType.type_name == mqp.type_name,
-				between(
-					ItemMsmt.measurement_value,
-					mqp.measurement - mqp.tolerance,
-					mqp.measurement + mqp.tolerance))
-			logger.debug('Constructed clause')
-			return clause
+		logger.debug((
+			'Reached an instruction and simple tuple content. '
+			'Attempting to construct clause.'))
+		clause = operator(
+			ClothingCategory.clothing_category_name == clothing_category_name,
+			MeasurementItemCategory.category_name == mqp.category_name,
+			MeasurementItemType.type_name == mqp.type_name,
+			between(
+				ItemMsmt.measurement_value,
+				mqp.measurement - mqp.tolerance,
+				mqp.measurement + mqp.tolerance))
+		logger.debug('Constructed clause')
+		if debug:
+			logger.debug('Returning from level <{}>'.format(debug_level))
+		return clause
 
 
 
