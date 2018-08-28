@@ -1,5 +1,7 @@
 [
   "app/instance/tests/utils_test.py::test_block_builder_fails_if_passed_more_than_one_top_level_item_in_dict",
   "app/instance/tests/utils_test.py::test_block_builder_returns_as_expected_without_schema",
-  "app/instance/tests/utils_test.py::test_block_builder_returns_as_expected_with_schema"
+  "app/instance/tests/utils_test.py::test_block_builder_returns_as_expected_with_schema",
+  "app/instance/tests/utils_test.py::test_recurse_construction_schema_works_with_simple",
+  "app/instance/tests/utils_test.py::test_recurse_construction_schema_works_with_complex"
 ]
