@@ -1,6 +1,6 @@
-from app.template_parsing.clothing_type_names import name_mapping as official_names
+from app.template_parsing.clothing_category_names import name_mapping as official_names
 
-# This parser supports only these categories.
+# These are the clothing categories that this parser supports.
 
 supported_category_names = {
 	'SPORTCOAT': official_names['SPORTCOAT'],

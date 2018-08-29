@@ -105,7 +105,3 @@ def parse(json_str):
 	logger.info('Successfully completing parsing parsing')
 
 	return parse_result
-
-	# parse_result = ParseResult()
-
-	return parse_result

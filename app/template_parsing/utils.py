@@ -5,6 +5,7 @@ from decimal import Decimal
 from app.template_parsing.exception import UnsupportedClothingCategory
 
 
+# Note: as of 8/29 this is no longer used for main functionality. Take it out soon.
 def parse_html_for_measurements(
 	item_html_description,
 	clothing_category_id,
@@ -60,7 +61,7 @@ def find_paired_measurement_value(navigable_str):
 	This structure is expected:
 		<td>navigable_str</td>
 		<td>22.5"</td>
-	
+
 	Returns
 	-------
 	str
@@ -71,9 +72,8 @@ def find_paired_measurement_value(navigable_str):
 		str_decimal = re.search(re.compile('\d*\.?\d\"'), s)  # .75" or 33" or 33.75"
 		if str_decimal != None:
 			return str_decimal.group(0)  # should return first measurement value string found"""
-	
-	return navigable_str.find_parent('td').find_next_sibling('td').string
 
+	return navigable_str.find_parent('td').find_next_sibling('td').string
 
 
 def str_measurement_to_int(string_measurement_value):
@@ -96,8 +96,3 @@ def str_measurement_to_int(string_measurement_value):
 		return None
 	decimal_string = match.group(0)
 	return int(Decimal(decimal_string) * 1000)
-
-
-
-
-

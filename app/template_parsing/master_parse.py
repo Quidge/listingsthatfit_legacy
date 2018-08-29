@@ -38,6 +38,8 @@ def simple_preparse_response_check(r_dict):
 
 
 def get_appropriate_seller_parse_module(parser_id_num):
+	"""Takes a parser id number and returns the appropriate parsing package.
+	Raises ImportError if parsing module cannot be found."""
 	module_name = 'parser_id_{}'.format(parser_id_num)
 	try:
 		appropriate_parser_module = import_module(
@@ -46,18 +48,6 @@ def get_appropriate_seller_parse_module(parser_id_num):
 		raise ImportError('Could not locate parser module')
 	else:
 		return appropriate_parser_module
-
-
-"""def get_appropriate_seller_module_parse_fn(parser_id_num):
-	module_name = 'parser_id_{}'.format(parser_id_num)
-	try:
-		appropriate_parser_module = import_module(
-			'app.template_parsing.seller_patterns.{}.parse'.format(module_name))
-	except ImportError:
-		raise ImportError('Could not locate parser module')
-	else:
-		appropriate_parse_fn = appropriate_parser_module.parse
-		return appropriate_parse_fn"""
 
 
 def parse(json_str):

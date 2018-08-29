@@ -1,4 +1,4 @@
-from app.template_parsing.clothing_type_names import name_mapping
+from app.template_parsing.clothing_category_names import name_mapping
 
 
 def test_name_mapping_contains_only_the_following():

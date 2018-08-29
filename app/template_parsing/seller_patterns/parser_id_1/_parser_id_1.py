@@ -1,3 +1,9 @@
+##################################################################################
+## NOTE: AS OF 8/29 THIS PARSING FILE IS NO LONGER USED FOR MAIN FUNCTIONALITY. ##
+## EXPECT IT TO BE DEPRECATED AND EVENTUALLY REMOVED.														##
+##################################################################################
+
+
 import re
 import logging
 from bs4 import BeautifulSoup, SoupStrainer
