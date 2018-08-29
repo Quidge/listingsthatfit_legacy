@@ -16,15 +16,13 @@ template_parsing/
 |		|		|-- <various files and folders specific to this parser> 	[2]
 |		|		|-- parse.py 	[2]
 |		|		|-- tests/
-|		|-- __init__.py
 |--	tests/
 |-- master_parse.py
 |-- exception.py
 |-- utils.py
 |-- clothing_category_names.py
-|-- __init__.py
 
-* __init__.py files aren't included here but are, in actuality, present at every directory level.
+* __init__.py files aren't diagrammed here but are present at every directory level.
 ```
 
 ###### Structure Notes:
