@@ -19,7 +19,7 @@ def compile_item_with_measurements(results_list):
 		test_item, test_msmt = results_list[0]
 	except IndexError:
 		logger.debug('No items found in results_list. Compressor returning empty dict.')
-		return {} # Empty, and early, return
+		return {}  # Empty, and early, return
 	try:
 		assert isinstance(test_item, Item)
 	except AssertionError:
@@ -38,5 +38,7 @@ def compile_item_with_measurements(results_list):
 	for item, msmt in results_list:
 		items_dict[item.ebay_item_id]['measurements'].append(msmt)
 
-	logger.info('Finished results list compressor. Returning dict with <%r> entries' % len(items_dict))
+	logger.info((
+		'Finished results list compressor. '
+		'Returning dict with <{}> entries').format(len(items_dict)))
 	return items_dict
