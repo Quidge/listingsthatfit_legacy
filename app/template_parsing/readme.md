@@ -27,7 +27,7 @@ template_parsing/
 
 ###### Structure Notes:
 `[1]`: This is the imagined naming structure for future parsers
-`[2]`: The format is that, at the top level of the specific parser, regarless of whatever else is inside the parser or how it operates (and different parsers could easily operate differently), **all** each `parser_id_N` will have `parser_id_N/parse.py`.
+`[2]`: The format is that, at the top level of the specific parser, regarless of whatever else is inside the parser or how it operates (and different parsers may operate differently), `master_parse` can rely on each `parser_id_N` having `parser_id_N/parse.py`.
 ###### General notes:
 - The design for master_parse is:
 	- Locate correct parser package for the provided parser number.
