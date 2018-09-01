@@ -3,7 +3,7 @@ import logging
 import datetime
 from importlib import import_module
 
-from app.instance.query.matching_ad_hoc import matching_in_categories_alt
+from app.instance.query.matching_ad_hoc import matching_in_categories_alt2
 from app.reporter.generate import generate_forum_post_w_msmts as gen
 from app.models import Item
 from app.reporter.utils import compile_item_with_measurements as compress
@@ -27,7 +27,7 @@ except ImportError:
 profile = measurements_module.mqp
 
 logger.info('Running query for items with provided user measurements')
-item_list = matching_in_categories_alt(profile, with_measurements=True)
+item_list = matching_in_categories_alt2(profile, with_measurements=True)
 
 logger.info('Generating meta')
 meta = {

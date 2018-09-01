@@ -1,8 +1,8 @@
 {% if metadata -%}
 [SPOILER='MEASUREMENT CRITERIA']
 Measurement criteria used:
-{% for ebay_item_cat, msmts_dict in metadata.measurements_provided.items() %}
-	Ebay Item Category {{ebay_item_cat}}:
+{% for clothing_category, msmts_dict in metadata.measurements_provided.items() %}
+	Clothing Category: {{clothing_category}}:
 	{%- for mqp in msmts_dict['measurements_list'] %}
 	|--- {{mqp.category_name}}, {{mqp.type_name}}: Measurement: {{mqp.measurement|int2inch_str}}, Tolerance: {{mqp.tolerance|int2inch_str}}
 	{%- endfor -%}
