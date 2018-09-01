@@ -251,7 +251,7 @@ class EbayItemCategory(db.Model):
 
 
 class MeasurementItemCategory(db.Model):
-	"""Represents the category (suit, sportcoat, dress shirt) that a user
+	"""Represents the category (jacket, pant, sweater, etc) that a
 	measurement can belong to.
 
 	Attributes
@@ -268,7 +268,7 @@ class MeasurementItemCategory(db.Model):
 
 
 class MeasurementItemType(db.Model):
-	"""Represents the type of measurement (sleeve, chest, collar) that a user
+	"""Represents the type of measurement (sleeve, chest_flat, length) that a
 	measurement can belong to.
 
 	Attributes
@@ -282,6 +282,47 @@ class MeasurementItemType(db.Model):
 
 	def __repr__(self):
 		return '<MeasurementItemType(type_name=%r)>' % (self.type_name,)
+
+
+class ItemMeasurement(db.Model):
+	"""Represents an item measurement. FKs out to a category (which is not an
+	ebay_item_category) like 'jacket' or 'shirt' or 'pant'. FKs out to a type like
+	'sleeve' or 'chest_flat' or 'hips_flat' or 'cuff_height'.
+
+	Attributes
+	----------
+	id : int
+	measurement_value : int
+	ebay_item : relationship to Item
+	measurement_category : relationship to MeasurementItemCategory
+	measurement_type : relationship to MeasurementItemType
+	"""
+
+	__tablename__ = 'item_measurement'
+	id = db.Column('item_measurement_id', db.Integer, primary_key=True)
+	measurement_value = db.Column('item_measurement_value', db.Integer, nullable=False)
+	_measurement_category_id = db.Column(
+		'measurement_item_category_id', db.Integer,
+		db.ForeignKey('measurement_item_category.measurement_item_category_id'),
+		nullable=False)
+	_measurement_type_id = db.Column(
+		'measurement_item_type_id', db.Integer,
+		db.ForeignKey('measurement_item_type.measurement_item_type_id'),
+		nullable=False)
+	_ebay_item_id = db.Column(
+		'ebay_items_id', db.Integer,
+		db.ForeignKey('ebay_items.id'),
+		nullable=False)
+
+	# ebay_item = db.relationship('Item', back_populates='measurements')
+	measurement_category = db.relationship('MeasurementItemCategory')
+	measurement_type = db.relationship('MeasurementItemType')
+
+	def __repr__(self):
+		return '<ItemMeasurement(measurement_category=%r, measurement_type=%r, measurement_value=%r)>' % (
+			self.measurement_category.category_name,
+			self.measurement_type.type_name,
+			self.measurement_value)
 
 
 class UserMeasurementPreference(db.Model):
@@ -336,50 +377,15 @@ class UserMeasurementPreference(db.Model):
 			self.range_end_value)
 
 
-class ItemMeasurement(db.Model):
-	"""Represents an item measurement. FKs out to a category (which is not an
-	ebay_item_category) like 'jacket' or 'shirt' or 'pant'. FKs out to a type like
-	'sleeve' or 'chest_flat' or 'hips_flat' or 'cuff_height'.
+class ClothingCategory(db.Model):
+	"""A model to represent different types of clothing. This is independent of ebay's
+	own clothing categories.
 
 	Attributes
 	----------
-	id : int
-	measurement_value : int
-	ebay_item : relationship to Item
-	measurement_category : relationship to MeasurementItemCategory
-	measurement_type : relationship to MeasurementItemType
+	clothing_category_id : int
+	clothing_category_name : text
 	"""
-
-	__tablename__ = 'item_measurement'
-	id = db.Column('item_measurement_id', db.Integer, primary_key=True)
-	measurement_value = db.Column('item_measurement_value', db.Integer, nullable=False)
-	_measurement_category_id = db.Column(
-		'measurement_item_category_id', db.Integer,
-		db.ForeignKey('measurement_item_category.measurement_item_category_id'),
-		nullable=False)
-	_measurement_type_id = db.Column(
-		'measurement_item_type_id', db.Integer,
-		db.ForeignKey('measurement_item_type.measurement_item_type_id'),
-		nullable=False)
-	_ebay_item_id = db.Column(
-		'ebay_items_id', db.Integer,
-		db.ForeignKey('ebay_items.id'),
-		nullable=False)
-
-	# ebay_item = db.relationship('Item', back_populates='measurements')
-	measurement_category = db.relationship('MeasurementItemCategory')
-	measurement_type = db.relationship('MeasurementItemType')
-
-	def __repr__(self):
-		return '<ItemMeasurement(measurement_category=%r, measurement_type=%r, measurement_value=%r)>' % (
-			self.measurement_category.category_name,
-			self.measurement_type.type_name,
-			self.measurement_value)
-
-
-class ClothingCategory(db.Model):
-	"""A model to represent different types of clothing. This is independent of ebay's
-	own clothing categories."""
 	__tablename__ = 'clothing_category'
 	clothing_category_id = db.Column(db.Integer, primary_key=True)
 	clothing_category_name = db.Column(db.Text(), nullable=False, unique=True)
@@ -390,6 +396,7 @@ class ClothingCategory(db.Model):
 
 
 class Item(db.Model):
+	"""Represents an ebay item."""
 	__tablename__ = 'ebay_items'
 	id = db.Column(db.Integer, primary_key=True)
 	ebay_item_id = db.Column(db.BigInteger, unique=False, nullable=False)  # explicitely False
