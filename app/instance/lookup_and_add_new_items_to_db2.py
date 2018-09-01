@@ -51,8 +51,6 @@ def lookup_and_create_models_for_new_items(
 	except AssertionError:
 		raise AssertionError('<{}> does not have an associated template parser in the db')
 
-	parser_file_number = msmts_parser.file_name_number
-
 	fapi = finding_connection
 	sapi = shopping_connection
 
@@ -160,12 +158,12 @@ if __name__ == '__main__':
 		'itemFilter': [
 			{'name': 'Seller', 'value': 'balearic1'},
 			{'name': 'listingType', 'value': 'Auction'},
-			{'name': 'ExcludeCategory', 'value': [4250]}
+			{'name': 'ExcludeCategory', 'value': [4250, 15724]}
 		],
 		# 'categoryId': [3001]
 	}
 	# 4250 = Mens-Accessories
-	# 
+	# 15724 = Women's Clothing
 
 	models = lookup_and_create_models_for_new_items(
 		f_api,
