@@ -147,15 +147,16 @@ def identify_clothing_type(
 
 	elif mentions_sleeve and mentions_length and num_waist_mentions == 0:
 		# Either sweater or casual jacket. Sportcoats will have waist mentions.
-		if ebay_primary_category_id == 11484:
+		if ebay_primary_category_id == 11484:  # Men's Sweaters
 			logger.debug('Identify thinks this template belongs to a sweater listing.')
 			identify_result.identified_clothing_type = nm['SWEATER']
-
-		elif ebay_primary_category_id == 57988:
+		elif ebay_primary_category_id == 57988:  # coats and jackets
 			logger.debug('Identify thinks this template belongs to a coat_or_jacket listing.')
 			identify_result.identified_clothing_type = nm['COAT_OR_JACKET']
-
-		elif ebay_primary_category_id == 3001:
+		elif ebay_primary_category_id == 175771:  # vintage coats and jackets
+			logger.debug('Identify thinks this template belongs to a coat_or_jacket listing.')
+			identify_result.identified_clothing_type = nm['COAT_OR_JACKET']
+		elif ebay_primary_category_id == 3001:  # Men's Suits & Suit Separates
 			msg = (
 				'Identify thinks this template belongs to a coat_or_jacket listing, '
 				'but expected ebay_primary_category_id=57988. Instead received '
