@@ -158,12 +158,22 @@ if __name__ == '__main__':
 		'itemFilter': [
 			{'name': 'Seller', 'value': 'balearic1'},
 			{'name': 'listingType', 'value': 'Auction'},
-			{'name': 'ExcludeCategory', 'value': [4250, 15724]}
+			{'name': 'ExcludeCategory', 'value': [
+				4250, 15724, 93427, 179243, 4251, 169291, 3034, 171146, 155185, 11700, 11511]}
 		],
 		# 'categoryId': [3001]
 	}
 	# 4250 = Mens-Accessories
 	# 15724 = Women's Clothing
+	# 93427 = Men's Shoes
+	# 179243 = Unisex Sunglasses & Sunglasses Accessories
+	# 4251 = Women's Accessories
+	# 169291 = Women's Bags & Handbags
+	# 3034 = Women's Shoes
+	# 171146 = Kids' Clothing, Shoes & Accessories
+	# 155185 = Unisex Accessories
+	# 11700 = Home & Garden
+	# 11511 = Men's Socks
 
 	models = lookup_and_create_models_for_new_items(
 		f_api,
