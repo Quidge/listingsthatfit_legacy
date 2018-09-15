@@ -48,12 +48,12 @@ def build_item_model(
 
 if __name__ == '__main__':
 	import logging
-	from app import db
+	# from app import db
 
 	logger = logging.getLogger('app.instance.build_item_model')
 	print('Running build_item_model in script mode (where name is __main__)')
 
-	m = build_item_model(362410421416, ebay_seller_id='balearic1')
+	m = build_item_model(352455440278, ebay_seller_id='balearic1')
 	print(type(m.ebay_title), m.ebay_title)
 	print(type(m.end_date), m.end_date)
 	print(type(m.ebay_item_id), m.ebay_item_id)
@@ -64,6 +64,7 @@ if __name__ == '__main__':
 	print(type(m.assigned_clothing_category), m.assigned_clothing_category)
 	for msmt in m.measurements:
 		print(msmt)
-
+	# db.session.add(m)
+	# db.session.commit()
 
 
