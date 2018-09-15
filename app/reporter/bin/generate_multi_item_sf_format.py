@@ -27,7 +27,7 @@ except ImportError:
 profile = measurements_module.mqp
 
 logger.info('Running query for items with provided user measurements')
-item_list = matching_in_categories_alt2(profile, with_measurements=True)
+item_list = matching_in_categories_alt2(profile, with_measurements=True, days_out=0)
 
 logger.info('Generating meta')
 meta = {
