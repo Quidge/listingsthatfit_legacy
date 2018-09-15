@@ -173,6 +173,13 @@ def build_ebay_item_model(
 		# for any item found, the measurements are also wanted. From that, if the
 		# measurements cannot be created, the entire item should be discarded.
 
+		# Thoughts: Maybe ParseResult should have an error attribute? This attribute should
+		# a list of all errors encountered during parsing. Then, once ParseResult is
+		# dehydrated, this list of errors is checked. If empty, proceed as normal. Else,
+		# discard this item. This is better than assuming an invalid listing when no
+		# measurements are returned. I can't think of scenarios where I want an item in the
+		# database that without measurements, but... maybe I should keep those items anyways?
+
 		logger.debug('Will attempt to parse')
 
 		try:
