@@ -169,6 +169,9 @@ def build_ebay_item_model(
 	m.ebay_affiliate_url = affiliate_url
 
 	if attempt_parse:
+		# The thought process here is that with attempt_parse=True, it can be assumed that
+		# for any item found, the measurements are also wanted. From that, if the
+		# measurements cannot be created, the entire item should be discarded.
 
 		logger.debug('Will attempt to parse')
 
@@ -208,7 +211,6 @@ def build_ebay_item_model(
 		if parse_result.clothing_type is None:
 			logger.warn('Parser could not identify clothing type. Returning None')
 			return None
-			# raise TemplateParsingError()
 
 		try:
 			clothing_category = ClothingCategory.query.filter(
@@ -235,10 +237,7 @@ def build_ebay_item_model(
 				measurement_value=msmt.value)
 			m.measurements.append(msmt_model)
 
-	if m is not None:
-		logger.info('Model created successfully. Model={}'.format(m))
-	else:
-		logger.warn('Failed to create model. Returning None.')
+	logger.info('Model created successfully. Model={}'.format(m))
 
 	return m
 
