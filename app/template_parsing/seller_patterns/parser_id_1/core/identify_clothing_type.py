@@ -93,22 +93,30 @@ def identify_clothing_type(
 		identify_result.identified_clothing_type = nm['SUIT']
 
 	elif mentions_cuff and not mentions_sleeve:
-		# Should be a pant listing.
-		logger.debug('Identify thinks this template belongs to a pant listing.')
+		# Should be a pant or jean listing.
+		logger.debug('Identify thinks this template belongs to a pant OR a jean listing.')
 		if num_waist_mentions is not 1:
 			msg = (
-				'Identify expected pant template to match CA "waist" twice, '
+				'Identify expected pant or jean template to match CA "waist" twice, '
 				'got: num_waist_mentions={}').format(num_waist_mentions)
 			identify_result.concerns.append(msg)
 			logger.warn(msg)
-		if ebay_primary_category_id and ebay_primary_category_id != 57989:
+
+		if ebay_primary_category_id == 11483:
+			logger.debug('Identify thinks this template belongs to a jean listing.')
+			identify_result.identified_clothing_type = nm['JEAN']
+		elif ebay_primary_category_id == 57989:
+			logger.debug('Identify thinks this template belongs to a pant listing.')
+			identify_result.identified_clothing_type = nm['PANT']
+		else:
 			msg = (
-				'Identify expected primary category to be 57989. Instead '
-				'ebay_primary_category_id={}').format(ebay_primary_category_id)
+				'Identify ebay_primary_category_id=57989 or ebay_primary_category_id=11483. Instead '
+				'received ebay_primary_category_id={}. This is significant enough that Identify '
+				'will return None and the parser will probably fail for this listing.').format(
+				ebay_primary_category_id)
 			identify_result.concerns.append(msg)
 			logger.warn(msg)
-
-		identify_result.identified_clothing_type = nm['PANT']
+			identify_result.identified_clothing_type = None
 
 	elif mentions_sleeve and not mentions_length:
 		# Should be either dress shirt or casual shirt. These have the same measurement descriptions so
@@ -116,11 +124,9 @@ def identify_clothing_type(
 		if ebay_primary_category_id == 57991:
 			identify_result.identified_clothing_type = nm['DRESS_SHIRT']
 			logger.debug('Identify thinks this template belongs to a dress shirt listing.')
-
 		elif ebay_primary_category_id == 57990:
 			identify_result.identified_clothing_type = nm['CASUAL_SHIRT']
 			logger.debug('Identify thinks this template belongs to a casual shirt listing.')
-
 		elif ebay_primary_category_id is None:
 			msg = (
 				'Identify received ebay_primary_category_id=None for a listing '

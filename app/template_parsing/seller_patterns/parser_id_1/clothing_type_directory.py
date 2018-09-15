@@ -9,5 +9,6 @@ supported_category_names = {
 	'CASUAL_SHIRT': official_names['CASUAL_SHIRT'],
 	'PANT': official_names['PANT'],
 	'COAT_OR_JACKET': official_names['COAT_OR_JACKET'],
-	'SWEATER': official_names['SWEATER']
+	'SWEATER': official_names['SWEATER'],
+	'JEAN': official_names['JEAN']
 }

@@ -5,5 +5,6 @@ name_mapping = {
 	"CASUAL_SHIRT": 'casual_shirt',
 	"PANT": 'pant',
 	"COAT_OR_JACKET": 'coat_or_jacket',
-	"SWEATER": 'sweater'
+	"SWEATER": 'sweater',
+	"JEAN": 'jean'
 }
