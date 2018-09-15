@@ -159,7 +159,8 @@ if __name__ == '__main__':
 			{'name': 'Seller', 'value': 'balearic1'},
 			{'name': 'listingType', 'value': 'Auction'},
 			{'name': 'ExcludeCategory', 'value': [
-				4250, 15724, 93427, 179243, 4251, 169291, 3034, 171146, 155185, 11700, 11511]}
+				4250, 15724, 93427, 179243, 4251, 169291, 3034, 171146, 155185, 11700, 11511,
+				15689, 182047]}
 		],
 		# 'categoryId': [3001]
 	}
@@ -174,6 +175,8 @@ if __name__ == '__main__':
 	# 155185 = Unisex Accessories
 	# 11700 = Home & Garden
 	# 11511 = Men's Socks
+	# 15689 = Men's Shorts
+	# 182047 = Women's Vintage Clothing
 
 	models = lookup_and_create_models_for_new_items(
 		f_api,
