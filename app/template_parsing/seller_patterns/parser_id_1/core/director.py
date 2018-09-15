@@ -443,6 +443,7 @@ function_directory_str = {
 	nm['DRESS_SHIRT']: get_dress_shirt_measurements,
 	nm['CASUAL_SHIRT']: get_casual_shirt_measurements,
 	nm['PANT']: get_pant_measurements,
+	nm['JEAN']: get_pant_measurements,  # Use the same parse fn as for pant
 	nm['COAT_OR_JACKET']: get_coat_and_jacket_measurements,
 	nm['SWEATER']: get_sweater_measurements
 }
