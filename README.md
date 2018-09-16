@@ -1,5 +1,7 @@
-# Summary
- The website and app for ListingsThatFit. ListingsThatFit is a website that emails you ebay clothing listings that fit your sizing information, weekly, from specific sellers. Built as a final project for Harvard's CS50 MOOC. 
+# What is ListingsThatFit?
+ListingsThatFit is a service that scans eBay clothing listings from specific sellers, parses those listing descriptions for in-text measurements, and turns those measurements to data. Those listings can then be queried *by* their measurements, and reports can be generated. For example, ListingsThatFit can be told, 'Give me all suits listings ending this coming Sunday that have a shoulder measurement of 18.5" to 18.75", a chest measurement of 22" to 22.75", etc'. This core feature, that clothing listings can be searched for *by their measurements*, is not offered by eBay itself or any service that I found within 4 years of thinking about it.
+
+This is a project I've had in mind since before I could program, in 2014. It was begun as a final project for Harvard's CS50 MOOC.
 
 Roadmap
 ------
@@ -46,8 +48,10 @@ Rough MVP todo for the minimum needed to email people matches by hand
 
 Steps to buildout rest of app and deploy
 -----
-* [ ] Proper logging
-* [ ] Some test coverage
+* [x] Proper logging
+* [x] Some test coverage
+* [ ] Dev environment parity
+  * [ ] Seed data generator for dev database
 * [ ] User account with measurements
 * [ ] Integrate user measurements form with site
 * [ ] UI to display matching items from current week
@@ -56,9 +60,7 @@ Steps to buildout rest of app and deploy
 * [ ] proper login/out
 * [ ] Plaintest report template for emails
 * [ ] Email report script and schedule
-* [ ] Dev server
-* [ ] Prod server
-* [ ] CI pipeine for deployment
 * [ ] buy URL
+* [ ] Prod server
 * [ ] deploy to server
 * [ ] link URL to server
