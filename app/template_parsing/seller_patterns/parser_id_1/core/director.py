@@ -334,11 +334,29 @@ def get_coat_and_jacket_measurements(measurements_table_soup, parse_strategy='de
 	if parse_strategy == 'default':
 		logger.debug('Using parse_strategy={}'.format(parse_strategy))
 		strings = list(measurements_table_soup.stripped_strings)
+		jacket_uses_raglan = measurements_table_soup.find(
+			string=re.compile('raglan', flags=re.IGNORECASE)) is not None
+		jacket_uses_underarm = measurements_table_soup.find(
+			string=re.compile('underarm', flags=re.IGNORECASE)) is not None
+
+		if jacket_uses_raglan != jacket_uses_underarm:
+			raise UnrecognizedTemplateHTML(
+				'Expected template text search for "raglan" and "underarm" to BOTH == True\
+				or BOTH == False. Found jacket_uses_raglan={} and jacket_uses_underarm={}'.format(
+					jacket_uses_raglan, jacket_uses_underarm),
+				html_string=str(measurements_table_soup))
+
 		try:
 			m_list.append(Msmt('jacket', 'chest_flat', str2int(strings[2])))
-			m_list.append(Msmt('jacket', 'sleeve', str2int(strings[4])))
-			m_list.append(Msmt('jacket', 'shoulders', str2int(strings[6])))
 			m_list.append(Msmt('jacket', 'length', str2int(strings[8])))
+
+			# Handle cases with raglan sleeves or not
+			if jacket_uses_raglan and jacket_uses_underarm:
+				m_list.append(Msmt('jacket', 'sleeve_from_armpit', str2int(strings[4])))
+				m_list.append(Msmt('jacket', 'shoulders_raglan', 0))
+			else:
+				m_list.append(Msmt('jacket', 'sleeve', str2int(strings[4])))
+				m_list.append(Msmt('jacket', 'shoulders', str2int(strings[6])))
 			# TypeError raised by Measurement class if passed non int value
 			# as the measurement value
 		except TypeError as e:
