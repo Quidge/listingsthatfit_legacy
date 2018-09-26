@@ -3,6 +3,7 @@
   "app/template_parsing/seller_patterns/parser_id_1/tests/director_casual_shirt_parse_fn_test.py::test_parse_fn_raises_unrecognized_template_html",
   "app/template_parsing/seller_patterns/parser_id_1/tests/director_casual_shirt_parse_fn_test.py::test_parse_fn_returns_measurement_collection",
   "app/template_parsing/seller_patterns/parser_id_1/tests/director_coat_or_jacket_parse_fn_test.py::test_parse_fn_raises_unrecognized_template_html",
+  "app/template_parsing/seller_patterns/parser_id_1/tests/director_coat_or_jacket_parse_fn_test.py::test_parse_fn_finds_raglan",
   "app/template_parsing/seller_patterns/parser_id_1/tests/director_dress_shirt_parse_fn_test.py::test_parse_fn_raises_unrecognized_template_html",
   "app/template_parsing/seller_patterns/parser_id_1/tests/director_dress_shirt_parse_fn_test.py::test_parse_fn_returns_measurement_collection",
   "app/template_parsing/seller_patterns/parser_id_1/tests/director_pant_parse_fn_test.py::test_parse_fn_raises_unrecognized_template_html",
