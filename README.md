@@ -7,6 +7,8 @@ Roadmap
 ------
 # [FEB 2019] Convert the parsing side of this to a severless function and host that somewhere separate from the db, or host them both on a server. Reporter will become a separate service that connects to the db/server. This will be a fantastic chance to to learn REST API design.
 
+# Once the db exists (however, wherever it exists) as a contactable REST API, I can (learn and) wrap it in a GraphQL client which can then connect to a Reporter PWA (that I'll also build).
+
 1. Make database tables
   * Users
     * Shirt size specifics + brands/price guidelines
