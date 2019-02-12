@@ -5,7 +5,7 @@ This is a project I've had in mind since before I could program, in 2014. It was
 
 Roadmap
 ------
-# [FEB 2019] Convert the parsing side of this to a severless function and host the somewhere, or host them both on a server. Either way, use this as a chance to to learn REST API design.
+# [FEB 2019] Convert the parsing side of this to a severless function and host that somewhere separate from the db, or host them both on a server. Reporter will become a separate service that connects to the db/server. This will be a fantastic chance to to learn REST API design.
 
 1. Make database tables
   * Users
